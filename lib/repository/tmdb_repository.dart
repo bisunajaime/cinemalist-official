@@ -2,6 +2,9 @@ import 'package:meta/meta.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
+import '../barrels/models.dart';
+import '../barrels/models.dart';
+
 class TMDBRepository {
   final TMDBApiClient tmdbApiClient;
 
@@ -18,5 +21,13 @@ class TMDBRepository {
 
   Future<List<UpcomingModel>> fetchUpcoming() async {
     return await tmdbApiClient.fetchUpcoming();
+  }
+
+  Future<List<TrendingModel>> fetchTrending() async {
+    return await tmdbApiClient.fetchTrending();
+  }
+
+  Future<List<ActorsModel>> fetchActors() async {
+    return await tmdbApiClient.fetchActors();
   }
 }

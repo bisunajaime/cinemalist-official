@@ -4,6 +4,9 @@ import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
 
+import '../barrels/models.dart';
+import '../barrels/models.dart';
+
 class TMDBApiClient {
   final String apiKey = "efd2f9bdbe60bbb9414be9a5a20296b0";
   final baseUrl = "https://api.themoviedb.org/3";
@@ -48,5 +51,31 @@ class TMDBApiClient {
     decodeJson['results']
         .forEach((data) => upcomingMovies.add(UpcomingModel.fromJson(data)));
     return upcomingMovies;
+  }
+
+  Future<List<TrendingModel>> fetchTrending() async {
+    List<TrendingModel> upcomingMovies = [];
+    final url = '$baseUrl/trending/movie/week?api_key=$apiKey';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results']
+        .forEach((data) => upcomingMovies.add(TrendingModel.fromJson(data)));
+    return upcomingMovies;
+  }
+
+  Future<List<ActorsModel>> fetchActors() async {
+    List<ActorsModel> actors = [];
+    final url = '$baseUrl/person/popular?api_key=$apiKey&language=en-US&page=1';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results']
+        .forEach((data) => actors.add(ActorsModel.fromJson(data)));
+    return actors;
   }
 }

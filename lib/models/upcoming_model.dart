@@ -45,7 +45,7 @@ class UpcomingModel extends Equatable {
       // voteCount: json['vote_count'],
       // video: json['video'],
       posterPath: json['poster_path'],
-      // id: json['id'],
+      id: json['id'],
       // adult: json['adult'],
       title: json['title'],
       voteAverage: json['vote_average'].toDouble(),

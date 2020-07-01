@@ -2,7 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/barrels/genres_barrel.dart';
+import 'package:tmdbflutter/bloc/actors/actors_bloc.dart';
 import 'package:tmdbflutter/bloc/popular/popular_bloc.dart';
+import 'package:tmdbflutter/bloc/trending/trending_bloc.dart';
 import 'package:tmdbflutter/bloc/upcoming/upcoming_bloc.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
@@ -49,11 +51,6 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         backgroundColor: Color(0xff1B1B1B),
-        appBar: AppBar(
-          title: Text('TMDB'),
-          centerTitle: true,
-          backgroundColor: Colors.pinkAccent[700],
-        ),
         body: MultiBlocProvider(
           providers: [
             BlocProvider(
@@ -71,8 +68,26 @@ class MyApp extends StatelessWidget {
                 tmdbRepository: repository,
               ),
             ),
+            BlocProvider(
+              create: (context) => TrendingBloc(
+                tmdbRepository: repository,
+              ),
+            ),
+            BlocProvider(
+              create: (context) => ActorsBloc(
+                tmdbRepository: repository,
+              ),
+            ),
           ],
-          child: HomePage(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return HomePage();
+              } else {
+                return Text('Yeet');
+              }
+            },
+          ),
         ),
       ),
     );
