@@ -54,7 +54,7 @@ class TMDBApiClient {
   }
 
   Future<List<GenericMoviesModel>> fetchTrending() async {
-    List<GenericMoviesModel> upcomingMovies = [];
+    List<GenericMoviesModel> trendingMovies = [];
     final url = '$baseUrl/trending/movie/week?api_key=$apiKey';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
@@ -62,8 +62,8 @@ class TMDBApiClient {
     }
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
-        (data) => upcomingMovies.add(GenericMoviesModel.fromJson(data)));
-    return upcomingMovies;
+        (data) => trendingMovies.add(GenericMoviesModel.fromJson(data)));
+    return trendingMovies;
   }
 
   Future<List<ActorsModel>> fetchActors() async {
@@ -77,5 +77,19 @@ class TMDBApiClient {
     decodeJson['results']
         .forEach((data) => actors.add(ActorsModel.fromJson(data)));
     return actors;
+  }
+
+  Future<List<GenericMoviesModel>> fetchNowPlaying() async {
+    List<GenericMoviesModel> nowPlaying = [];
+    final url =
+        '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=1';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results']
+        .forEach((data) => nowPlaying.add(GenericMoviesModel.fromJson(data)));
+    return nowPlaying;
   }
 }

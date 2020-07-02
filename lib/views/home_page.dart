@@ -6,8 +6,10 @@ import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/movie_page.dart';
 
 import '../barrels/genres_barrel.dart';
-import '../barrels/movies_barrel.dart';
 import '../barrels/actors_barrel.dart';
+import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
+import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
+import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -75,27 +77,6 @@ class HomePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Trending',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-        ),
-        buildTrendingList(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
                 'Actors',
                 style: Styles.mBold,
               ),
@@ -110,6 +91,27 @@ class HomePage extends StatelessWidget {
           ),
         ),
         buildActorsList(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Trending',
+                style: Styles.mBold,
+              ),
+              Text(
+                'See more',
+                style: Styles.mReg.copyWith(
+                  color: Colors.pinkAccent,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ),
+        buildTrendingList(),
       ],
     );
   }
@@ -227,6 +229,7 @@ class HomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       CircleAvatar(
+                        backgroundColor: Colors.grey,
                         backgroundImage: NetworkImage(
                             'https://image.tmdb.org/t/p/w500${state.actors[i].profilePath}'),
                         radius: 35,
@@ -236,9 +239,7 @@ class HomePage extends StatelessWidget {
                       ),
                       Text(
                         state.actors[i].name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        style: Styles.mMed.copyWith(
                           fontSize: 8,
                         ),
                       ),
@@ -276,26 +277,27 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  BlocBuilder<MoviesBloc, MoviesState> buildUpcomingList() {
-    return BlocBuilder<MoviesBloc, MoviesState>(
+  BlocBuilder<UpcomingMoviesBloc, UpcomingMoviesState> buildUpcomingList() {
+    return BlocBuilder<UpcomingMoviesBloc, UpcomingMoviesState>(
       builder: (context, state) {
-        if (state is MoviesEmpty) {
-          BlocProvider.of<MoviesBloc>(context).add(FetchUpcomingMovies());
+        if (state is UpcomingMoviesEmpty) {
+          BlocProvider.of<UpcomingMoviesBloc>(context)
+              .add(FetchUpcomingMovies());
         }
 
-        if (state is MoviesError) {
+        if (state is UpcomingMoviesError) {
           return Center(
             child: Text('Failed to load genres'),
           );
         }
 
-        if (state is MoviesLoaded) {
+        if (state is UpcomingMoviesLoaded) {
           return Container(
             height: MediaQuery.of(context).size.height * .2,
             width: MediaQuery.of(context).size.width,
             child: ListView.builder(
               physics: BouncingScrollPhysics(),
-              itemCount: state.movies.length,
+              itemCount: state.upcomingMovies.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, i) {
                 return GestureDetector(
@@ -303,7 +305,8 @@ class HomePage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => MoviePage(
-                        model: state.movies[i],
+                        model: state.upcomingMovies[i],
+                        tag: 'upcoming${state.upcomingMovies[i].posterPath}',
                       ),
                     ),
                   ),
@@ -318,10 +321,10 @@ class HomePage extends StatelessWidget {
                     child: Stack(
                       children: <Widget>[
                         Hero(
-                          tag: state.movies[i].posterPath,
+                          tag: 'upcoming${state.upcomingMovies[i].posterPath}',
                           child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${state.movies[i].posterPath}',
-                            fit: BoxFit.fitHeight,
+                            'https://image.tmdb.org/t/p/w500${state.upcomingMovies[i].posterPath}',
+                            fit: BoxFit.fitWidth,
                             colorBlendMode: BlendMode.darken,
                             color: Colors.black26,
                             height: double.infinity,
@@ -336,14 +339,12 @@ class HomePage extends StatelessWidget {
                               Icon(
                                 Icons.star,
                                 color: Colors.yellow,
-                                size: 12,
+                                size: 10,
                               ),
                               Text(
-                                state.movies[i].voteAverage.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 12,
+                                state.upcomingMovies[i].voteAverage.toString(),
+                                style: Styles.mBold.copyWith(
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -384,32 +385,33 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  BlocBuilder<MoviesBloc, MoviesState> buildPopularList() {
-    return BlocBuilder<MoviesBloc, MoviesState>(
+  BlocBuilder<PopularMoviesBloc, PopularMoviesState> buildPopularList() {
+    return BlocBuilder<PopularMoviesBloc, PopularMoviesState>(
       builder: (context, state) {
-        if (state is MoviesEmpty) {
-          BlocProvider.of<MoviesBloc>(context).add(FetchPopularMovies());
+        if (state is PopularMoviesEmpty) {
+          BlocProvider.of<PopularMoviesBloc>(context).add(FetchPopularMovies());
         }
 
-        if (state is MoviesError) {
+        if (state is PopularMoviesError) {
           return Center(
             child: Text('Failed to load genres'),
           );
         }
 
-        if (state is MoviesLoaded) {
+        if (state is PopularMoviesLoaded) {
           return Container(
             height: MediaQuery.of(context).size.height * .6,
             width: MediaQuery.of(context).size.width,
             child: CarouselSlider.builder(
-              itemCount: state.movies.length,
+              itemCount: state.popularMovies.length,
               itemBuilder: (context, i) {
                 return GestureDetector(
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MoviePage(
-                        model: state.movies[i],
+                        model: state.popularMovies[i],
+                        tag: 'popular${state.popularMovies[i].posterPath}',
                       ),
                     ),
                   ),
@@ -418,9 +420,9 @@ class HomePage extends StatelessWidget {
                     child: Stack(
                       children: <Widget>[
                         Hero(
-                          tag: state.movies[i].posterPath,
+                          tag: 'popular${state.popularMovies[i].posterPath}',
                           child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${state.movies[i].posterPath}',
+                            'https://image.tmdb.org/t/p/w500${state.popularMovies[i].posterPath}',
                             fit: BoxFit.cover,
                             colorBlendMode: BlendMode.darken,
                             color: Colors.black12,
@@ -439,10 +441,8 @@ class HomePage extends StatelessWidget {
                                 size: 20,
                               ),
                               Text(
-                                state.movies[i].voteAverage.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                state.popularMovies[i].voteAverage.toString(),
+                                style: Styles.mBold.copyWith(
                                   fontSize: 20,
                                 ),
                               ),
@@ -497,53 +497,63 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  BlocBuilder<MoviesBloc, MoviesState> buildTrendingList() {
-    return BlocBuilder<MoviesBloc, MoviesState>(
+  BlocBuilder<TrendingMoviesBloc, TrendingMoviesState> buildTrendingList() {
+    return BlocBuilder<TrendingMoviesBloc, TrendingMoviesState>(
       builder: (context, state) {
-        if (state is MoviesEmpty) {
-          BlocProvider.of<MoviesBloc>(context).add(FetchTrendingMovies());
+        if (state is TrendingMoviesEmpty) {
+          BlocProvider.of<TrendingMoviesBloc>(context)
+              .add(FetchTrendingMovies());
         }
 
-        if (state is MoviesError) {
+        if (state is TrendingMoviesError) {
           return Center(
-            child: Text('Failed to load genres'),
+            child: Text('Failed to load trending'),
           );
         }
 
-        if (state is MoviesLoaded) {
+        if (state is TrendingMoviesLoaded) {
           return Container(
             height: MediaQuery.of(context).size.height * .4,
             width: MediaQuery.of(context).size.width,
             child: ListView.builder(
               physics: BouncingScrollPhysics(),
-              itemCount: state.movies.length,
+              itemCount: state.trendingMovies.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, i) {
-                return Container(
-                  height: double.infinity,
-                  width: 150,
-                  margin: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(1),
-                    color: Colors.grey,
-                    image: DecorationImage(
-                      colorFilter: ColorFilter.mode(
-                        Colors.black26,
-                        BlendMode.darken,
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MoviePage(
+                        model: state.trendingMovies[i],
+                        tag: 'trending${state.trendingMovies[i].posterPath}',
                       ),
-                      image: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${state.movies[i].posterPath}',
-                      ),
-                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: double.infinity,
+                    width: 180,
+                    margin: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(1),
+                      color: Colors.grey,
+                    ),
                     child: Stack(
                       children: <Widget>[
+                        Hero(
+                          tag: 'trending${state.trendingMovies[i].posterPath}',
+                          child: Image.network(
+                            'https://image.tmdb.org/t/p/w500${state.trendingMovies[i].posterPath}',
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.fitWidth,
+                            color: Colors.black26,
+                            colorBlendMode: BlendMode.darken,
+                          ),
+                        ),
                         Positioned(
-                          top: 0,
-                          right: 0,
+                          bottom: 5,
+                          left: 5,
                           child: Row(
                             children: <Widget>[
                               Icon(
@@ -552,10 +562,8 @@ class HomePage extends StatelessWidget {
                                 size: 12,
                               ),
                               Text(
-                                state.movies[i].voteAverage.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                state.trendingMovies[i].voteAverage.toString(),
+                                style: Styles.mBold.copyWith(
                                   fontSize: 12,
                                 ),
                               ),

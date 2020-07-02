@@ -30,4 +30,8 @@ class TMDBRepository {
   Future<List<ActorsModel>> fetchActors() async {
     return await tmdbApiClient.fetchActors();
   }
+
+  Future<List<GenericMoviesModel>> fetchNowPlaying() async {
+    return await tmdbApiClient.fetchNowPlaying();
+  }
 }

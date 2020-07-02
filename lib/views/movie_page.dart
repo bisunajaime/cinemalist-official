@@ -1,32 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:tmdbflutter/styles/styles.dart';
 
 import '../barrels/models.dart';
 
 class MoviePage extends StatelessWidget {
   final GenericMoviesModel model;
+  final String tag;
 
-  MoviePage({this.model});
+  MoviePage({
+    this.model,
+    this.tag,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff1B1B1B),
+      backgroundColor: Color(0xff0E0E0E),
       body: CustomScrollView(
+        physics: BouncingScrollPhysics(),
         slivers: <Widget>[
           SliverAppBar(
-            expandedHeight: 500,
+            expandedHeight: MediaQuery.of(context).size.height * .7,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
               background: Container(
-                color: Colors.redAccent,
+                color: Color(0xff0E0E0E),
                 height: double.infinity,
                 width: double.infinity,
                 child: Hero(
-                  tag: model.posterPath,
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w500${model.posterPath}',
-                    height: double.infinity,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                  tag: tag,
+                  child: ShaderMask(
+                    shaderCallback: (rect) {
+                      return LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black,
+                          Colors.transparent,
+                        ],
+                      ).createShader(
+                        Rect.fromLTRB(
+                          0,
+                          0,
+                          rect.width,
+                          rect.height,
+                        ),
+                      );
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.network(
+                      'https://image.tmdb.org/t/p/w500${model.posterPath}',
+                      height: double.infinity,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -43,10 +71,8 @@ class MoviePage extends StatelessWidget {
                   ),
                   Text(
                     model.title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
+                    style: Styles.mBold.copyWith(
+                      fontSize: 20,
                     ),
                   ),
                   SizedBox(
@@ -56,9 +82,9 @@ class MoviePage extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         model.releaseDate,
-                        style: TextStyle(
-                          color: Colors.orangeAccent,
-                          fontWeight: FontWeight.bold,
+                        style: Styles.mMed.copyWith(
+                          fontSize: 12,
+                          color: Colors.amber,
                         ),
                       ),
                       SizedBox(
@@ -73,9 +99,7 @@ class MoviePage extends StatelessWidget {
                           ),
                           Text(
                             model.voteAverage.toString(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            style: Styles.mBold.copyWith(
                               fontSize: 12,
                             ),
                           ),
@@ -88,9 +112,8 @@ class MoviePage extends StatelessWidget {
                   ),
                   Text(
                     'Overview',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    style: Styles.mBold.copyWith(
+                      fontSize: 12,
                     ),
                   ),
                   SizedBox(
@@ -98,13 +121,13 @@ class MoviePage extends StatelessWidget {
                   ),
                   Text(
                     model.overview,
-                    style: TextStyle(
-                      color: Colors.white,
+                    style: Styles.mReg.copyWith(
                       fontSize: 10,
+                      height: 1.6,
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 1000,
                   ),
                 ],
               ),
