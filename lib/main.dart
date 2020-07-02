@@ -2,14 +2,14 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/barrels/genres_barrel.dart';
-import 'package:tmdbflutter/bloc/actors/actors_bloc.dart';
-import 'package:tmdbflutter/bloc/popular/popular_bloc.dart';
-import 'package:tmdbflutter/bloc/trending/trending_bloc.dart';
-import 'package:tmdbflutter/bloc/upcoming/upcoming_bloc.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/views/home_page.dart';
+
+import 'barrels/genres_barrel.dart';
+import 'barrels/movies_barrel.dart';
+import 'barrels/actors_barrel.dart';
 
 void main() {
   BlocSupervisor.delegate = SimpleBlocDelegate();
@@ -59,17 +59,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
             BlocProvider(
-              create: (context) => PopularsBloc(
-                tmdbRepository: repository,
-              ),
-            ),
-            BlocProvider(
-              create: (context) => UpcomingsBloc(
-                tmdbRepository: repository,
-              ),
-            ),
-            BlocProvider(
-              create: (context) => TrendingBloc(
+              create: (context) => MoviesBloc(
                 tmdbRepository: repository,
               ),
             ),

@@ -15,15 +15,15 @@ class TMDBRepository {
     return await tmdbApiClient.fetchCategories();
   }
 
-  Future<List<PopularModel>> fetchPopular() async {
+  Future<List<GenericMoviesModel>> fetchPopular() async {
     return await tmdbApiClient.fetchPopular();
   }
 
-  Future<List<UpcomingModel>> fetchUpcoming() async {
+  Future<List<GenericMoviesModel>> fetchUpcoming() async {
     return await tmdbApiClient.fetchUpcoming();
   }
 
-  Future<List<TrendingModel>> fetchTrending() async {
+  Future<List<GenericMoviesModel>> fetchTrending() async {
     return await tmdbApiClient.fetchTrending();
   }
 

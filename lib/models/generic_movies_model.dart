@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class PopularModel extends Equatable {
+class GenericMoviesModel extends Equatable {
   final double popularity;
   final int voteCount;
   final bool video;
@@ -12,7 +12,7 @@ class PopularModel extends Equatable {
   final String overview;
   final String releaseDate;
 
-  PopularModel({
+  GenericMoviesModel({
     this.popularity,
     this.voteCount,
     this.video,
@@ -39,8 +39,8 @@ class PopularModel extends Equatable {
         releaseDate,
       ];
 
-  factory PopularModel.fromJson(Map<String, dynamic> json) {
-    return PopularModel(
+  factory GenericMoviesModel.fromJson(Map<String, dynamic> json) {
+    return GenericMoviesModel(
       // popularity: json['popularity'],
       // voteCount: json['vote_count'],
       // video: json['video'],

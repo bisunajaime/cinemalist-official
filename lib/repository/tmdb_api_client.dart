@@ -27,42 +27,42 @@ class TMDBApiClient {
     return genres;
   }
 
-  Future<List<PopularModel>> fetchPopular() async {
-    List<PopularModel> popularMovies = [];
+  Future<List<GenericMoviesModel>> fetchPopular() async {
+    List<GenericMoviesModel> popularMovies = [];
     final url = '$baseUrl/movie/popular?api_key=$apiKey&language=en-US&page=1';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
     final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => popularMovies.add(PopularModel.fromJson(data)));
+    decodeJson['results'].forEach(
+        (data) => popularMovies.add(GenericMoviesModel.fromJson(data)));
     return popularMovies;
   }
 
-  Future<List<UpcomingModel>> fetchUpcoming() async {
-    List<UpcomingModel> upcomingMovies = [];
+  Future<List<GenericMoviesModel>> fetchUpcoming() async {
+    List<GenericMoviesModel> upcomingMovies = [];
     final url = '$baseUrl/movie/upcoming?api_key=$apiKey&language=en-US&page=1';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
     final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => upcomingMovies.add(UpcomingModel.fromJson(data)));
+    decodeJson['results'].forEach(
+        (data) => upcomingMovies.add(GenericMoviesModel.fromJson(data)));
     return upcomingMovies;
   }
 
-  Future<List<TrendingModel>> fetchTrending() async {
-    List<TrendingModel> upcomingMovies = [];
+  Future<List<GenericMoviesModel>> fetchTrending() async {
+    List<GenericMoviesModel> upcomingMovies = [];
     final url = '$baseUrl/trending/movie/week?api_key=$apiKey';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
     final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => upcomingMovies.add(TrendingModel.fromJson(data)));
+    decodeJson['results'].forEach(
+        (data) => upcomingMovies.add(GenericMoviesModel.fromJson(data)));
     return upcomingMovies;
   }
 

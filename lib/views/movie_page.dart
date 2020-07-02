@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../barrels/models.dart';
 
 class MoviePage extends StatelessWidget {
-  final PopularModel model;
+  final GenericMoviesModel model;
 
   MoviePage({this.model});
 
