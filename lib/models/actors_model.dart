@@ -10,7 +10,9 @@ class ActorsModel extends Equatable {
     return ActorsModel(
       popularity: json['popularity'],
       department: json['department'],
-      profilePath: json['profile_path'],
+      profilePath: json['profile_path'] != null
+          ? 'https://image.tmdb.org/t/p/w500${json['profile_path']}'
+          : 'https://via.placeholder.com/400',
       name: json['name'],
     );
   }

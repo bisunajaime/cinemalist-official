@@ -9,3 +9,10 @@ class FetchNowPlayingMovies extends NowPlayingMoviesEvent {
   @override
   List<Object> get props => [];
 }
+
+class LoadNextPage extends NowPlayingMoviesEvent {
+  const LoadNextPage();
+
+  @override
+  List<Object> get props => [];
+}

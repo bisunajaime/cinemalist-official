@@ -1,11 +1,42 @@
 import 'package:equatable/equatable.dart';
-import 'package:tmdbflutter/models/moviecast_model.dart';
+import 'package:meta/meta.dart';
 
-class TvShowCastModel extends Equatable {
-  List<CastModel> tvShowCast;
+class CrewModel extends Equatable {
+  final String creditId, department, name, job, profilePath;
+  final int id, gender;
+
+  CrewModel({
+    @required this.creditId,
+    @required this.department,
+    @required this.name,
+    @required this.job,
+    @required this.profilePath,
+    @required this.id,
+    @required this.gender,
+  });
+
+  factory CrewModel.fromJson(Map<String, dynamic> json) {
+    return CrewModel(
+      creditId: json['credit_id'],
+      department: json['department'],
+      name: json['name'],
+      job: json['job'],
+      profilePath: json['profile_path'],
+      id: json['id'],
+      gender: json['gender'],
+    );
+  }
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        creditId,
+        department,
+        name,
+        job,
+        profilePath,
+        id,
+        gender,
+      ];
 }
 
 /*

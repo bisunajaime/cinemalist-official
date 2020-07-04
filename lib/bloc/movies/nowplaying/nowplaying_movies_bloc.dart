@@ -8,6 +8,9 @@ import 'package:tmdbflutter/repository/tmdb_repository.dart';
 class NowPlayingMoviesBloc
     extends Bloc<NowPlayingMoviesEvent, NowPlayingMoviesState> {
   final TMDBRepository tmdbRepository;
+  int initialPage = 1;
+  List<GenericMoviesModel> nowPlaying = [];
+  List<GenericMoviesModel> nextPage = [];
 
   NowPlayingMoviesBloc({@required this.tmdbRepository})
       : assert(tmdbRepository != null);
@@ -21,11 +24,31 @@ class NowPlayingMoviesBloc
     if (event is FetchNowPlayingMovies) {
       yield NowPlayingMoviesLoading();
       try {
-        final List<GenericMoviesModel> nowPlaying =
-            await tmdbRepository.fetchNowPlaying();
+        nowPlaying.clear();
+        nextPage.clear();
+        initialPage = 1;
+        nowPlaying
+            .addAll(await tmdbRepository.fetchNowPlaying(page: initialPage));
+        print(initialPage);
+        print(nowPlaying.length);
         yield NowPlayingMoviesLoaded(nowPlayingMovies: nowPlaying);
       } catch (e) {
         yield NowPlayingMoviesError();
+      }
+    }
+    if (event is LoadNextPage) {
+      try {
+        nextPage = await tmdbRepository.fetchNowPlaying(page: initialPage++);
+        nextPage.removeAt(0);
+        nowPlaying.addAll(nextPage);
+        print(initialPage);
+        print(nowPlaying.length);
+        nowPlaying.removeWhere((element) => element.posterPath == null);
+        List removeDups = nowPlaying.toSet().toList();
+        yield NowPlayingMoviesLoaded(nowPlayingMovies: removeDups);
+      } catch (e) {
+        print(initialPage);
+        print(e);
       }
     }
   }

@@ -5,16 +5,20 @@ import 'package:tmdbflutter/barrels/genres_barrel.dart';
 import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
+import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/nowplaying/nowplaying_movies_bloc.dart';
+import 'package:tmdbflutter/bloc/tvshows/popular/popular_tvshows_bloc.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
+import 'package:tmdbflutter/views/tvshows_page.dart';
 
 import 'barrels/genres_barrel.dart';
 import 'barrels/actors_barrel.dart';
+import 'bloc/movies/info/movie_info_bloc.dart';
 
 void main() {
   BlocSupervisor.delegate = SimpleBlocDelegate();
@@ -68,7 +72,8 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with AutomaticKeepAliveClientMixin {
   int index = 0;
   PageController controller;
 
@@ -82,13 +87,17 @@ class _MainPageState extends State<MainPage> {
   }
 
   @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff0E0E0E),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xff0E0E0E),
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.pinkAccent,
         selectedFontSize: 10,
+        selectedLabelStyle: Styles.mBold.copyWith(
+          color: Colors.pinkAccent,
+        ),
         unselectedFontSize: 9,
         unselectedItemColor: Colors.white,
         currentIndex: index,
@@ -98,6 +107,9 @@ class _MainPageState extends State<MainPage> {
             duration: Duration(milliseconds: 500),
             curve: Curves.ease,
           );
+          setState(() {
+            index = i;
+          });
         },
         items: [
           BottomNavigationBarItem(
@@ -161,6 +173,16 @@ class _MainPageState extends State<MainPage> {
               tmdbRepository: widget.repository,
             ),
           ),
+          BlocProvider(
+            create: (context) => PopularTvShowsBloc(
+              tmdbRepository: widget.repository,
+            ),
+          ),
+          BlocProvider(
+            create: (context) => MovieCastBloc(
+              tmdbRepository: widget.repository,
+            ),
+          ),
         ],
         child: PageView(
           controller: controller,
@@ -168,14 +190,13 @@ class _MainPageState extends State<MainPage> {
           children: <Widget>[
             HomePage(),
             MoviesPage(),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.blueAccent,
-            ),
+            TvShowsPage(),
           ],
         ),
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

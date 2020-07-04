@@ -14,10 +14,15 @@ class NowPlayingMoviesLoading extends NowPlayingMoviesState {}
 
 class NowPlayingMoviesError extends NowPlayingMoviesState {}
 
+class NowPlayingMoviesMax extends NowPlayingMoviesState {}
+
+class NowPlayingMoviesLoadingNextPage extends NowPlayingMoviesState {}
+
 class NowPlayingMoviesLoaded extends NowPlayingMoviesState {
   final List<GenericMoviesModel> nowPlayingMovies;
-  const NowPlayingMoviesLoaded({@required this.nowPlayingMovies})
-      : assert(nowPlayingMovies != null);
+  NowPlayingMoviesLoaded({
+    @required this.nowPlayingMovies,
+  }) : assert(nowPlayingMovies != null);
 
   @override
   List<Object> get props => [nowPlayingMovies];

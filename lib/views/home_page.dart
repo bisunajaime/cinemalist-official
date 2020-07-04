@@ -11,108 +11,147 @@ import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      physics: BouncingScrollPhysics(),
-      children: <Widget>[
-        SizedBox(
-          height: 10,
-        ),
-        Image.asset(
-          'assets/images/logo.png',
-          height: 20,
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        buildPopularList(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Genres',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
-                ),
-              ),
-            ],
+    // ignore: close_sinks
+    final popularMovBloc = BlocProvider.of<PopularMoviesBloc>(context);
+    // ignore: close_sinks
+    final trendingMovBloc = BlocProvider.of<TrendingMoviesBloc>(context);
+    // ignore: close_sinks
+    final upcomingMovBloc = BlocProvider.of<UpcomingMoviesBloc>(context);
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(Duration(seconds: 1));
+        popularMovBloc.add(FetchPopularMovies());
+        trendingMovBloc.add(FetchTrendingMovies());
+        upcomingMovBloc.add(FetchUpcomingMovies());
+      },
+      child: ListView(
+        physics: BouncingScrollPhysics(),
+        children: <Widget>[
+          SizedBox(
+            height: 10,
           ),
-        ),
-        buildGenresList(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Upcoming',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+//          Image.asset(
+//            'assets/images/logo.png',
+//            height: 20,
+//          ),
+          Center(
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'TMDB',
+                  style: Styles.mBold.copyWith(
+                    fontSize: 30,
+                    color: Colors.pinkAccent,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        buildUpcomingList(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Actors',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+                Text(
+                  'by Jaime Bisuna',
+                  style: Styles.mMed.copyWith(
+                    fontSize: 8,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        buildActorsList(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Trending',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+          SizedBox(
+            height: 10,
+          ),
+          buildPopularList(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Genres',
+                  style: Styles.mBold,
                 ),
-              ),
-            ],
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        buildTrendingList(),
-      ],
+          buildGenresList(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Upcoming',
+                  style: Styles.mBold,
+                ),
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          buildUpcomingList(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Actors',
+                  style: Styles.mBold,
+                ),
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          buildActorsList(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Trending',
+                  style: Styles.mBold,
+                ),
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          buildTrendingList(),
+        ],
+      ),
     );
   }
 
@@ -189,8 +228,8 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                   ),
-                  baseColor: Colors.grey,
-                  highlightColor: Colors.grey[400],
+                  baseColor: Color(0xff313131),
+                  highlightColor: Color(0xff4A4A4A),
                 ),
               );
             },
@@ -230,8 +269,8 @@ class HomePage extends StatelessWidget {
                     children: <Widget>[
                       CircleAvatar(
                         backgroundColor: Colors.grey,
-                        backgroundImage: NetworkImage(
-                            'https://image.tmdb.org/t/p/w500${state.actors[i].profilePath}'),
+                        backgroundImage:
+                            NetworkImage(state.actors[i].profilePath),
                         radius: 35,
                       ),
                       SizedBox(
@@ -265,8 +304,8 @@ class HomePage extends StatelessWidget {
                   backgroundColor: Colors.grey,
                   child: Shimmer.fromColors(
                     child: Container(),
-                    baseColor: Colors.grey,
-                    highlightColor: Colors.grey[400],
+                    baseColor: Color(0xff313131),
+                    highlightColor: Color(0xff4A4A4A),
                   ),
                 ),
               );
@@ -374,8 +413,8 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                   ),
-                  baseColor: Colors.grey,
-                  highlightColor: Colors.grey[400],
+                  baseColor: Color(0xff313131),
+                  highlightColor: Color(0xff4A4A4A),
                 ),
               );
             },
@@ -486,8 +525,8 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                   ),
-                  baseColor: Colors.grey,
-                  highlightColor: Colors.grey[400],
+                  baseColor: Color(0xff313131),
+                  highlightColor: Color(0xff4A4A4A),
                 ),
               );
             },
@@ -536,7 +575,7 @@ class HomePage extends StatelessWidget {
                     margin: EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(1),
-                      color: Colors.grey,
+                      color: Color(0xff0e0e0e),
                     ),
                     child: Stack(
                       children: <Widget>[
@@ -594,8 +633,8 @@ class HomePage extends StatelessWidget {
                   child: Container(
                     color: Colors.white,
                   ),
-                  baseColor: Colors.grey,
-                  highlightColor: Colors.grey[400],
+                  baseColor: Color(0xff313131),
+                  highlightColor: Color(0xff4A4A4A),
                 ),
               );
             },
@@ -604,4 +643,7 @@ class HomePage extends StatelessWidget {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

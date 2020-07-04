@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
+import 'package:tmdbflutter/models/movie_info_model.dart';
+import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 
 import '../barrels/models.dart';
 import '../barrels/models.dart';
@@ -79,10 +83,10 @@ class TMDBApiClient {
     return actors;
   }
 
-  Future<List<GenericMoviesModel>> fetchNowPlaying() async {
+  Future<List<GenericMoviesModel>> fetchNowPlaying({int page}) async {
     List<GenericMoviesModel> nowPlaying = [];
     final url =
-        '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=1';
+        '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=$page';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -91,5 +95,53 @@ class TMDBApiClient {
     decodeJson['results']
         .forEach((data) => nowPlaying.add(GenericMoviesModel.fromJson(data)));
     return nowPlaying;
+  }
+
+  Future<List<TVShowModel>> fetchPopularTvShows({int page}) async {
+    List<TVShowModel> tvShows = [];
+    final url = '$baseUrl/tv/popular?api_key=$apiKey&language=en-US&page=$page';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results']
+        .forEach((data) => tvShows.add(TVShowModel.fromJson(data)));
+    return tvShows;
+  }
+
+  Future<MovieInfoModel> fetchMovieInfo({int id}) async {
+    final url = '$baseUrl/movie/$id?api_key=$apiKey&language=en-US';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    MovieInfoModel movieInfo = MovieInfoModel.fromJson(decodeJson);
+    return movieInfo;
+  }
+
+  Future<List<CastModel>> fetchMovieCasts({int id}) async {
+    List<CastModel> casts = [];
+    final url = '$baseUrl/movie/$id/credits?api_key=$apiKey';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['cast'].forEach((data) => casts.add(CastModel.fromJson(data)));
+    return casts;
+  }
+
+  Future<TvShowCreditsModel> fetchTvShowCredits({int id}) async {
+    final url = '$baseUrl/tv/$id/credits?api_key=$apiKey';
+    final response = await httpClient.get(url);
+    if (response.statusCode != 200) {
+      throw new Exception('There was a problem.');
+    }
+    final decodedJson = jsonDecode(response.body);
+    TvShowCreditsModel tvShowCreditsModel =
+        TvShowCreditsModel.fromJson(decodedJson);
+    return tvShowCreditsModel;
   }
 }

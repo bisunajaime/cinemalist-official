@@ -1,4 +1,8 @@
 import 'package:meta/meta.dart';
+import 'package:tmdbflutter/models/movie_info_model.dart';
+import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
@@ -31,7 +35,23 @@ class TMDBRepository {
     return await tmdbApiClient.fetchActors();
   }
 
-  Future<List<GenericMoviesModel>> fetchNowPlaying() async {
-    return await tmdbApiClient.fetchNowPlaying();
+  Future<List<GenericMoviesModel>> fetchNowPlaying({int page}) async {
+    return await tmdbApiClient.fetchNowPlaying(page: page);
+  }
+
+  Future<List<TVShowModel>> fetchPopularTvShows({int page}) async {
+    return await tmdbApiClient.fetchPopularTvShows(page: page);
+  }
+
+  Future<MovieInfoModel> fetchMovieInfo({int id}) async {
+    return await tmdbApiClient.fetchMovieInfo(id: id);
+  }
+
+  Future<List<CastModel>> fetchMovieCasts({int id}) async {
+    return await tmdbApiClient.fetchMovieCasts(id: id);
+  }
+
+  Future<TvShowCreditsModel> fetchTvShowCredits({int id}) async {
+    return await tmdbApiClient.fetchTvShowCredits(id: id);
   }
 }
