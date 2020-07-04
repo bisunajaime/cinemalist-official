@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
@@ -6,6 +7,7 @@ import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
+import '../barrels/models.dart';
 import '../barrels/models.dart';
 import '../barrels/models.dart';
 
@@ -53,5 +55,13 @@ class TMDBRepository {
 
   Future<TvShowCreditsModel> fetchTvShowCredits({int id}) async {
     return await tmdbApiClient.fetchTvShowCredits(id: id);
+  }
+
+  Future<ActorInfoModel> fetchActorInfo({int id}) async {
+    return await tmdbApiClient.fetchActorInfo(id: id);
+  }
+
+  Future<List<GenericMoviesModel>> fetchSimilarMovies({int id}) async {
+    return await tmdbApiClient.fetchSimilarMovies(id: id);
   }
 }

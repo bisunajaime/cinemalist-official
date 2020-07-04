@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/views/actor_info_page.dart';
 import 'package:tmdbflutter/views/movie_page.dart';
 
 import '../barrels/genres_barrel.dart';
@@ -186,8 +187,8 @@ class _HomePageState extends State<HomePage>
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.blueAccent[400],
-                        Colors.blue[400],
+                        Colors.pinkAccent[400],
+                        Colors.redAccent,
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -263,26 +264,36 @@ class _HomePageState extends State<HomePage>
                   padding: const EdgeInsets.symmetric(
                     horizontal: 5,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        backgroundImage:
-                            NetworkImage(state.actors[i].profilePath),
-                        radius: 35,
-                      ),
-                      SizedBox(
-                        height: 1,
-                      ),
-                      Text(
-                        state.actors[i].name,
-                        style: Styles.mMed.copyWith(
-                          fontSize: 8,
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ActorInfoPage(
+                          id: state.actors[i].id,
                         ),
                       ),
-                    ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          backgroundImage:
+                              NetworkImage(state.actors[i].profilePath),
+                          radius: 35,
+                        ),
+                        SizedBox(
+                          height: 1,
+                        ),
+                        Text(
+                          state.actors[i].name,
+                          style: Styles.mMed.copyWith(
+                            fontSize: 8,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -363,7 +374,7 @@ class _HomePageState extends State<HomePage>
                           tag: 'upcoming${state.upcomingMovies[i].posterPath}',
                           child: Image.network(
                             'https://image.tmdb.org/t/p/w500${state.upcomingMovies[i].posterPath}',
-                            fit: BoxFit.fitWidth,
+                            fit: BoxFit.cover,
                             colorBlendMode: BlendMode.darken,
                             color: Colors.black26,
                             height: double.infinity,

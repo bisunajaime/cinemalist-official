@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
 import 'package:tmdbflutter/bloc/tvshows/credits/tvshow_credits_bloc.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/crew_model.dart';
@@ -10,6 +10,9 @@ import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/views/actor_info_page.dart';
+
+import '../styles/styles.dart';
 
 class TvShowPage extends StatefulWidget {
   final TVShowModel model;
@@ -80,27 +83,29 @@ class _TvShowPageState extends State<TvShowPage> {
               ),
             ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
                       widget.model.name,
                       style: Styles.mBold.copyWith(
                         fontSize: 20,
+                        color: Colors.pinkAccent[100],
                       ),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
                       children: <Widget>[
                         Text(
-                          widget.model.firstAirDate,
+                          DateFormat.yMMMd().format(
+                              DateTime.parse(widget.model.firstAirDate)),
                           style: Styles.mMed.copyWith(
                             fontSize: 12,
                             color: Colors.amber,
@@ -126,180 +131,151 @@ class _TvShowPageState extends State<TvShowPage> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Overview',
-                      style: Styles.mBold.copyWith(
-                        fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
                       widget.model.overview,
                       style: Styles.mReg.copyWith(
                         fontSize: 10,
                         height: 1.6,
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Text(
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
                       'Cast & Crew',
                       style: Styles.mBold.copyWith(
                         fontSize: 20,
                         color: Colors.pinkAccent[100],
                       ),
                     ),
-                    BlocBuilder<TvShowCreditsBloc, TvShowCreditsState>(
-                      builder: (context, state) {
-                        if (state is TvShowCreditsEmpty) {
-                          BlocProvider.of<TvShowCreditsBloc>(context)
-                              .add(FetchTvShowCredits(id: widget.model.id));
-                        }
-                        if (state is TvShowCreditsError) {
-                          return Text('There was a problem');
-                        }
-                        if (state is TvShowCreditsLoaded) {
-                          int castsSize = state.tvShowCredits.casts.length;
-                          int crewSize = state.tvShowCredits.crew.length;
-                          return Container(
-                            height: castsSize == 0 || crewSize == 0 ? 100 : 200,
-                            width: double.infinity,
-                            child: Column(
-                              children: <Widget>[
-                                castsSize == 0
-                                    ? Container()
-                                    : Expanded(
-                                        child: ListView.builder(
-                                          itemCount:
-                                              state.tvShowCredits.casts.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, i) {
-                                            CastModel model =
-                                                state.tvShowCredits.casts[i];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 5,
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.grey,
-                                                    backgroundImage: model
-                                                                .profilePath ==
-                                                            null
-                                                        ? AssetImage(
-                                                            'assets/images/placeholder_actor.png')
-                                                        : NetworkImage(
-                                                            'https://image.tmdb.org/t/p/w500${model.profilePath}'),
-                                                    radius: 35,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 1,
-                                                  ),
-                                                  Text(
-                                                    model.name,
-                                                    style: Styles.mMed.copyWith(
-                                                      fontSize: 8,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                crewSize == 0
-                                    ? Container()
-                                    : Expanded(
-                                        child: ListView.builder(
-                                          itemCount:
-                                              state.tvShowCredits.crew.length,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, i) {
-                                            CrewModel model =
-                                                state.tvShowCredits.crew[i];
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 5,
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.grey,
-                                                    backgroundImage: model
-                                                                .profilePath ==
-                                                            null
-                                                        ? AssetImage(
-                                                            'assets/images/placeholder_actor.png')
-                                                        : NetworkImage(
-                                                            'https://image.tmdb.org/t/p/w500${model.profilePath}'),
-                                                    radius: 35,
-                                                  ),
-                                                  SizedBox(
-                                                    height: 1,
-                                                  ),
-                                                  Text(
-                                                    model.name,
-                                                    style: Styles.mMed.copyWith(
-                                                      fontSize: 8,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                              ],
-                            ),
-                          );
-                        }
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  BlocBuilder<TvShowCreditsBloc, TvShowCreditsState>(
+                    builder: (context, state) {
+                      if (state is TvShowCreditsEmpty) {
+                        BlocProvider.of<TvShowCreditsBloc>(context)
+                            .add(FetchTvShowCredits(id: widget.model.id));
+                      }
+                      if (state is TvShowCreditsError) {
+                        return Text('There was a problem');
+                      }
+                      if (state is TvShowCreditsLoaded) {
+                        int castsSize = state.tvShowCredits.casts.length;
                         return Container(
-                          height: 100,
+                          height: 150,
                           width: double.infinity,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 10,
-                            itemBuilder: (context, i) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Color(0xff313131),
-                                  child: Shimmer.fromColors(
-                                    child: Container(),
-                                    baseColor: Color(0xff313131),
-                                    highlightColor: Color(0xff4A4A4A),
+                          child: castsSize == 0
+                              ? Container(
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  color: Color(0xff252525),
+                                  child: Center(
+                                    child: Text(
+                                      'Casts Not Updated',
+                                      style: Styles.mBold,
+                                    ),
                                   ),
+                                )
+                              : ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  itemCount: state.tvShowCredits.casts.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, i) {
+                                    if (state.tvShowCredits.casts.length ==
+                                        0) {}
+                                    CastModel model =
+                                        state.tvShowCredits.casts[i];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 5,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ActorInfoPage(
+                                              id: model.id,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Container(
+                                                height: double.infinity,
+                                                width: 100,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xff252525),
+                                                  image: DecorationImage(
+                                                    image: model.profilePath ==
+                                                            null
+                                                        ? AssetImage(
+                                                            'assets/images/placeholder_actor.png')
+                                                        : NetworkImage(
+                                                            'https://image.tmdb.org/t/p/w500${model.profilePath}'),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              model.name,
+                                              style: Styles.mReg.copyWith(
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
                         );
-                      },
-                    ),
-                    SizedBox(
-                      height: 200,
-                    ),
-                  ],
-                ),
+                      }
+                      return Container(
+                        height: 150,
+                        width: double.infinity,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 10,
+                          itemBuilder: (context, i) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5),
+                              child: Shimmer.fromColors(
+                                child: Container(
+                                  height: double.infinity,
+                                  width: 100,
+                                ),
+                                baseColor: Color(0xff313131),
+                                highlightColor: Color(0xff4A4A4A),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: 200,
+                  ),
+                ],
               ),
             ),
           ],

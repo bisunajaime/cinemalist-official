@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
+import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 
+import '../barrels/models.dart';
 import '../barrels/models.dart';
 import '../barrels/models.dart';
 
@@ -143,5 +145,24 @@ class TMDBApiClient {
     TvShowCreditsModel tvShowCreditsModel =
         TvShowCreditsModel.fromJson(decodedJson);
     return tvShowCreditsModel;
+  }
+
+  Future<ActorInfoModel> fetchActorInfo({int id}) async {
+    final url = '$baseUrl/person/$id?api_key=$apiKey&language=en-US';
+    final response = await httpClient.get(url);
+    final decodedJson = jsonDecode(response.body);
+    ActorInfoModel actorInfoModel = ActorInfoModel.fromJson(decodedJson);
+    return actorInfoModel;
+  }
+
+  Future<List<GenericMoviesModel>> fetchSimilarMovies({int id}) async {
+    List<GenericMoviesModel> similarMovies = [];
+    final url =
+        '$baseUrl/movie/$id/similar?api_key=$apiKey&language=en-US&page=1';
+    final response = await httpClient.get(url);
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results'].forEach(
+        (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
+    return similarMovies;
   }
 }

@@ -1,13 +1,16 @@
 import 'package:equatable/equatable.dart';
 
 class ActorsModel extends Equatable {
+  final int id;
   final double popularity;
   final String department, profilePath, name;
 
-  ActorsModel({this.popularity, this.department, this.profilePath, this.name});
+  ActorsModel(
+      {this.id, this.popularity, this.department, this.profilePath, this.name});
 
   factory ActorsModel.fromJson(Map<String, dynamic> json) {
     return ActorsModel(
+      id: json['id'],
       popularity: json['popularity'],
       department: json['department'],
       profilePath: json['profile_path'] != null

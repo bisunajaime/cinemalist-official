@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'package:tmdbflutter/bloc/tvshows/popular/popular_tvshows_bloc.dart';
-import 'package:tmdbflutter/bloc/tvshows/popular/popular_tvshows_event.dart';
-import 'package:tmdbflutter/bloc/tvshows/popular/popular_tvshows_state.dart';
+import 'package:tmdbflutter/bloc/tvshows/trending/populartvshows_bloc.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
@@ -17,61 +14,69 @@ class TvShowsPage extends StatefulWidget {
 class _TvShowsPageState extends State<TvShowsPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController controller = new ScrollController();
+  final scrollThreshold = 200;
+  PopularTvShowsBloc _popularTvShowsBloc;
 
   @override
   void initState() {
     super.initState();
+    controller.addListener(_onScroll);
+    _popularTvShowsBloc = BlocProvider.of<PopularTvShowsBloc>(context);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  _onScroll() {
+    final maxScroll = controller.position.maxScrollExtent;
+    final currentScroll = controller.position.pixels;
+    if (maxScroll - currentScroll <= scrollThreshold) {
+      _popularTvShowsBloc.add(FetchPopularTvShows());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final popularTvBloc = BlocProvider.of<PopularTvShowsBloc>(context);
-    controller.addListener(() {
-      if (popularTvBloc.initialPage < 25) {
-        if (controller.position.atEdge) {
-          popularTvBloc.add(LoadNextPage());
-          setState(() {});
-        }
-      }
-    });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        SizedBox(
+          height: 30,
+        ),
         Padding(
-          padding: const EdgeInsets.only(
-            top: 30,
-            left: 10,
-            bottom: 20,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 10,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'Popular',
-                    style: Styles.mBold.copyWith(
-                      fontSize: 30,
-                    ),
-                  ),
-                  Text(
-                    'TV SHOWS',
-                    style: Styles.mBold.copyWith(
-                      color: Colors.pinkAccent,
-                    ),
-                  ),
-                ],
+              Text(
+                'Popular',
+                style: Styles.mBold.copyWith(
+                  fontSize: 30,
+                ),
+              ),
+              Text(
+                'TV SHOWS',
+                style: Styles.mBold.copyWith(
+                  color: Colors.pinkAccent,
+                ),
               ),
             ],
           ),
+        ),
+        SizedBox(
+          height: 10,
         ),
         Expanded(
           child: Container(
             child: RefreshIndicator(
               onRefresh: () async {
                 await Future.delayed(Duration(seconds: 1));
-                popularTvBloc.add(FetchPopularTvShows());
+                _popularTvShowsBloc.add(FetchPopularTvShows());
               },
               child: buildNowPlaying(),
             ),
@@ -84,60 +89,80 @@ class _TvShowsPageState extends State<TvShowsPage>
   BlocBuilder<PopularTvShowsBloc, PopularTvShowsState> buildNowPlaying() {
     return BlocBuilder<PopularTvShowsBloc, PopularTvShowsState>(
       builder: (context, state) {
-        if (state is PopularTvShowsEmpty) {
-          BlocProvider.of<PopularTvShowsBloc>(context)
-              .add(FetchPopularTvShows());
-        }
-
-        if (state is PopularTvShowsError) {
-          return Center(
-            child: Text('Failed to load genres'),
-          );
-        }
-
-        if (state is PopularTvShowsLoaded) {
-          return GridView(
-            controller: controller,
+        if (state is PopularTvShowsInitial) {
+          return GridView.builder(
+            itemCount: 7,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 5.0,
               mainAxisSpacing: 5.0,
               childAspectRatio: 0.7,
             ),
-            children: List.generate(state.popularTvShows.length + 1, (i) {
-              if (i == state.popularTvShows.length) {
-                return Shimmer.fromColors(
-                  child: Container(
-                    color: Color(0xff232323),
-                  ),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
-                );
-              }
-              TVShowModel tvShows = state.popularTvShows[i];
-              return GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => TvShowPage(
-                        model: tvShows,
-                      ),
-                    )),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xff232323),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        tvShows.posterPath != null
-                            ? 'https://image.tmdb.org/t/p/w500${tvShows.posterPath}'
-                            : 'https://via.placeholder.com/400',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+            itemBuilder: (context, i) {
+              return Shimmer.fromColors(
+                child: Container(color: Colors.black),
+                baseColor: Color(0xff313131),
+                highlightColor: Color(0xff4A4A4A),
               );
-            }),
+            },
+          );
+        }
+
+        if (state is PopularTvShowsFailed) {
+          return Center(
+            child: Text('Failed to load tvshows'),
+          );
+        }
+
+        if (state is PopularTvShowsSuccess) {
+          return Scrollbar(
+            child: GridView.builder(
+              controller: controller,
+              physics: BouncingScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 5.0,
+                mainAxisSpacing: 5.0,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: state.hasReachedMax
+                  ? state.tvShowModel.length
+                  : state.tvShowModel.length + 1,
+              itemBuilder: (context, i) {
+                return i >= state.tvShowModel.length
+                    ? Shimmer.fromColors(
+                        child: Container(
+                          color: Color(0xff232323),
+                        ),
+                        baseColor: Color(0xff313131),
+                        highlightColor: Color(0xff4A4A4A),
+                      )
+                    : GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TvShowPage(
+                                model: state.tvShowModel[i],
+                              ),
+                            )),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xff232323),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                state.tvShowModel[i].posterPath != null
+                                    ? 'https://image.tmdb.org/t/p/w500${state.tvShowModel[i].posterPath}'
+                                    : 'https://via.placeholder.com/400',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      );
+              },
+            ),
           );
         }
         return GridView.builder(
