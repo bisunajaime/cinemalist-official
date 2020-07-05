@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
+import 'package:tmdbflutter/views/genres_page.dart';
 import 'package:tmdbflutter/views/movie_page.dart';
 
 import '../barrels/genres_barrel.dart';
@@ -69,22 +70,9 @@ class _HomePageState extends State<HomePage>
           buildPopularList(),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Genres',
-                  style: Styles.mBold,
-                ),
-                Text(
-                  'See more',
-                  style: Styles.mReg.copyWith(
-                    color: Colors.pinkAccent,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
+            child: Text(
+              'Genres',
+              style: Styles.mBold,
             ),
           ),
           buildGenresList(),
@@ -178,32 +166,43 @@ class _HomePageState extends State<HomePage>
               itemCount: state.genres.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, i) {
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 1,
-                  ),
-                  margin: EdgeInsets.symmetric(horizontal: 2),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.pinkAccent[400],
-                        Colors.redAccent,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.pinkAccent,
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GenresPage(
+                        id: state.genres[i].id,
+                        genre: state.genres[i].name,
                       ),
-                    ],
+                    ),
                   ),
-                  child: Center(
-                    child: Text(
-                      state.genres[i].name,
-                      style: Styles.mBold.copyWith(
-                        fontSize: 10,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 1,
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.pinkAccent[400],
+                          Colors.redAccent,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.pinkAccent,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        state.genres[i].name,
+                        style: Styles.mBold.copyWith(
+                          fontSize: 10,
+                        ),
                       ),
                     ),
                   ),

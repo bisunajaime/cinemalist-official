@@ -42,15 +42,17 @@ class SearchPage extends StatelessWidget {
         Expanded(
           child: GridView(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 1,
               crossAxisSpacing: 5.0,
               mainAxisSpacing: 5.0,
-              childAspectRatio: .9,
+              childAspectRatio: 2,
             ),
             children: <Widget>[
-              _buildTypeWidget('movie', context),
-              _buildTypeWidget('tv', context),
-              _buildTypeWidget('person', context),
+              _buildTypeWidget(
+                  'movie', context, 'assets/images/movie_search.jpg'),
+              _buildTypeWidget('tv', context, 'assets/images/tv_search.jpg'),
+              _buildTypeWidget(
+                  'person', context, 'assets/images/actor_search.jpg'),
             ],
           ),
         )
@@ -58,16 +60,16 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeWidget(String type, BuildContext context) {
+  Widget _buildTypeWidget(String type, BuildContext context, String imageUrl) {
     TMDBRepository tmdbRepo = TMDBRepository(
       tmdbApiClient: TMDBApiClient(
         httpClient: http.Client(),
       ),
     );
     return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: FlatButton(
-        onPressed: () => Navigator.push(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => BlocProvider(
@@ -80,13 +82,20 @@ class SearchPage extends StatelessWidget {
             ),
           ),
         ),
-        color: Color(0xff2e2e2e),
-        child: Center(
-          child: Text(
-            type.toUpperCase(),
-            style: Styles.mBold.copyWith(
-              color: Colors.pinkAccent[100],
-              fontSize: 20,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(imageUrl),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              type.toUpperCase(),
+              style: Styles.mBold.copyWith(
+                fontSize: 30,
+              ),
             ),
           ),
         ),

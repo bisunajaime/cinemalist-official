@@ -36,7 +36,8 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchPopular() async {
     List<GenericMoviesModel> popularMovies = [];
-    final url = '$baseUrl/movie/popular?api_key=$apiKey&language=en-US&page=1';
+    final url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=1';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -165,6 +166,31 @@ class TMDBApiClient {
     decodeJson['results'].forEach(
         (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
     return similarMovies;
+  }
+
+  Future<List<GenericMoviesModel>> fetchMoviesByGenre(
+      {int id, int page}) async {
+    // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
+    List<GenericMoviesModel> moviesByGenre = [];
+    final url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
+    final response = await httpClient.get(url);
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results'].forEach(
+        (movie) => moviesByGenre.add(GenericMoviesModel.fromJson(movie)));
+    return moviesByGenre;
+  }
+
+  Future<List<GenericMoviesModel>> fetchActorMovies({int id}) async {
+//    https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_cast=16483
+    List<GenericMoviesModel> actorMovies = [];
+    final url =
+        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_cast=$id';
+    final response = await httpClient.get(url);
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results'].forEach(
+        (movie) => actorMovies.add(GenericMoviesModel.fromJson(movie)));
+    return actorMovies;
   }
 
   Future fetchSearchResults({String type, String query, int page}) async {

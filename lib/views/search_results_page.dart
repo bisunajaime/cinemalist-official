@@ -9,6 +9,9 @@ import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/views/actor_info_page.dart';
+import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:tmdbflutter/views/tvshow_page.dart';
 
 class SearchResultsPage extends StatefulWidget {
   final String type;
@@ -174,28 +177,39 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           ),
                           itemCount: result.length,
                           itemBuilder: (context, i) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xff2e2e2e),
-                                image: DecorationImage(
-                                  image: result[i].posterPath == null
-                                      ? AssetImage(
-                                          'assets/images/placeholder.png')
-                                      : NetworkImage(
-                                          'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
-                                        ),
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black26,
-                                    BlendMode.darken,
+                            return GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MoviePage(
+                                    model: result[i],
+                                    tag: 'search ${result[i].posterPath}',
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                result[i].title,
-                                style: Styles.mReg.copyWith(
-                                  fontSize: 10,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff2e2e2e),
+                                  image: DecorationImage(
+                                    image: result[i].posterPath == null
+                                        ? AssetImage(
+                                            'assets/images/placeholder.png')
+                                        : NetworkImage(
+                                            'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
+                                          ),
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black26,
+                                      BlendMode.darken,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  result[i].title,
+                                  style: Styles.mReg.copyWith(
+                                    fontSize: 10,
+                                  ),
                                 ),
                               ),
                             );
@@ -221,28 +235,38 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           ),
                           itemCount: result.length,
                           itemBuilder: (context, i) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xff2e2e2e),
-                                image: DecorationImage(
-                                  image: result[i].profilePath == null
-                                      ? AssetImage(
-                                          'assets/images/placeholder.png')
-                                      : NetworkImage(
-                                          'https://image.tmdb.org/t/p/w500${result[i].profilePath}',
-                                        ),
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black26,
-                                    BlendMode.darken,
+                            return GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ActorInfoPage(
+                                    id: result[i].id,
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                result[i].name,
-                                style: Styles.mReg.copyWith(
-                                  fontSize: 10,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff2e2e2e),
+                                  image: DecorationImage(
+                                    image: result[i].profilePath == null
+                                        ? AssetImage(
+                                            'assets/images/placeholder.png')
+                                        : NetworkImage(
+                                            'https://image.tmdb.org/t/p/w500${result[i].profilePath}',
+                                          ),
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black26,
+                                      BlendMode.darken,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  result[i].name,
+                                  style: Styles.mReg.copyWith(
+                                    fontSize: 10,
+                                  ),
                                 ),
                               ),
                             );
@@ -265,28 +289,38 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           ),
                           itemCount: result.length,
                           itemBuilder: (context, i) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xff2e2e2e),
-                                image: DecorationImage(
-                                  image: result[i].posterPath == null
-                                      ? AssetImage(
-                                          'assets/images/placeholder.png')
-                                      : NetworkImage(
-                                          'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
-                                        ),
-                                  colorFilter: ColorFilter.mode(
-                                    Colors.black26,
-                                    BlendMode.darken,
+                            return GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => TvShowPage(
+                                    model: result[i],
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                result[i].name,
-                                style: Styles.mReg.copyWith(
-                                  fontSize: 10,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xff2e2e2e),
+                                  image: DecorationImage(
+                                    image: result[i].posterPath == null
+                                        ? AssetImage(
+                                            'assets/images/placeholder.png')
+                                        : NetworkImage(
+                                            'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
+                                          ),
+                                    colorFilter: ColorFilter.mode(
+                                      Colors.black26,
+                                      BlendMode.darken,
+                                    ),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  result[i].name,
+                                  style: Styles.mReg.copyWith(
+                                    fontSize: 10,
+                                  ),
                                 ),
                               ),
                             );
