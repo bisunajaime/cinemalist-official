@@ -25,7 +25,7 @@ class TVShowModel extends Equatable {
       firstAirDate: json['first_air_date'],
       posterPath: json['poster_path'],
       overview: json['overview'],
-      popularity: json['popularity'],
+      popularity: json['popularity'].toDouble(),
       voteAverage: json['vote_average'].toDouble(),
       voteCount: json['vote_count'],
     );

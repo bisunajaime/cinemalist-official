@@ -7,12 +7,14 @@ import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
+import 'package:tmdbflutter/bloc/search/search_bloc.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
+import 'package:tmdbflutter/views/search_page.dart';
 import 'package:tmdbflutter/views/tvshows_page.dart';
 
 import 'barrels/genres_barrel.dart';
@@ -200,11 +202,7 @@ class _MainPageState extends State<MainPage>
             HomePage(),
             MoviesPage(),
             TvShowsPage(),
-            Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.blue,
-            ),
+            SearchPage(),
           ],
         ),
       ),

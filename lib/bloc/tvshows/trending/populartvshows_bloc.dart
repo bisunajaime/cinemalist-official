@@ -87,7 +87,8 @@ class PopularTvShowsBloc
                   hasReachedMax: false,
                 );
         }
-      } catch (_) {
+      } catch (e) {
+        print(e);
         yield PopularTvShowsFailed();
       }
     }

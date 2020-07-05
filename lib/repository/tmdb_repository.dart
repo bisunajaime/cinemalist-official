@@ -64,4 +64,12 @@ class TMDBRepository {
   Future<List<GenericMoviesModel>> fetchSimilarMovies({int id}) async {
     return await tmdbApiClient.fetchSimilarMovies(id: id);
   }
+
+  Future fetchSearchResults({String type, String query, int page}) async {
+    return await tmdbApiClient.fetchSearchResults(
+      type: type,
+      query: query,
+      page: page,
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
+import 'package:tmdbflutter/bloc/tvshows/trending/populartvshows_bloc.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
@@ -164,5 +165,55 @@ class TMDBApiClient {
     decodeJson['results'].forEach(
         (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
     return similarMovies;
+  }
+
+  Future fetchSearchResults({String type, String query, int page}) async {
+    switch (type) {
+      case 'movie':
+        final url =
+            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final response = await httpClient.get(Uri.encodeFull(url));
+        final decodeJson = jsonDecode(response.body);
+        List<GenericMoviesModel> searchedMovies = [];
+        if (decodeJson['results'] == null) {
+          return [];
+        }
+        decodeJson['results'].forEach(
+            (movie) => searchedMovies.add(GenericMoviesModel.fromJson(movie)));
+        return searchedMovies;
+        break;
+      case 'person':
+        final url =
+            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final response = await httpClient.get(Uri.encodeFull(url));
+        final decodeJson = jsonDecode(response.body);
+        List<ActorInfoModel> actorsInfo = [];
+        if (decodeJson['results'] == null) {
+          return [];
+        }
+        decodeJson['results']
+            .forEach((actor) => actorsInfo.add(ActorInfoModel.fromJson(actor)));
+        return actorsInfo;
+        break;
+      case 'tv':
+        final url =
+            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final response = await httpClient.get(Uri.encodeFull(url));
+        final decodeJson = jsonDecode(response.body);
+        List<TVShowModel> searchedTvShows = [];
+        if (decodeJson['results'] == null) {
+          return [];
+        }
+        decodeJson['results'].forEach(
+            (tvShow) => searchedTvShows.add(TVShowModel.fromJson(tvShow)));
+        return searchedTvShows;
+        break;
+      case 'clear':
+        print('clear');
+        return [];
+        break;
+      default:
+        break;
+    }
   }
 }

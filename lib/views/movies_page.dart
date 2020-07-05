@@ -12,7 +12,8 @@ class MoviesPage extends StatefulWidget {
   _MoviesPageState createState() => _MoviesPageState();
 }
 
-class _MoviesPageState extends State<MoviesPage> {
+class _MoviesPageState extends State<MoviesPage>
+    with AutomaticKeepAliveClientMixin {
   ScrollController controller = new ScrollController();
   final scrollThreshold = 200;
   NowShowingBloc _nowShowingBloc;
@@ -170,4 +171,7 @@ class _MoviesPageState extends State<MoviesPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
