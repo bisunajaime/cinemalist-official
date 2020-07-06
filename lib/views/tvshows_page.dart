@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/tvshows/trending/populartvshows_bloc.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
 
@@ -40,34 +39,14 @@ class _TvShowsPageState extends State<TvShowsPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(
           height: 30,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Popular',
-                style: Styles.mBold.copyWith(
-                  fontSize: 30,
-                ),
-              ),
-              Text(
-                'TV SHOWS',
-                style: Styles.mBold.copyWith(
-                  color: Colors.pinkAccent,
-                ),
-              ),
-            ],
-          ),
-        ),
+        buildTitle(),
         SizedBox(
           height: 10,
         ),
@@ -83,6 +62,31 @@ class _TvShowsPageState extends State<TvShowsPage>
           ),
         ),
       ],
+    );
+  }
+
+  Padding buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Discover',
+            style: Styles.mBold.copyWith(
+              fontSize: 30,
+            ),
+          ),
+          Text(
+            'TV SHOWS',
+            style: Styles.mBold.copyWith(
+              color: Colors.pinkAccent,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -131,6 +135,8 @@ class _TvShowsPageState extends State<TvShowsPage>
                   ? state.tvShowModel.length
                   : state.tvShowModel.length + 1,
               itemBuilder: (context, i) {
+                state.tvShowModel
+                    .removeWhere((element) => element.posterPath == null);
                 return i >= state.tvShowModel.length
                     ? Shimmer.fromColors(
                         child: Container(
@@ -150,14 +156,16 @@ class _TvShowsPageState extends State<TvShowsPage>
                         child: Container(
                           decoration: BoxDecoration(
                             color: Color(0xff232323),
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                state.tvShowModel[i].posterPath != null
-                                    ? 'https://image.tmdb.org/t/p/w500${state.tvShowModel[i].posterPath}'
-                                    : 'https://via.placeholder.com/400',
-                              ),
-                              fit: BoxFit.cover,
-                            ),
+                          ),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/placeholder_box.png',
+                            image:
+                                'https://image.tmdb.org/t/p/w500${state.tvShowModel[i].posterPath}',
+                            fit: BoxFit.cover,
+                            fadeInCurve: Curves.ease,
+                            fadeInDuration: Duration(milliseconds: 250),
+                            fadeOutDuration: Duration(milliseconds: 250),
+                            fadeOutCurve: Curves.ease,
                           ),
                         ),
                       );

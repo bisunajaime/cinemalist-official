@@ -121,6 +121,6 @@ class SearchResultBloc extends Bloc<SearchEvent, SearchState> {
 //    }
   }
 
-  bool _hasReachedMax(SearchState state) =>
-      state is SearchResultsLoaded && state.hasReachedMax;
+  // bool _hasReachedMax(SearchState state) =>
+  //     state is SearchResultsLoaded && state.hasReachedMax;
 }

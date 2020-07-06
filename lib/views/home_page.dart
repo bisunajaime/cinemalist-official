@@ -22,12 +22,12 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    // ignore: close_sinks
-    final popularMovBloc = BlocProvider.of<PopularMoviesBloc>(context);
-    // ignore: close_sinks
-    final trendingMovBloc = BlocProvider.of<TrendingMoviesBloc>(context);
-    // ignore: close_sinks
-    final upcomingMovBloc = BlocProvider.of<UpcomingMoviesBloc>(context);
+    final PopularMoviesBloc popularMovBloc =
+        BlocProvider.of<PopularMoviesBloc>(context);
+    final TrendingMoviesBloc trendingMovBloc =
+        BlocProvider.of<TrendingMoviesBloc>(context);
+    final UpcomingMoviesBloc upcomingMovBloc =
+        BlocProvider.of<UpcomingMoviesBloc>(context);
     return RefreshIndicator(
       onRefresh: () async {
         await Future.delayed(Duration(seconds: 1));
@@ -41,24 +41,23 @@ class _HomePageState extends State<HomePage>
           SizedBox(
             height: 10,
           ),
-//          Image.asset(
-//            'assets/images/logo.png',
-//            height: 20,
-//          ),
-          Center(
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   'TMDB',
                   style: Styles.mBold.copyWith(
                     fontSize: 30,
-                    color: Colors.pinkAccent,
                   ),
                 ),
                 Text(
-                  'by Jaime Bisuna',
-                  style: Styles.mMed.copyWith(
-                    fontSize: 8,
+                  'The Movie Database',
+                  style: Styles.mBold.copyWith(
+                    color: Colors.pinkAccent,
                   ),
                 ),
               ],
@@ -277,7 +276,7 @@ class _HomePageState extends State<HomePage>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         CircleAvatar(
-                          backgroundColor: Colors.grey,
+                          backgroundColor: Color(0xff2e2e2e),
                           backgroundImage:
                               NetworkImage(state.actors[i].profilePath),
                           radius: 35,
@@ -371,11 +370,15 @@ class _HomePageState extends State<HomePage>
                       children: <Widget>[
                         Hero(
                           tag: 'upcoming${state.upcomingMovies[i].posterPath}',
-                          child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${state.upcomingMovies[i].posterPath}',
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/placeholder_box.png',
+                            image:
+                                'https://image.tmdb.org/t/p/w500${state.upcomingMovies[i].posterPath}',
                             fit: BoxFit.cover,
-                            colorBlendMode: BlendMode.darken,
-                            color: Colors.black26,
+                            fadeInCurve: Curves.ease,
+                            fadeInDuration: Duration(milliseconds: 250),
+                            fadeOutDuration: Duration(milliseconds: 250),
+                            fadeOutCurve: Curves.ease,
                             height: double.infinity,
                             width: double.infinity,
                           ),
@@ -451,6 +454,7 @@ class _HomePageState extends State<HomePage>
           return Container(
             height: MediaQuery.of(context).size.height * .6,
             width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
             child: CarouselSlider.builder(
               itemCount: state.popularMovies.length,
               itemBuilder: (context, i) {
@@ -470,30 +474,59 @@ class _HomePageState extends State<HomePage>
                       children: <Widget>[
                         Hero(
                           tag: 'popular${state.popularMovies[i].posterPath}',
-                          child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${state.popularMovies[i].posterPath}',
-                            fit: BoxFit.cover,
-                            colorBlendMode: BlendMode.darken,
-                            color: Colors.black12,
-                            height: double.infinity,
-                            width: double.infinity,
+                          child: ShaderMask(
+                            shaderCallback: (rect) {
+                              return LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black12,
+                                  Colors.transparent,
+                                ],
+                              ).createShader(
+                                Rect.fromLTRB(
+                                  0,
+                                  0,
+                                  rect.width,
+                                  rect.height,
+                                ),
+                              );
+                            },
+                            blendMode: BlendMode.darken,
+                            child: FadeInImage.assetNetwork(
+                              image:
+                                  'https://image.tmdb.org/t/p/w500${state.popularMovies[i].posterPath}',
+                              placeholder: 'assets/images/placeholder_box.png',
+                              fit: BoxFit.cover,
+                              fadeInCurve: Curves.ease,
+                              fadeInDuration: Duration(milliseconds: 250),
+                              fadeOutDuration: Duration(milliseconds: 250),
+                              fadeOutCurve: Curves.ease,
+                              height: double.infinity,
+                              width: double.infinity,
+                            ),
                           ),
                         ),
                         Positioned(
                           bottom: 5,
                           left: 5,
-                          child: Row(
+                          child: Column(
                             children: <Widget>[
-                              Icon(
-                                Icons.star,
-                                color: Colors.yellow,
-                                size: 20,
-                              ),
-                              Text(
-                                state.popularMovies[i].voteAverage.toString(),
-                                style: Styles.mBold.copyWith(
-                                  fontSize: 20,
-                                ),
+                              Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.yellow,
+                                    size: 20,
+                                  ),
+                                  Text(
+                                    state.popularMovies[i].voteAverage
+                                        .toString(),
+                                    style: Styles.mBold.copyWith(
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -591,13 +624,16 @@ class _HomePageState extends State<HomePage>
                       children: <Widget>[
                         Hero(
                           tag: 'trending${state.trendingMovies[i].posterPath}',
-                          child: Image.network(
-                            'https://image.tmdb.org/t/p/w500${state.trendingMovies[i].posterPath}',
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/placeholder_box.png',
+                            image:
+                                'https://image.tmdb.org/t/p/w500${state.trendingMovies[i].posterPath}',
+                            fadeInCurve: Curves.ease,
+                            fadeInDuration: Duration(milliseconds: 250),
+                            fadeOutDuration: Duration(milliseconds: 250),
+                            fadeOutCurve: Curves.ease,
                             height: double.infinity,
                             width: double.infinity,
-                            fit: BoxFit.fitWidth,
-                            color: Colors.black26,
-                            colorBlendMode: BlendMode.darken,
                           ),
                         ),
                         Positioned(

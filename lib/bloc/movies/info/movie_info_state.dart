@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 
 abstract class MovieInfoState extends Equatable {

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:meta/meta.dart';
 
 import '../../repository/tmdb_repository.dart';

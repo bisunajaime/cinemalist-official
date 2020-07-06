@@ -26,15 +26,15 @@ class ActorInfoModel extends Equatable {
     @required this.homePage,
     @required this.profilePath,
     @required this.deathday,
-    @required this.knownFor, // new
+    // @required this.knownFor, // new
     @required this.id,
     @required this.popularity,
   });
 
   factory ActorInfoModel.fromJson(Map<String, dynamic> json) {
-    List knownForInfo = json['known_for'] ?? [];
-    List<GenericMoviesModel> knownFor =
-        knownForInfo.map((e) => GenericMoviesModel.fromJson(e)).toList();
+    // List knownForInfo = json['known_for'] ?? [];
+    // List<GenericMoviesModel> knownFor =
+    //     knownForInfo.map((e) => GenericMoviesModel.fromJson(e)).toList();
 
     return ActorInfoModel(
       birthday: json['birthday'] ?? "?",

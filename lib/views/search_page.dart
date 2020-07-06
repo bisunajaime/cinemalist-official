@@ -16,28 +16,7 @@ class SearchPage extends StatelessWidget {
         SizedBox(
           height: 30,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Select Type',
-                style: Styles.mBold.copyWith(
-                  fontSize: 30,
-                ),
-              ),
-              Text(
-                'SEARCH',
-                style: Styles.mBold.copyWith(
-                  color: Colors.pinkAccent,
-                ),
-              ),
-            ],
-          ),
-        ),
+        buildTitle(),
         SizedBox(height: 10),
         Expanded(
           child: GridView(
@@ -57,6 +36,31 @@ class SearchPage extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+
+  Padding buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Select Type',
+            style: Styles.mBold.copyWith(
+              fontSize: 30,
+            ),
+          ),
+          Text(
+            'SEARCH',
+            style: Styles.mBold.copyWith(
+              color: Colors.pinkAccent,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

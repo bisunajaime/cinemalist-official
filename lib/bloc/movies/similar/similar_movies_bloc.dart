@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../barrels/models.dart';
-import '../../../barrels/models.dart';
 import '../../../repository/tmdb_repository.dart';
 
 /*

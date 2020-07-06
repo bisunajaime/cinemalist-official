@@ -49,74 +49,78 @@ class _GenresPageState extends State<GenresPage> {
           backgroundColor: Colors.transparent,
           centerTitle: true,
         ),
-        body: BlocBuilder<MovieByGenreBloc, MovieByGenreState>(
-          builder: (context, state) {
-            if (state is MovieByGenreInitial) {
-              BlocProvider.of<MovieByGenreBloc>(context)
-                  .add(FetchMovieByGenreMovies(id: widget.id));
-            }
-            if (state is MovieByGenreFailed) {
-              return Center(child: Text('Failed'));
-            }
-
-            if (state is MovieByGenreSuccess) {
-              if (state.movieByGenreMovies.isEmpty) {
-                return Center(
-                  child: Text('None'),
-                );
-              }
-              return Scrollbar(
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: NotificationListener<ScrollEndNotification>(
-                    onNotification: (scroll) {
-                      final scrollThreshold = 200;
-                      final maxScroll = scroll.metrics.maxScrollExtent;
-                      final currentScroll = scroll.metrics.pixels;
-                      if (maxScroll - currentScroll <= scrollThreshold) {
-                        BlocProvider.of<MovieByGenreBloc>(context)
-                            .add(FetchMovieByGenreMovies(id: widget.id));
-                        return true;
-                      } else {
-                        return false;
-                      }
-                    },
-                    child: GridView.builder(
-                      physics: BouncingScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 5.0,
-                        mainAxisSpacing: 5.0,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: state.hasReachedMax
-                          ? state.movieByGenreMovies.length
-                          : state.movieByGenreMovies.length + 1,
-                      itemBuilder: (context, i) {
-                        return i >= state.movieByGenreMovies.length
-                            ? Shimmer.fromColors(
-                                child: Container(
-                                  color: Color(0xff232323),
-                                ),
-                                baseColor: Color(0xff313131),
-                                highlightColor: Color(0xff4A4A4A),
-                              )
-                            : buildNowShowingMovies(
-                                context, state.movieByGenreMovies[i]);
-                      },
-                    ),
-                  ),
-                ),
-              );
-            }
-            return Center(
-                child: CircularProgressIndicator(
-              backgroundColor: Colors.pinkAccent[100],
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xff0E0E0E)),
-            ));
-          },
-        ),
+        body: buildMoviesByGenre(),
       ),
+    );
+  }
+
+  BlocBuilder<MovieByGenreBloc, MovieByGenreState> buildMoviesByGenre() {
+    return BlocBuilder<MovieByGenreBloc, MovieByGenreState>(
+      builder: (context, state) {
+        if (state is MovieByGenreInitial) {
+          BlocProvider.of<MovieByGenreBloc>(context)
+              .add(FetchMovieByGenreMovies(id: widget.id));
+        }
+        if (state is MovieByGenreFailed) {
+          return Center(child: Text('Failed'));
+        }
+
+        if (state is MovieByGenreSuccess) {
+          if (state.movieByGenreMovies.isEmpty) {
+            return Center(
+              child: Text('None'),
+            );
+          }
+          return Scrollbar(
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: NotificationListener<ScrollEndNotification>(
+                onNotification: (scroll) {
+                  final scrollThreshold = 200;
+                  final maxScroll = scroll.metrics.maxScrollExtent;
+                  final currentScroll = scroll.metrics.pixels;
+                  if (maxScroll - currentScroll <= scrollThreshold) {
+                    BlocProvider.of<MovieByGenreBloc>(context)
+                        .add(FetchMovieByGenreMovies(id: widget.id));
+                    return true;
+                  } else {
+                    return false;
+                  }
+                },
+                child: GridView.builder(
+                  physics: BouncingScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 5.0,
+                    mainAxisSpacing: 5.0,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemCount: state.hasReachedMax
+                      ? state.movieByGenreMovies.length
+                      : state.movieByGenreMovies.length + 1,
+                  itemBuilder: (context, i) {
+                    return i >= state.movieByGenreMovies.length
+                        ? Shimmer.fromColors(
+                            child: Container(
+                              color: Color(0xff232323),
+                            ),
+                            baseColor: Color(0xff313131),
+                            highlightColor: Color(0xff4A4A4A),
+                          )
+                        : buildNowShowingMovies(
+                            context, state.movieByGenreMovies[i]);
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+        return Center(
+            child: CircularProgressIndicator(
+          backgroundColor: Colors.pinkAccent[100],
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xff0E0E0E)),
+        ));
+      },
     );
   }
 

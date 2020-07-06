@@ -2,13 +2,12 @@ import 'package:meta/meta.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
-import '../barrels/models.dart';
-import '../barrels/models.dart';
 import '../barrels/models.dart';
 
 class TMDBRepository {
@@ -65,6 +64,10 @@ class TMDBRepository {
     return await tmdbApiClient.fetchSimilarMovies(id: id);
   }
 
+  Future<List<TVShowModel>> fetchSimilarTvShows({int id}) async {
+    return await tmdbApiClient.fetchSimilarTvShows(id: id);
+  }
+
   Future<List<GenericMoviesModel>> fetchActorMovies({int id}) async {
     return await tmdbApiClient.fetchActorMovies(id: id);
   }
@@ -72,6 +75,10 @@ class TMDBRepository {
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
       {int id, int page}) async {
     return await tmdbApiClient.fetchMoviesByGenre(id: id, page: page);
+  }
+
+  Future<List<SeasonModel>> fetchTvSeasons({int id}) async {
+    return await tmdbApiClient.fetchTvSeasons(id: id);
   }
 
   Future fetchSearchResults({String type, String query, int page}) async {

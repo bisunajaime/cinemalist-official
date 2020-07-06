@@ -3,15 +3,13 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/bloc/tvshows/trending/populartvshows_bloc.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 
-import '../barrels/models.dart';
-import '../barrels/models.dart';
 import '../barrels/models.dart';
 
 class TMDBApiClient {
@@ -103,7 +101,9 @@ class TMDBApiClient {
 
   Future<List<TVShowModel>> fetchPopularTvShows({int page}) async {
     List<TVShowModel> tvShows = [];
-    final url = '$baseUrl/tv/popular?api_key=$apiKey&language=en-US&page=$page';
+    // https://api.themoviedb.org/3/discover/tv?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false
+    final url =
+        '$baseUrl/discover/tv?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=$page';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -168,6 +168,16 @@ class TMDBApiClient {
     return similarMovies;
   }
 
+  Future<List<TVShowModel>> fetchSimilarTvShows({int id}) async {
+    List<TVShowModel> similarTvShows = [];
+    final url = '$baseUrl/tv/$id/similar?api_key=$apiKey&language=en-US&page=1';
+    final response = await httpClient.get(url);
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['results']
+        .forEach((data) => similarTvShows.add(TVShowModel.fromJson(data)));
+    return similarTvShows;
+  }
+
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
       {int id, int page}) async {
     // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
@@ -191,6 +201,17 @@ class TMDBApiClient {
     decodeJson['results'].forEach(
         (movie) => actorMovies.add(GenericMoviesModel.fromJson(movie)));
     return actorMovies;
+  }
+
+  Future<List<SeasonModel>> fetchTvSeasons({int id}) async {
+    //  https://api.themoviedb.org/3/tv/456?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US
+    List<SeasonModel> seasons = [];
+    final url = '$baseUrl/tv/$id?api_key=$apiKey&language=en-US';
+    final response = await httpClient.get(url);
+    final decodeJson = jsonDecode(response.body);
+    decodeJson['seasons']
+        .forEach((season) => seasons.add(SeasonModel.fromJson(season)));
+    return seasons;
   }
 
   Future fetchSearchResults({String type, String query, int page}) async {
