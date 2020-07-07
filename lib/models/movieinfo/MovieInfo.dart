@@ -1,3 +1,10 @@
+import 'package:tmdbflutter/models/movieinfo/BelongsToCollection.dart';
+import 'package:tmdbflutter/models/movieinfo/Genre.dart';
+import 'package:tmdbflutter/models/movieinfo/ProductionCompany.dart';
+import 'package:tmdbflutter/models/movieinfo/ProductionCountry.dart';
+import 'package:tmdbflutter/models/movieinfo/SpokenLanguage.dart';
+import 'package:tmdbflutter/models/movieinfo/Videos.dart';
+
 class MovieInfo {
   bool adult;
   String backdrop_path;

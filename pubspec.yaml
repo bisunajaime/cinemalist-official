@@ -37,6 +37,8 @@ dependencies:
   intl: ^0.16.1
   google_fonts: ^1.1.0
   cached_network_image: ^2.2.0+1
+  url_launcher: ^5.4.11
+  youtube_player_flutter: ^7.0.0+6
 
 dev_dependencies:
   flutter_test:

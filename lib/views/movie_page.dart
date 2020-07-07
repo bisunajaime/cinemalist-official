@@ -4,13 +4,18 @@ import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_bloc.dart';
+import 'package:tmdbflutter/bloc/movies/info/movie_info_event.dart';
+import 'package:tmdbflutter/bloc/movies/info/movie_info_state.dart';
 import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/movieinfo/Result.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/views/actor_info_page.dart';
+import 'package:tmdbflutter/views/youtube_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../barrels/models.dart';
 
@@ -34,6 +39,14 @@ class _MoviePageState extends State<MoviePage> {
     ),
   );
 
+  _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.model.id);
@@ -47,6 +60,9 @@ class _MoviePageState extends State<MoviePage> {
         ),
         BlocProvider(
           create: (context) => SimilarMoviesBloc(tmdbRepository: tmdbRepo),
+        ),
+        BlocProvider(
+          create: (context) => MovieInfoBloc(tmdbRepository: tmdbRepo),
         ),
       ],
       child: Scaffold(
@@ -131,6 +147,76 @@ class _MoviePageState extends State<MoviePage> {
           ),
           SizedBox(
             height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Trailers',
+              style: Styles.mBold.copyWith(
+                fontSize: 20,
+                color: Colors.pinkAccent[100],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          BlocBuilder<MovieInfoBloc, MovieInfoState>(builder: (context, state) {
+            if (state is MovieInfoEmpty) {
+              BlocProvider.of<MovieInfoBloc>(context)
+                  .add(FetchMovieInfo(id: widget.model.id));
+            }
+            if (state is MovieInfoError) {
+              return Center(child: Text('There was a problem'));
+            }
+            if (state is MovieInfoLoaded) {
+              return Container(
+                height: 80,
+                width: double.infinity,
+                child: ListView.builder(
+                  itemCount: state.movieInfo.videos.results.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, i) {
+                    Result videoResult = state.movieInfo.videos.results[i];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 2,
+                      ),
+                      child: FlatButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => YoutubePage(
+                              ytKey: videoResult.key,
+                            ),
+                          ),
+                        ),
+                        color: Colors.redAccent,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.play_arrow,
+                              color: Colors.black,
+                            ),
+                            Text(
+                              videoResult.name,
+                              style: Styles.mMed.copyWith(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+            return CircularProgressIndicator();
+          }),
+          SizedBox(
+            height: 5,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),

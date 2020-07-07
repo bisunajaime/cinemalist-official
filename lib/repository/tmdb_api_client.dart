@@ -6,6 +6,7 @@ import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
@@ -114,14 +115,16 @@ class TMDBApiClient {
     return tvShows;
   }
 
-  Future<MovieInfoModel> fetchMovieInfo({int id}) async {
-    final url = '$baseUrl/movie/$id?api_key=$apiKey&language=en-US';
+  Future<MovieInfo> fetchMovieInfo({int id}) async {
+    //https://api.themoviedb.org/3/movie/419704?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&append_to_response=videos
+    final url =
+        '$baseUrl/movie/$id?api_key=$apiKey&language=en-US&append_to_response=videos';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
     final decodeJson = jsonDecode(response.body);
-    MovieInfoModel movieInfo = MovieInfoModel.fromJson(decodeJson);
+    MovieInfo movieInfo = MovieInfo.fromJson(decodeJson);
     return movieInfo;
   }
 

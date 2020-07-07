@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
+import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
@@ -44,7 +45,7 @@ class TMDBRepository {
     return await tmdbApiClient.fetchPopularTvShows(page: page);
   }
 
-  Future<MovieInfoModel> fetchMovieInfo({int id}) async {
+  Future<MovieInfo> fetchMovieInfo({int id}) async {
     return await tmdbApiClient.fetchMovieInfo(id: id);
   }
 

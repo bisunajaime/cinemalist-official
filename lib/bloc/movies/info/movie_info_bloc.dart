@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:tmdbflutter/models/movie_info_model.dart';
+import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 
 import 'movie_info_event.dart';
@@ -9,7 +10,7 @@ import 'movie_info_state.dart';
 class MovieInfoBloc extends Bloc<MovieInfoEvent, MovieInfoState> {
   final TMDBRepository tmdbRepository;
   int initialPage = 1;
-  MovieInfoModel movieInfo;
+  MovieInfo movieInfo;
 
   MovieInfoBloc({@required this.tmdbRepository})
       : assert(tmdbRepository != null);
