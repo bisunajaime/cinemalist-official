@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
 import 'package:tmdbflutter/views/genres_page.dart';
@@ -20,126 +22,91 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  PageController pageController = PageController(
+    initialPage: 0,
+  );
+  PageController smallPage =
+      PageController(initialPage: 0, viewportFraction: 0.18);
+  int index = 0;
   @override
   Widget build(BuildContext context) {
-    final PopularMoviesBloc popularMovBloc =
-        BlocProvider.of<PopularMoviesBloc>(context);
-    final TrendingMoviesBloc trendingMovBloc =
-        BlocProvider.of<TrendingMoviesBloc>(context);
-    final UpcomingMoviesBloc upcomingMovBloc =
-        BlocProvider.of<UpcomingMoviesBloc>(context);
-    return RefreshIndicator(
-      onRefresh: () async {
-        await Future.delayed(Duration(seconds: 1));
-        popularMovBloc.add(FetchPopularMovies());
-        trendingMovBloc.add(FetchTrendingMovies());
-        upcomingMovBloc.add(FetchUpcomingMovies());
-      },
-      child: ListView(
-        physics: BouncingScrollPhysics(),
-        children: <Widget>[
-          SizedBox(
-            height: 10,
+    super.build(context);
+    return ListView(
+      physics: BouncingScrollPhysics(),
+      children: <Widget>[
+        buildPopularList(context),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'Genres',
+            style: Styles.mBold,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'TMDB',
-                  style: Styles.mBold.copyWith(
-                    fontSize: 30,
-                  ),
+        ),
+        buildGenresList(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Upcoming',
+                style: Styles.mBold,
+              ),
+              Text(
+                'See more',
+                style: Styles.mReg.copyWith(
+                  color: Colors.pinkAccent,
+                  fontSize: 10,
                 ),
-                Text(
-                  'The Movie Database',
-                  style: Styles.mBold.copyWith(
-                    color: Colors.pinkAccent,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          SizedBox(
-            height: 10,
+        ),
+        buildUpcomingList(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Actors',
+                style: Styles.mBold,
+              ),
+              Text(
+                'See more',
+                style: Styles.mReg.copyWith(
+                  color: Colors.pinkAccent,
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
-          buildPopularList(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Genres',
-              style: Styles.mBold,
-            ),
+        ),
+        buildActorsList(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Trending',
+                style: Styles.mBold,
+              ),
+              Text(
+                'See more',
+                style: Styles.mReg.copyWith(
+                  color: Colors.pinkAccent,
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
-          buildGenresList(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Upcoming',
-                  style: Styles.mBold,
-                ),
-                Text(
-                  'See more',
-                  style: Styles.mReg.copyWith(
-                    color: Colors.pinkAccent,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          buildUpcomingList(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Actors',
-                  style: Styles.mBold,
-                ),
-                Text(
-                  'See more',
-                  style: Styles.mReg.copyWith(
-                    color: Colors.pinkAccent,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          buildActorsList(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Trending',
-                  style: Styles.mBold,
-                ),
-                Text(
-                  'See more',
-                  style: Styles.mReg.copyWith(
-                    color: Colors.pinkAccent,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          buildTrendingList(),
-        ],
-      ),
+        ),
+        buildTrendingList(),
+      ],
     );
   }
 
@@ -437,50 +404,52 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  BlocBuilder<PopularMoviesBloc, PopularMoviesState> buildPopularList() {
-    return BlocBuilder<PopularMoviesBloc, PopularMoviesState>(
-      builder: (context, state) {
-        if (state is PopularMoviesEmpty) {
-          BlocProvider.of<PopularMoviesBloc>(context).add(FetchPopularMovies());
-        }
+  Container buildPopularList(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * .8,
+      width: double.infinity,
+      child: BlocBuilder<PopularMoviesBloc, PopularMoviesState>(
+        builder: (context, state) {
+          if (state is PopularMoviesEmpty) {
+            BlocProvider.of<PopularMoviesBloc>(context)
+                .add(FetchPopularMovies());
+          }
 
-        if (state is PopularMoviesError) {
-          return Center(
-            child: Text('Failed to load genres'),
-          );
-        }
+          if (state is PopularMoviesError) {
+            return Center(
+              child: Icon(Icons.warning),
+            );
+          }
 
-        if (state is PopularMoviesLoaded) {
-          return Container(
-            height: MediaQuery.of(context).size.height * .6,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.transparent,
-            child: CarouselSlider.builder(
-              itemCount: state.popularMovies.length,
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MoviePage(
-                        model: state.popularMovies[i],
-                        tag: 'popular${state.popularMovies[i].posterPath}',
-                      ),
-                    ),
-                  ),
-                  child: Container(
-                    height: double.infinity,
-                    child: Stack(
-                      children: <Widget>[
-                        Hero(
-                          tag: 'popular${state.popularMovies[i].posterPath}',
-                          child: ShaderMask(
+          if (state is PopularMoviesLoaded) {
+            return Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 4,
+                  child: PageView.builder(
+                    itemCount: state.popularMovies.length,
+                    scrollDirection: Axis.horizontal,
+                    controller: pageController,
+                    physics: NeverScrollableScrollPhysics(),
+                    onPageChanged: (int i) {
+                      // smallPage.animateToPage(i,
+                      //     duration: Duration(milliseconds: 250),
+                      //     curve: Curves.ease);
+                      setState(() {
+                        index = i;
+                      });
+                    },
+                    itemBuilder: (context, i) {
+                      GenericMoviesModel movie = state.popularMovies[i];
+                      return Stack(
+                        children: <Widget>[
+                          ShaderMask(
                             shaderCallback: (rect) {
                               return LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.black12,
+                                  Color(0xff0E0E0E),
                                   Colors.transparent,
                                 ],
                               ).createShader(
@@ -492,90 +461,200 @@ class _HomePageState extends State<HomePage>
                                 ),
                               );
                             },
-                            blendMode: BlendMode.darken,
-                            child: FadeInImage.assetNetwork(
-                              image:
-                                  'https://image.tmdb.org/t/p/w500${state.popularMovies[i].posterPath}',
-                              placeholder: 'assets/images/placeholder_box.png',
-                              fit: BoxFit.cover,
-                              fadeInCurve: Curves.ease,
-                              fadeInDuration: Duration(milliseconds: 250),
-                              fadeOutDuration: Duration(milliseconds: 250),
-                              fadeOutCurve: Curves.ease,
+                            blendMode: BlendMode.dstIn,
+                            child: Container(
                               height: double.infinity,
                               width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Color(0xff0E0E0E),
+                              ),
+                              child: FadeInImage.assetNetwork(
+                                placeholder:
+                                    'assets/images/placeholder_box.png',
+                                image:
+                                    "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 5,
-                          left: 5,
-                          child: Column(
-                            children: <Widget>[
-                              Row(
+                          Positioned(
+                            bottom: 5,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.yellow,
-                                    size: 20,
-                                  ),
-                                  Text(
-                                    state.popularMovies[i].voteAverage
-                                        .toString(),
-                                    style: Styles.mBold.copyWith(
-                                      fontSize: 20,
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Text(
+                                      movie.title,
+                                      style: Styles.mMed.copyWith(
+                                        color: Colors.pinkAccent[100],
+                                      ),
                                     ),
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.calendar_today,
+                                              color: Colors.amber,
+                                              size: 10,
+                                            ),
+                                            SizedBox(
+                                              width: 2,
+                                            ),
+                                            Text(
+                                              DateFormat.yMMMd().format(
+                                                  DateTime.parse(
+                                                      movie.releaseDate)),
+                                              style: Styles.mMed.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 2),
+                                          child: Text(
+                                            ' - ',
+                                            style: Styles.mBold,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.amber,
+                                              size: 10,
+                                            ),
+                                            Text(
+                                              movie.voteAverage.toString(),
+                                              style: Styles.mMed.copyWith(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.8,
+                                    child: Text(
+                                      movie.overview,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Styles.mReg.copyWith(
+                                        color: Colors.grey,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MoviePage(
+                                                  model: movie,
+                                                  tag:
+                                                      'popular${movie.posterPath}',
+                                                ))),
+                                    child: Text(
+                                      'Details',
+                                      style: Styles.mBold.copyWith(
+                                        fontSize: 10,
+                                        color: Colors.pinkAccent[100],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 40,
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  height: 80,
+                  child: PageView.builder(
+                    controller: smallPage,
+                    itemCount: state.popularMovies.length,
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (i) {
+                      pageController.animateToPage(
+                        i,
+                        duration: Duration(milliseconds: 250),
+                        curve: Curves.ease,
+                      );
+                    },
+                    itemBuilder: (context, i) {
+                      GenericMoviesModel movie = state.popularMovies[i];
+                      return GestureDetector(
+                        onTap: () {
+                          pageController.jumpToPage(i);
+                          smallPage.jumpToPage(i);
+                          setState(() {
+                            index = i;
+                          });
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 5,
+                          ),
+                          child: ColorFiltered(
+                            colorFilter: ColorFilter.mode(
+                              index == i
+                                  ? Colors.transparent
+                                  : Colors.black.withOpacity(0.5),
+                              index == i ? BlendMode.lighten : BlendMode.darken,
+                            ),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/images/placeholder_box.png',
+                              image:
+                                  'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-              options: CarouselOptions(
-                autoPlay: true,
-                height: double.infinity,
-                autoPlayCurve: Curves.easeInOutCirc,
-                enlargeCenterPage: true,
-                enableInfiniteScroll: true,
-                enlargeStrategy: CenterPageEnlargeStrategy.scale,
-                pauseAutoPlayOnTouch: true,
-              ),
-            ),
+                )
+              ],
+            );
+          }
+
+          return Center(
+            child: CircularProgressIndicator(),
           );
-        }
-        return Container(
-          height: MediaQuery.of(context).size.height * .6,
-          width: MediaQuery.of(context).size.width,
-          child: CarouselSlider.builder(
-            itemCount: 6,
-            options: CarouselOptions(
-              height: double.infinity,
-              enlargeCenterPage: true,
-              enableInfiniteScroll: true,
-              enlargeStrategy: CenterPageEnlargeStrategy.scale,
-            ),
-            itemBuilder: (context, i) {
-              return Container(
-                height: double.infinity,
-                margin: EdgeInsets.all(5),
-                color: Colors.grey,
-                child: Shimmer.fromColors(
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
-                ),
-              );
-            },
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 

@@ -176,6 +176,7 @@ class _MoviePageState extends State<MoviePage> {
                 child: ListView.builder(
                   itemCount: state.movieInfo.videos.results.length,
                   scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
                   itemBuilder: (context, i) {
                     Result videoResult = state.movieInfo.videos.results[i];
                     return Padding(
@@ -191,7 +192,7 @@ class _MoviePageState extends State<MoviePage> {
                             ),
                           ),
                         ),
-                        color: Colors.redAccent,
+                        color: Colors.pinkAccent[100],
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -203,6 +204,7 @@ class _MoviePageState extends State<MoviePage> {
                               videoResult.name,
                               style: Styles.mMed.copyWith(
                                 color: Colors.black,
+                                fontSize: 10,
                               ),
                             ),
                           ],
