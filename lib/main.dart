@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:tmdbflutter/barrels/genres_barrel.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
@@ -14,7 +12,6 @@ import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
 import 'package:tmdbflutter/views/search_page.dart';
 import 'package:tmdbflutter/views/tvshows_page.dart';
