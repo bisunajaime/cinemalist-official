@@ -173,49 +173,67 @@ class _MoviePageState extends State<MoviePage> {
               return Container(
                 height: 80,
                 width: double.infinity,
-                child: ListView.builder(
+                child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return SizedBox(
+                      width: 8,
+                    );
+                  },
                   itemCount: state.movieInfo.videos.results.length,
                   scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, i) {
-                    Result videoResult = state.movieInfo.videos.results[i];
+                  itemBuilder: (context, index) {
+                    Result videoResult = state.movieInfo.videos.results[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 2,
-                      ),
-                      child: FlatButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => YoutubePage(
-                              ytKey: videoResult.key,
-                            ),
-                          ),
-                        ),
-                        color: Colors.pinkAccent[100],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.play_arrow,
-                              color: Colors.black,
-                            ),
-                            Text(
-                              videoResult.name,
-                              style: Styles.mMed.copyWith(
-                                color: Colors.black,
-                                fontSize: 10,
+                      padding: index == 0
+                          ? EdgeInsets.only(left: 8)
+                          : EdgeInsets.zero,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => YoutubePage(
+                                      ytKey: videoResult.key,
+                                      title: videoResult.name,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
+                                maxRadius: 30,
+                                backgroundColor: Colors.pinkAccent[100],
+                                child: Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            'Trailer #${index + 1}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
                 ),
               );
             }
-            return CircularProgressIndicator();
+            return Center(
+                child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: CircularProgressIndicator(),
+            ));
           }),
           SizedBox(
             height: 5,

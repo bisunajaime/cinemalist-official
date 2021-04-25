@@ -3,7 +3,8 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePage extends StatefulWidget {
   final String ytKey;
-  YoutubePage({this.ytKey});
+  final String title;
+  YoutubePage({this.ytKey, this.title});
   @override
   _YoutubePageState createState() => _YoutubePageState();
 }
@@ -55,7 +56,7 @@ class _YoutubePageState extends State<YoutubePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Yt Player'),
+        title: Text(widget.title),
         backgroundColor: Color(0xff0e0e0e),
         centerTitle: true,
       ),
