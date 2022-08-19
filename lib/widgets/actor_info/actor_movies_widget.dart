@@ -10,7 +10,7 @@ class ActorMoviesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ActorMoviesCubit>();
+    final cubit = context.watch<ActorMoviesCubit>();
     final actorMovies = cubit.state;
     if (cubit.isLoading) {
       return Shimmer.fromColors(

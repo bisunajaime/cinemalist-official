@@ -10,7 +10,7 @@ class ActorInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ActorInfoCubit>();
+    final cubit = context.watch<ActorInfoCubit>();
     ActorInfoModel? actorInfoModel = cubit.state;
     if (cubit.loading) {
       return Container(
