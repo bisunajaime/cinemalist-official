@@ -9,7 +9,8 @@ class UpcomingMoviesBloc
   final TMDBRepository tmdbRepository;
 
   UpcomingMoviesBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(UpcomingMoviesLoading());
 
   @override
   UpcomingMoviesState get initialState => UpcomingMoviesEmpty();

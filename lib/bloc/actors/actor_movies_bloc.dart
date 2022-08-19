@@ -60,7 +60,8 @@ class ActorMoviesBloc extends Bloc<ActorMoviesEvent, ActorMoviesState> {
   final TMDBRepository tmdbRepository;
 
   ActorMoviesBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(ActorMoviesLoading());
 
   @override
   ActorMoviesState get initialState => ActorMoviesEmpty();

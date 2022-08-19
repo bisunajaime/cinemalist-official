@@ -64,7 +64,7 @@ class MovieByGenreSuccess extends MovieByGenreState {
 class MovieByGenreBloc extends Bloc<MovieByGenreEvent, MovieByGenreState> {
   final TMDBRepository? tmdbRepository;
   int page = 1;
-  MovieByGenreBloc({this.tmdbRepository});
+  MovieByGenreBloc({this.tmdbRepository}) : super(MovieByGenreInitial());
 
   @override
   MovieByGenreState get initialState => MovieByGenreInitial();
@@ -75,16 +75,16 @@ class MovieByGenreBloc extends Bloc<MovieByGenreEvent, MovieByGenreState> {
     if (event is FetchMovieByGenreMovies && !_hasReachedMax(currentState)) {
       try {
         if (currentState is MovieByGenreInitial) {
-          final movies =
-              await tmdbRepository!.fetchMoviesByGenre(page: page, id: event.id);
+          final movies = await tmdbRepository!
+              .fetchMoviesByGenre(page: page, id: event.id);
           yield MovieByGenreSuccess(
               movieByGenreMovies: movies, hasReachedMax: false);
           return;
         }
 
         if (currentState is MovieByGenreSuccess) {
-          final movies = await tmdbRepository!.fetchMoviesByGenre(
-              page: ++page, id: event.id);
+          final movies = await tmdbRepository!
+              .fetchMoviesByGenre(page: ++page, id: event.id);
           yield movies.isEmpty
               ? currentState.copyWith(hasReachedMax: true)
               : MovieByGenreSuccess(

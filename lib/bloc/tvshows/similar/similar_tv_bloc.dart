@@ -54,7 +54,7 @@ class SimilarTvShowsLoaded extends SimilarTvShowsState {
 class SimilarTvShowsBloc
     extends Bloc<SimilarTvShowsEvent, SimilarTvShowsState> {
   final TMDBRepository? tmdbRepository;
-  SimilarTvShowsBloc({this.tmdbRepository});
+  SimilarTvShowsBloc({this.tmdbRepository}) : super(SimilarTvShowsLoading());
 
   @override
   SimilarTvShowsState get initialState => SimilarTvShowsEmpty();

@@ -9,7 +9,8 @@ class TrendingMoviesBloc
   final TMDBRepository tmdbRepository;
 
   TrendingMoviesBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(TrendingMoviesLoading());
 
   @override
   TrendingMoviesState get initialState => TrendingMoviesEmpty();

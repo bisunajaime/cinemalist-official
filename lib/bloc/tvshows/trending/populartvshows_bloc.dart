@@ -59,7 +59,7 @@ class PopularTvShowsBloc
   final TMDBRepository? tmdbRepository;
   int page = 1;
 
-  PopularTvShowsBloc({this.tmdbRepository});
+  PopularTvShowsBloc({this.tmdbRepository}) : super(PopularTvShowsInitial());
 
   @override
   PopularTvShowsState get initialState => PopularTvShowsInitial();

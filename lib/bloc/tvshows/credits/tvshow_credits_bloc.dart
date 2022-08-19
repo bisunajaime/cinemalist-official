@@ -59,7 +59,7 @@ class TvShowCreditsBloc extends Bloc<TvShowCreditsEvent, TvShowCreditsState> {
   final TMDBRepository tmdbRepository;
 
   TvShowCreditsBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : super(TvShowCreditsLoading());
 
   @override
   TvShowCreditsState get initialState => TvShowCreditsEmpty();

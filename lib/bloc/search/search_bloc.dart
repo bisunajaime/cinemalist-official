@@ -70,7 +70,7 @@ class SearchResultsLoaded extends SearchState {
 class SearchResultBloc extends Bloc<SearchEvent, SearchState> {
   final TMDBRepository? tmdbRepository;
   int page = 1;
-  SearchResultBloc({this.tmdbRepository});
+  SearchResultBloc({this.tmdbRepository}) : super(SearchIsLoading());
 
   @override
   SearchState get initialState => HasNotSearched();

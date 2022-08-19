@@ -13,7 +13,8 @@ class MovieInfoBloc extends Bloc<MovieInfoEvent, MovieInfoState> {
   late MovieInfo movieInfo;
 
   MovieInfoBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(MovieInfoLoading());
 
   @override
   MovieInfoState get initialState => MovieInfoEmpty();

@@ -60,7 +60,7 @@ class NowShowingSuccess extends NowShowingState {
 class NowShowingBloc extends Bloc<NowShowingEvent, NowShowingState> {
   final TMDBRepository? tmdbRepository;
   int page = 1;
-  NowShowingBloc({this.tmdbRepository});
+  NowShowingBloc({this.tmdbRepository}) : super(NowShowingInitial());
 
   @override
   NowShowingState get initialState => NowShowingInitial();

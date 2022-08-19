@@ -9,7 +9,8 @@ class PopularMoviesBloc extends Bloc<PopularMoviesEvent, PopularMoviesState> {
   final TMDBRepository tmdbRepository;
 
   PopularMoviesBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(PopularMoviesLoading());
 
   @override
   PopularMoviesState get initialState => PopularMoviesEmpty();

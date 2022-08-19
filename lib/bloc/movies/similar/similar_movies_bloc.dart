@@ -53,7 +53,7 @@ class SimilarMoviesLoaded extends SimilarMoviesState {
 
 class SimilarMoviesBloc extends Bloc<SimilarMoviesEvent, SimilarMoviesState> {
   final TMDBRepository? tmdbRepository;
-  SimilarMoviesBloc({this.tmdbRepository});
+  SimilarMoviesBloc({this.tmdbRepository}) : super(SimilarMoviesLoading());
 
   @override
   SimilarMoviesState get initialState => SimilarMoviesEmpty();

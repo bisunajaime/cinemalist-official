@@ -65,7 +65,8 @@ class MovieCastBloc extends Bloc<MovieCastEvent, MovieCastState> {
   final TMDBRepository tmdbRepository;
 
   MovieCastBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(MovieCastLoading());
 
   @override
   MovieCastState get initialState => MovieCastEmpty();

@@ -59,7 +59,8 @@ class TvSeasonsBloc extends Bloc<TvSeasonsEvent, TvSeasonsState> {
   final TMDBRepository tmdbRepository;
 
   TvSeasonsBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(TvSeasonsLoading());
 
   @override
   TvSeasonsState get initialState => TvSeasonsEmpty();

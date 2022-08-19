@@ -60,7 +60,8 @@ class ActorInfoBloc extends Bloc<ActorInfoEvent, ActorInfoState> {
   final TMDBRepository tmdbRepository;
 
   ActorInfoBloc({required this.tmdbRepository})
-      : assert(tmdbRepository != null);
+      : assert(tmdbRepository != null),
+        super(ActorInfoLoading());
 
   @override
   ActorInfoState get initialState => ActorInfoEmpty();
