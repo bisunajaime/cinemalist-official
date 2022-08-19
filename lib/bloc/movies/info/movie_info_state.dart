@@ -23,7 +23,7 @@ class SearchMovieInfo extends MovieInfoState {}
 class MovieInfoLoaded extends MovieInfoState {
   final MovieInfo movieInfo;
   MovieInfoLoaded({
-    @required this.movieInfo,
+    required this.movieInfo,
   }) : assert(movieInfo != null);
 
   @override

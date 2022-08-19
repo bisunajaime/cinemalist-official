@@ -23,7 +23,7 @@ class TvShowCreditsLoadingNextPage extends TvShowCreditsState {}
 class TvShowCreditsLoaded extends TvShowCreditsState {
   final TvShowCreditsModel tvShowCredits;
   TvShowCreditsLoaded({
-    @required this.tvShowCredits,
+    required this.tvShowCredits,
   }) : assert(tvShowCredits != null);
 
   @override
@@ -41,12 +41,12 @@ abstract class TvShowCreditsEvent extends Equatable {
 }
 
 class FetchTvShowCredits extends TvShowCreditsEvent {
-  final int id;
+  final int? id;
   const FetchTvShowCredits({
     this.id,
   });
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 /*
@@ -58,7 +58,7 @@ class FetchTvShowCredits extends TvShowCreditsEvent {
 class TvShowCreditsBloc extends Bloc<TvShowCreditsEvent, TvShowCreditsState> {
   final TMDBRepository tmdbRepository;
 
-  TvShowCreditsBloc({@required this.tmdbRepository})
+  TvShowCreditsBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

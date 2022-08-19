@@ -8,7 +8,7 @@ class TrendingMoviesBloc
     extends Bloc<TrendingMoviesEvent, TrendingMoviesState> {
   final TMDBRepository tmdbRepository;
 
-  TrendingMoviesBloc({@required this.tmdbRepository})
+  TrendingMoviesBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

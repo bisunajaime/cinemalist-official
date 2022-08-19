@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage>
                     ),
                     child: Center(
                       child: Text(
-                        state.genres[i].name,
+                        state.genres[i].name!,
                         style: Styles.mBold.copyWith(
                           fontSize: 10,
                         ),
@@ -244,14 +244,14 @@ class _HomePageState extends State<HomePage>
                         CircleAvatar(
                           backgroundColor: Color(0xff2e2e2e),
                           backgroundImage:
-                              NetworkImage(state.actors[i].profilePath),
+                              NetworkImage(state.actors[i].profilePath!),
                           radius: 35,
                         ),
                         SizedBox(
                           height: 1,
                         ),
                         Text(
-                          state.actors[i].name,
+                          state.actors[i].name!,
                           style: Styles.mMed.copyWith(
                             fontSize: 8,
                           ),
@@ -489,7 +489,7 @@ class _HomePageState extends State<HomePage>
                                     width:
                                         MediaQuery.of(context).size.width * 0.8,
                                     child: Text(
-                                      movie.title,
+                                      movie.title!,
                                       style: Styles.mMed.copyWith(
                                         color: Colors.pinkAccent[100],
                                       ),
@@ -516,7 +516,7 @@ class _HomePageState extends State<HomePage>
                                             Text(
                                               DateFormat.yMMMd().format(
                                                   DateTime.parse(
-                                                      movie.releaseDate)),
+                                                      movie.releaseDate!)),
                                               style: Styles.mMed.copyWith(
                                                 color: Colors.white,
                                                 fontSize: 10,
@@ -558,7 +558,7 @@ class _HomePageState extends State<HomePage>
                                     width:
                                         MediaQuery.of(context).size.width * 0.8,
                                     child: Text(
-                                      movie.overview,
+                                      movie.overview!,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                       style: Styles.mReg.copyWith(

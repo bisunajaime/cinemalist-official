@@ -31,8 +31,8 @@ class NowShowingInitial extends NowShowingState {}
 class NowShowingFailed extends NowShowingState {}
 
 class NowShowingSuccess extends NowShowingState {
-  final List<GenericMoviesModel> nowShowingMovies;
-  final bool hasReachedMax;
+  final List<GenericMoviesModel>? nowShowingMovies;
+  final bool? hasReachedMax;
 
   const NowShowingSuccess({
     this.nowShowingMovies,
@@ -40,8 +40,8 @@ class NowShowingSuccess extends NowShowingState {
   });
 
   NowShowingSuccess copyWith({
-    List<GenericMoviesModel> nowShowingMovies,
-    bool hasReachedMax,
+    List<GenericMoviesModel>? nowShowingMovies,
+    bool? hasReachedMax,
   }) {
     return NowShowingSuccess(
         nowShowingMovies: nowShowingMovies ?? this.nowShowingMovies,
@@ -49,16 +49,16 @@ class NowShowingSuccess extends NowShowingState {
   }
 
   @override
-  List<Object> get props => [nowShowingMovies, hasReachedMax];
+  List<Object> get props => [nowShowingMovies!, hasReachedMax!];
   @override
   String toString() =>
-      'NowShowingSuccess { nowShowingMovies: ${nowShowingMovies.length}, hasReachedMax: $hasReachedMax }';
+      'NowShowingSuccess { nowShowingMovies: ${nowShowingMovies!.length}, hasReachedMax: $hasReachedMax }';
 }
 
 // BLOC
 
 class NowShowingBloc extends Bloc<NowShowingEvent, NowShowingState> {
-  final TMDBRepository tmdbRepository;
+  final TMDBRepository? tmdbRepository;
   int page = 1;
   NowShowingBloc({this.tmdbRepository});
 
@@ -67,22 +67,22 @@ class NowShowingBloc extends Bloc<NowShowingEvent, NowShowingState> {
 
   @override
   Stream<NowShowingState> mapEventToState(NowShowingEvent event) async* {
-    final currentState = state;
+    final NowShowingState currentState = state;
     if (event is FetchNowShowingMovies && !_hasReachedMax(currentState)) {
       try {
         if (currentState is NowShowingInitial) {
-          final movies = await tmdbRepository.fetchNowPlaying(page: page);
+          final movies = await tmdbRepository!.fetchNowPlaying(page: page);
           yield NowShowingSuccess(
               nowShowingMovies: movies, hasReachedMax: false);
           return;
         }
 
         if (currentState is NowShowingSuccess) {
-          final movies = await tmdbRepository.fetchNowPlaying(page: ++page);
+          final movies = await tmdbRepository!.fetchNowPlaying(page: ++page);
           yield movies.isEmpty
               ? currentState.copyWith(hasReachedMax: true)
               : NowShowingSuccess(
-                  nowShowingMovies: currentState.nowShowingMovies + movies,
+                  nowShowingMovies: currentState.nowShowingMovies! + movies,
                   hasReachedMax: false,
                 );
         }
@@ -93,5 +93,5 @@ class NowShowingBloc extends Bloc<NowShowingEvent, NowShowingState> {
   }
 
   bool _hasReachedMax(NowShowingState state) =>
-      state is NowShowingSuccess && state.hasReachedMax;
+      state is NowShowingSuccess && state.hasReachedMax!;
 }

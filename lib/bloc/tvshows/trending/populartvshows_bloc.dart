@@ -27,8 +27,8 @@ class PopularTvShowsInitial extends PopularTvShowsState {}
 class PopularTvShowsFailed extends PopularTvShowsState {}
 
 class PopularTvShowsSuccess extends PopularTvShowsState {
-  final List<TVShowModel> tvShowModel;
-  final bool hasReachedMax;
+  final List<TVShowModel>? tvShowModel;
+  final bool? hasReachedMax;
 
   const PopularTvShowsSuccess({
     this.tvShowModel,
@@ -36,8 +36,8 @@ class PopularTvShowsSuccess extends PopularTvShowsState {
   });
 
   PopularTvShowsSuccess copyWith({
-    List<TVShowModel> tvShowModel,
-    bool hasReachedMax,
+    List<TVShowModel>? tvShowModel,
+    bool? hasReachedMax,
   }) {
     return PopularTvShowsSuccess(
       tvShowModel: tvShowModel ?? this.tvShowModel,
@@ -46,17 +46,17 @@ class PopularTvShowsSuccess extends PopularTvShowsState {
   }
 
   @override
-  List<Object> get props => [tvShowModel, hasReachedMax];
+  List<Object> get props => [tvShowModel!, hasReachedMax!];
   @override
   String toString() =>
-      'PopularTvShowSuccess { tvShowModel: ${tvShowModel.length}, hasReachedMax: $hasReachedMax }';
+      'PopularTvShowSuccess { tvShowModel: ${tvShowModel!.length}, hasReachedMax: $hasReachedMax }';
 }
 
 // BLOC
 
 class PopularTvShowsBloc
     extends Bloc<PopularTvShowsEvent, PopularTvShowsState> {
-  final TMDBRepository tmdbRepository;
+  final TMDBRepository? tmdbRepository;
   int page = 1;
 
   PopularTvShowsBloc({this.tmdbRepository});
@@ -67,11 +67,11 @@ class PopularTvShowsBloc
   @override
   Stream<PopularTvShowsState> mapEventToState(
       PopularTvShowsEvent event) async* {
-    final currentState = state;
+    final PopularTvShowsState currentState = state;
     if (event is FetchPopularTvShows && !_hasReachedMax(currentState)) {
       try {
         if (currentState is PopularTvShowsInitial) {
-          final tvShows = await tmdbRepository.fetchPopularTvShows(page: page);
+          final tvShows = await tmdbRepository!.fetchPopularTvShows(page: page);
           yield PopularTvShowsSuccess(
               tvShowModel: tvShows, hasReachedMax: false);
           return;
@@ -79,11 +79,11 @@ class PopularTvShowsBloc
 
         if (currentState is PopularTvShowsSuccess) {
           final tvShows =
-              await tmdbRepository.fetchPopularTvShows(page: ++page);
+              await tmdbRepository!.fetchPopularTvShows(page: ++page);
           yield tvShows.isEmpty
               ? currentState.copyWith(hasReachedMax: true)
               : PopularTvShowsSuccess(
-                  tvShowModel: currentState.tvShowModel + tvShows,
+                  tvShowModel: currentState.tvShowModel! + tvShows,
                   hasReachedMax: false,
                 );
         }
@@ -95,5 +95,5 @@ class PopularTvShowsBloc
   }
 
   bool _hasReachedMax(PopularTvShowsState state) =>
-      state is PopularTvShowsSuccess && state.hasReachedMax;
+      state is PopularTvShowsSuccess && state.hasReachedMax!;
 }

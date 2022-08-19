@@ -10,7 +10,7 @@ import 'package:tmdbflutter/views/movie_page.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
 
 class SearchResultsPage extends StatefulWidget {
-  final String type;
+  final String? type;
   SearchResultsPage({this.type});
 
   @override
@@ -21,7 +21,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   ScrollController controller = new ScrollController();
   final scrollThreshold = 200;
   TextEditingController searchController = TextEditingController();
-  SearchResultBloc _searchResultBloc;
+  late SearchResultBloc _searchResultBloc;
   @override
   void initState() {
     super.initState();
@@ -54,7 +54,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(
-          widget.type.toUpperCase(),
+          widget.type!.toUpperCase(),
           style: Styles.mMed,
         ),
       ),
@@ -151,11 +151,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         decoration: BoxDecoration(
                           color: Color(0xff2e2e2e),
                           image: DecorationImage(
-                            image: result[i].posterPath == null
+                            image: (result[i].posterPath == null
                                 ? AssetImage('assets/images/placeholder.png')
                                 : NetworkImage(
                                     'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
-                                  ),
+                                  )) as ImageProvider<Object>,
                             colorFilter: ColorFilter.mode(
                               Colors.black26,
                               BlendMode.darken,
@@ -165,7 +165,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         ),
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          result[i].title,
+                          result[i].title!,
                           style: Styles.mReg.copyWith(
                             fontSize: 10,
                           ),
@@ -205,11 +205,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         decoration: BoxDecoration(
                           color: Color(0xff2e2e2e),
                           image: DecorationImage(
-                            image: result[i].profilePath == null
+                            image: (result[i].profilePath == null
                                 ? AssetImage('assets/images/placeholder.png')
                                 : NetworkImage(
                                     'https://image.tmdb.org/t/p/w500${result[i].profilePath}',
-                                  ),
+                                  )) as ImageProvider<Object>,
                             colorFilter: ColorFilter.mode(
                               Colors.black26,
                               BlendMode.darken,
@@ -219,7 +219,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         ),
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          result[i].name,
+                          result[i].name!,
                           style: Styles.mReg.copyWith(
                             fontSize: 10,
                           ),
@@ -256,11 +256,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         decoration: BoxDecoration(
                           color: Color(0xff2e2e2e),
                           image: DecorationImage(
-                            image: result[i].posterPath == null
+                            image: (result[i].posterPath == null
                                 ? AssetImage('assets/images/placeholder.png')
                                 : NetworkImage(
                                     'https://image.tmdb.org/t/p/w500${result[i].posterPath}',
-                                  ),
+                                  )) as ImageProvider<Object>,
                             colorFilter: ColorFilter.mode(
                               Colors.black26,
                               BlendMode.darken,
@@ -270,7 +270,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                         ),
                         alignment: Alignment.bottomLeft,
                         child: Text(
-                          result[i].name,
+                          result[i].name!,
                           style: Styles.mReg.copyWith(
                             fontSize: 10,
                           ),

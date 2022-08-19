@@ -29,7 +29,7 @@ class MovieCastLoadingNextPage extends MovieCastState {}
 class MovieCastLoaded extends MovieCastState {
   final List<CastModel> movieCast;
   MovieCastLoaded({
-    @required this.movieCast,
+    required this.movieCast,
   }) : assert(movieCast != null);
 
   @override
@@ -47,12 +47,12 @@ abstract class MovieCastEvent extends Equatable {
 }
 
 class FetchMovieCast extends MovieCastEvent {
-  final int id;
+  final int? id;
   const FetchMovieCast({
     this.id,
   });
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 /*
@@ -64,7 +64,7 @@ class FetchMovieCast extends MovieCastEvent {
 class MovieCastBloc extends Bloc<MovieCastEvent, MovieCastState> {
   final TMDBRepository tmdbRepository;
 
-  MovieCastBloc({@required this.tmdbRepository})
+  MovieCastBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

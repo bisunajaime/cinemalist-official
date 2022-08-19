@@ -14,7 +14,7 @@ class _TvShowsPageState extends State<TvShowsPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController controller = new ScrollController();
   final scrollThreshold = 200;
-  PopularTvShowsBloc _popularTvShowsBloc;
+  late PopularTvShowsBloc _popularTvShowsBloc;
 
   @override
   void initState() {
@@ -131,13 +131,13 @@ class _TvShowsPageState extends State<TvShowsPage>
                 mainAxisSpacing: 5.0,
                 childAspectRatio: 0.7,
               ),
-              itemCount: state.hasReachedMax
-                  ? state.tvShowModel.length
-                  : state.tvShowModel.length + 1,
+              itemCount: state.hasReachedMax!
+                  ? state.tvShowModel!.length
+                  : state.tvShowModel!.length + 1,
               itemBuilder: (context, i) {
-                state.tvShowModel
+                state.tvShowModel!
                     .removeWhere((element) => element.posterPath == null);
-                return i >= state.tvShowModel.length
+                return i >= state.tvShowModel!.length
                     ? Shimmer.fromColors(
                         child: Container(
                           color: Color(0xff232323),
@@ -150,7 +150,7 @@ class _TvShowsPageState extends State<TvShowsPage>
                             context,
                             MaterialPageRoute(
                               builder: (context) => TvShowPage(
-                                model: state.tvShowModel[i],
+                                model: state.tvShowModel![i],
                               ),
                             )),
                         child: Container(
@@ -160,7 +160,7 @@ class _TvShowsPageState extends State<TvShowsPage>
                           child: FadeInImage.assetNetwork(
                             placeholder: 'assets/images/placeholder_box.png',
                             image:
-                                'https://image.tmdb.org/t/p/w500${state.tvShowModel[i].posterPath}',
+                                'https://image.tmdb.org/t/p/w500${state.tvShowModel![i].posterPath}',
                             fit: BoxFit.cover,
                             fadeInCurve: Curves.ease,
                             fadeInDuration: Duration(milliseconds: 250),

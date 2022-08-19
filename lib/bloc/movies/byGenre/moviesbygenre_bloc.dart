@@ -15,10 +15,10 @@ abstract class MovieByGenreEvent extends Equatable {
 }
 
 class FetchMovieByGenreMovies extends MovieByGenreEvent {
-  final int id;
+  final int? id;
   const FetchMovieByGenreMovies({this.id});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 //STATES
@@ -35,8 +35,8 @@ class MovieByGenreInitial extends MovieByGenreState {}
 class MovieByGenreFailed extends MovieByGenreState {}
 
 class MovieByGenreSuccess extends MovieByGenreState {
-  final List<GenericMoviesModel> movieByGenreMovies;
-  final bool hasReachedMax;
+  final List<GenericMoviesModel>? movieByGenreMovies;
+  final bool? hasReachedMax;
 
   const MovieByGenreSuccess({
     this.movieByGenreMovies,
@@ -44,8 +44,8 @@ class MovieByGenreSuccess extends MovieByGenreState {
   });
 
   MovieByGenreSuccess copyWith({
-    List<GenericMoviesModel> movieByGenreMovies,
-    bool hasReachedMax,
+    List<GenericMoviesModel>? movieByGenreMovies,
+    bool? hasReachedMax,
   }) {
     return MovieByGenreSuccess(
         movieByGenreMovies: movieByGenreMovies ?? this.movieByGenreMovies,
@@ -53,16 +53,16 @@ class MovieByGenreSuccess extends MovieByGenreState {
   }
 
   @override
-  List<Object> get props => [movieByGenreMovies, hasReachedMax];
+  List<Object> get props => [movieByGenreMovies!, hasReachedMax!];
   @override
   String toString() =>
-      'MovieByGenreSuccess { MovieByGenreMovies: ${movieByGenreMovies.length}, hasReachedMax: $hasReachedMax }';
+      'MovieByGenreSuccess { MovieByGenreMovies: ${movieByGenreMovies!.length}, hasReachedMax: $hasReachedMax }';
 }
 
 // BLOC
 
 class MovieByGenreBloc extends Bloc<MovieByGenreEvent, MovieByGenreState> {
-  final TMDBRepository tmdbRepository;
+  final TMDBRepository? tmdbRepository;
   int page = 1;
   MovieByGenreBloc({this.tmdbRepository});
 
@@ -71,24 +71,24 @@ class MovieByGenreBloc extends Bloc<MovieByGenreEvent, MovieByGenreState> {
 
   @override
   Stream<MovieByGenreState> mapEventToState(MovieByGenreEvent event) async* {
-    final currentState = state;
+    final MovieByGenreState currentState = state;
     if (event is FetchMovieByGenreMovies && !_hasReachedMax(currentState)) {
       try {
         if (currentState is MovieByGenreInitial) {
           final movies =
-              await tmdbRepository.fetchMoviesByGenre(page: page, id: event.id);
+              await tmdbRepository!.fetchMoviesByGenre(page: page, id: event.id);
           yield MovieByGenreSuccess(
               movieByGenreMovies: movies, hasReachedMax: false);
           return;
         }
 
         if (currentState is MovieByGenreSuccess) {
-          final movies = await tmdbRepository.fetchMoviesByGenre(
+          final movies = await tmdbRepository!.fetchMoviesByGenre(
               page: ++page, id: event.id);
           yield movies.isEmpty
               ? currentState.copyWith(hasReachedMax: true)
               : MovieByGenreSuccess(
-                  movieByGenreMovies: currentState.movieByGenreMovies + movies,
+                  movieByGenreMovies: currentState.movieByGenreMovies! + movies,
                   hasReachedMax: false,
                 );
         }
@@ -99,5 +99,5 @@ class MovieByGenreBloc extends Bloc<MovieByGenreEvent, MovieByGenreState> {
   }
 
   bool _hasReachedMax(MovieByGenreState state) =>
-      state is MovieByGenreSuccess && state.hasReachedMax;
+      state is MovieByGenreSuccess && state.hasReachedMax!;
 }

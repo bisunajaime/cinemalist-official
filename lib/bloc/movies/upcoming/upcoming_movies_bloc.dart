@@ -8,7 +8,7 @@ class UpcomingMoviesBloc
     extends Bloc<UpcomingMoviesEvent, UpcomingMoviesState> {
   final TMDBRepository tmdbRepository;
 
-  UpcomingMoviesBloc({@required this.tmdbRepository})
+  UpcomingMoviesBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

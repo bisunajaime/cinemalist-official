@@ -15,7 +15,7 @@ class GenresLoading extends GenresState {}
 class GenresLoaded extends GenresState {
   final List<GenresModel> genres;
 
-  const GenresLoaded({@required this.genres}) : assert(genres != null);
+  const GenresLoaded({required this.genres}) : assert(genres != null);
 
   @override
   List<Object> get props => [genres];

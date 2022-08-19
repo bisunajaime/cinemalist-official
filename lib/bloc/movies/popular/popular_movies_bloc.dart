@@ -8,7 +8,7 @@ import 'package:tmdbflutter/repository/tmdb_repository.dart';
 class PopularMoviesBloc extends Bloc<PopularMoviesEvent, PopularMoviesState> {
   final TMDBRepository tmdbRepository;
 
-  PopularMoviesBloc({@required this.tmdbRepository})
+  PopularMoviesBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

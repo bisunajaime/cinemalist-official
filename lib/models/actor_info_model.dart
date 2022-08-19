@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
 class ActorInfoModel extends Equatable {
-  final String birthday,
+  final String? birthday,
       knownForDepartment,
       name,
       biography,
@@ -12,23 +12,23 @@ class ActorInfoModel extends Equatable {
       homePage,
       profilePath,
       deathday;
-  List<GenericMoviesModel> knownFor;
+  late List<GenericMoviesModel> knownFor;
   final int id;
   final double popularity;
 
   ActorInfoModel({
-    @required this.birthday,
-    @required this.knownForDepartment,
-    @required this.name,
-    @required this.biography,
-    @required this.placeOfBirth,
-    @required this.imdbId,
-    @required this.homePage,
-    @required this.profilePath,
-    @required this.deathday,
+    required this.birthday,
+    required this.knownForDepartment,
+    required this.name,
+    required this.biography,
+    required this.placeOfBirth,
+    required this.imdbId,
+    required this.homePage,
+    required this.profilePath,
+    required this.deathday,
     // @required this.knownFor, // new
-    @required this.id,
-    @required this.popularity,
+    required this.id,
+    required this.popularity,
   });
 
   factory ActorInfoModel.fromJson(Map<String, dynamic> json) {
@@ -54,14 +54,14 @@ class ActorInfoModel extends Equatable {
 
   @override
   List<Object> get props => [
-        birthday,
-        knownForDepartment,
-        name,
-        biography,
-        placeOfBirth,
-        imdbId,
-        homePage,
-        deathday,
+        birthday!,
+        knownForDepartment!,
+        name!,
+        biography!,
+        placeOfBirth!,
+        imdbId!,
+        homePage!,
+        deathday!,
         knownFor,
         id,
         popularity,

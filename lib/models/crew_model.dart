@@ -2,17 +2,17 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 class CrewModel extends Equatable {
-  final String creditId, department, name, job, profilePath;
-  final int id, gender;
+  final String? creditId, department, name, job, profilePath;
+  final int? id, gender;
 
   CrewModel({
-    @required this.creditId,
-    @required this.department,
-    @required this.name,
-    @required this.job,
-    @required this.profilePath,
-    @required this.id,
-    @required this.gender,
+    required this.creditId,
+    required this.department,
+    required this.name,
+    required this.job,
+    required this.profilePath,
+    required this.id,
+    required this.gender,
   });
 
   factory CrewModel.fromJson(Map<String, dynamic> json) {
@@ -29,13 +29,13 @@ class CrewModel extends Equatable {
 
   @override
   List<Object> get props => [
-        creditId,
-        department,
-        name,
-        job,
-        profilePath,
-        id,
-        gender,
+        creditId!,
+        department!,
+        name!,
+        job!,
+        profilePath!,
+        id!,
+        gender!,
       ];
 }
 

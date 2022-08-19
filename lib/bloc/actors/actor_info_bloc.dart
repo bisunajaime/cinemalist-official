@@ -24,7 +24,7 @@ class ActorInfoLoadingNextPage extends ActorInfoState {}
 class ActorInfoLoaded extends ActorInfoState {
   final ActorInfoModel actorInfo;
   ActorInfoLoaded({
-    @required this.actorInfo,
+    required this.actorInfo,
   }) : assert(actorInfo != null);
 
   @override
@@ -42,12 +42,12 @@ abstract class ActorInfoEvent extends Equatable {
 }
 
 class FetchActorInfo extends ActorInfoEvent {
-  final int id;
+  final int? id;
   const FetchActorInfo({
     this.id,
   });
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 /*
@@ -59,7 +59,7 @@ class FetchActorInfo extends ActorInfoEvent {
 class ActorInfoBloc extends Bloc<ActorInfoEvent, ActorInfoState> {
   final TMDBRepository tmdbRepository;
 
-  ActorInfoBloc({@required this.tmdbRepository})
+  ActorInfoBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

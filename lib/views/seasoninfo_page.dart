@@ -3,10 +3,10 @@ import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 
 class SeasonInfoPage extends StatefulWidget {
-  final List<SeasonModel> tvSeasons;
-  final SeasonModel tvShow;
-  final int index;
-  final String name;
+  final List<SeasonModel>? tvSeasons;
+  final SeasonModel? tvShow;
+  final int? index;
+  final String? name;
   SeasonInfoPage({
     this.tvSeasons,
     this.tvShow,
@@ -19,7 +19,7 @@ class SeasonInfoPage extends StatefulWidget {
 }
 
 class _SeasonInfoPageState extends State<SeasonInfoPage> {
-  List<SeasonModel> tv;
+  List<SeasonModel>? tv;
   @override
   void initState() {
     super.initState();
@@ -51,7 +51,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              widget.name,
+              widget.name!,
               style: Styles.mBold.copyWith(
                 fontSize: 20,
                 color: Colors.pinkAccent[100],
@@ -64,7 +64,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              '${widget.tvShow.name}',
+              '${widget.tvShow!.name}',
               style: Styles.mReg,
             ),
           ),
@@ -74,7 +74,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              widget.tvShow.overview,
+              widget.tvShow!.overview!,
               style: Styles.mReg.copyWith(
                 fontSize: 10,
                 height: 1.6,
@@ -100,14 +100,14 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
             child: ListView.builder(
               physics: BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
-              itemCount: tv.length,
+              itemCount: tv!.length,
               itemBuilder: (context, i) {
                 return GestureDetector(
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SeasonInfoPage(
-                        tvShow: tv[i],
+                        tvShow: tv![i],
                         index: i,
                         tvSeasons: widget.tvSeasons,
                         name: widget.name,
@@ -122,10 +122,10 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     decoration: BoxDecoration(
                       color: Color(0xff2e2e2e),
                       image: DecorationImage(
-                          image: tv[i].posterPath == null
+                          image: (tv![i].posterPath == null
                               ? AssetImage('assets/images/placeholder.png')
                               : NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${tv[i].posterPath}'),
+                                  'https://image.tmdb.org/t/p/w500${tv![i].posterPath}')) as ImageProvider<Object>,
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black26,
@@ -134,7 +134,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     ),
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      tv[i].name,
+                      tv![i].name!,
                       style: Styles.mBold,
                     ),
                   ),
@@ -176,7 +176,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
               );
             },
             blendMode: BlendMode.dstIn,
-            child: widget.tvShow.posterPath == null
+            child: widget.tvShow!.posterPath == null
                 ? Image.asset(
                     'assets/images/placeholder.png',
                     height: double.infinity,
@@ -184,7 +184,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     fit: BoxFit.cover,
                   )
                 : Image.network(
-                    'https://image.tmdb.org/t/p/w500${widget.tvShow.posterPath}',
+                    'https://image.tmdb.org/t/p/w500${widget.tvShow!.posterPath}',
                     height: double.infinity,
                     width: double.infinity,
                     fit: BoxFit.cover,

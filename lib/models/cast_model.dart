@@ -2,18 +2,18 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 class CastModel extends Equatable {
-  final int castId, gender, id, order;
-  final String character, creditId, name, profilePath;
+  final int? castId, gender, id, order;
+  final String? character, creditId, name, profilePath;
 
   CastModel({
-    @required this.castId,
-    @required this.gender,
-    @required this.id,
-    @required this.order,
-    @required this.character,
-    @required this.creditId,
-    @required this.name,
-    @required this.profilePath,
+    required this.castId,
+    required this.gender,
+    required this.id,
+    required this.order,
+    required this.character,
+    required this.creditId,
+    required this.name,
+    required this.profilePath,
   });
 
   factory CastModel.fromJson(Map<String, dynamic> json) {
@@ -31,7 +31,7 @@ class CastModel extends Equatable {
 
   @override
   List<Object> get props =>
-      [castId, gender, id, order, character, creditId, name, profilePath];
+      [castId!, gender!, id!, order!, character!, creditId!, name!, profilePath!];
 }
 
 /*

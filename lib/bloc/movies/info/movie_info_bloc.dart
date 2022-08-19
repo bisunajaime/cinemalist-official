@@ -10,9 +10,9 @@ import 'movie_info_state.dart';
 class MovieInfoBloc extends Bloc<MovieInfoEvent, MovieInfoState> {
   final TMDBRepository tmdbRepository;
   int initialPage = 1;
-  MovieInfo movieInfo;
+  late MovieInfo movieInfo;
 
-  MovieInfoBloc({@required this.tmdbRepository})
+  MovieInfoBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

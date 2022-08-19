@@ -2,19 +2,19 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 class TVShowModel extends Equatable {
-  final String originalName, name, firstAirDate, posterPath, overview;
-  final double popularity, voteAverage;
-  final int voteCount, id;
+  final String? originalName, name, firstAirDate, posterPath, overview;
+  final double? popularity, voteAverage;
+  final int? voteCount, id;
   TVShowModel({
-    @required this.id,
-    @required this.originalName,
-    @required this.name,
-    @required this.firstAirDate,
-    @required this.posterPath,
-    @required this.overview,
-    @required this.popularity,
-    @required this.voteAverage,
-    @required this.voteCount,
+    required this.id,
+    required this.originalName,
+    required this.name,
+    required this.firstAirDate,
+    required this.posterPath,
+    required this.overview,
+    required this.popularity,
+    required this.voteAverage,
+    required this.voteCount,
   });
 
   factory TVShowModel.fromJson(Map<String, dynamic> json) {
@@ -33,15 +33,15 @@ class TVShowModel extends Equatable {
 
   @override
   List<Object> get props => [
-        id,
-        originalName,
-        name,
-        firstAirDate,
-        posterPath,
-        overview,
-        popularity,
-        voteAverage,
-        voteCount,
+        id!,
+        originalName!,
+        name!,
+        firstAirDate!,
+        posterPath!,
+        overview!,
+        popularity!,
+        voteAverage!,
+        voteCount!,
       ];
 
   @override

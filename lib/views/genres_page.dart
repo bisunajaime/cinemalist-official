@@ -10,8 +10,8 @@ import 'package:http/http.dart' as http;
 import 'movie_page.dart';
 
 class GenresPage extends StatefulWidget {
-  final int id;
-  final String genre;
+  final int? id;
+  final String? genre;
   GenresPage({this.id, this.genre});
   @override
   _GenresPageState createState() => _GenresPageState();
@@ -41,7 +41,7 @@ class _GenresPageState extends State<GenresPage> {
         backgroundColor: Color(0xff0E0E0E),
         appBar: AppBar(
           title: Text(
-            widget.genre,
+            widget.genre!,
             style: Styles.mReg.copyWith(
               color: Colors.pinkAccent[100],
             ),
@@ -66,7 +66,7 @@ class _GenresPageState extends State<GenresPage> {
         }
 
         if (state is MovieByGenreSuccess) {
-          if (state.movieByGenreMovies.isEmpty) {
+          if (state.movieByGenreMovies!.isEmpty) {
             return Center(
               child: Text('None'),
             );
@@ -95,11 +95,11 @@ class _GenresPageState extends State<GenresPage> {
                     mainAxisSpacing: 5.0,
                     childAspectRatio: 0.7,
                   ),
-                  itemCount: state.hasReachedMax
-                      ? state.movieByGenreMovies.length
-                      : state.movieByGenreMovies.length + 1,
+                  itemCount: state.hasReachedMax!
+                      ? state.movieByGenreMovies!.length
+                      : state.movieByGenreMovies!.length + 1,
                   itemBuilder: (context, i) {
-                    return i >= state.movieByGenreMovies.length
+                    return i >= state.movieByGenreMovies!.length
                         ? Shimmer.fromColors(
                             child: Container(
                               color: Color(0xff232323),
@@ -108,7 +108,7 @@ class _GenresPageState extends State<GenresPage> {
                             highlightColor: Color(0xff4A4A4A),
                           )
                         : buildNowShowingMovies(
-                            context, state.movieByGenreMovies[i]);
+                            context, state.movieByGenreMovies![i]);
                   },
                 ),
               ),

@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 class GenresBloc extends Bloc<GenreEvent, GenresState> {
   final TMDBRepository tmdbRepository;
 
-  GenresBloc({@required this.tmdbRepository}) : assert(tmdbRepository != null);
+  GenresBloc({required this.tmdbRepository}) : assert(tmdbRepository != null);
 
   @override
   GenresState get initialState => GenresEmpty();

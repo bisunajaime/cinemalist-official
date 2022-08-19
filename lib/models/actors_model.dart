@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 class ActorsModel extends Equatable {
-  final int id;
-  final double popularity;
-  final String department, profilePath, name;
+  final int? id;
+  final double? popularity;
+  final String? department, profilePath, name;
 
   ActorsModel(
       {this.id, this.popularity, this.department, this.profilePath, this.name});
@@ -22,9 +22,9 @@ class ActorsModel extends Equatable {
 
   @override
   List<Object> get props => [
-        popularity,
-        department,
-        profilePath,
-        name,
+        popularity!,
+        department!,
+        profilePath!,
+        name!,
       ];
 }

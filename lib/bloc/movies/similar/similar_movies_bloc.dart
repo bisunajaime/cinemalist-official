@@ -15,10 +15,10 @@ abstract class SimilarMoviesEvent extends Equatable {
 }
 
 class FetchSimilarMoviesMovies extends SimilarMoviesEvent {
-  final int id;
+  final int? id;
   const FetchSimilarMoviesMovies({this.id});
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 //STATES
@@ -37,22 +37,22 @@ class SimilarMoviesLoading extends SimilarMoviesState {}
 class SimilarMoviesError extends SimilarMoviesState {}
 
 class SimilarMoviesLoaded extends SimilarMoviesState {
-  final List<GenericMoviesModel> similarMoviesMovies;
+  final List<GenericMoviesModel>? similarMoviesMovies;
 
   const SimilarMoviesLoaded({
     this.similarMoviesMovies,
   });
   @override
-  List<Object> get props => [similarMoviesMovies];
+  List<Object> get props => [similarMoviesMovies!];
   @override
   String toString() =>
-      'SimilarMoviesSuccess { SimilarMoviesMovies: ${similarMoviesMovies.length} }';
+      'SimilarMoviesSuccess { SimilarMoviesMovies: ${similarMoviesMovies!.length} }';
 }
 
 // BLOC
 
 class SimilarMoviesBloc extends Bloc<SimilarMoviesEvent, SimilarMoviesState> {
-  final TMDBRepository tmdbRepository;
+  final TMDBRepository? tmdbRepository;
   SimilarMoviesBloc({this.tmdbRepository});
 
   @override
@@ -64,7 +64,7 @@ class SimilarMoviesBloc extends Bloc<SimilarMoviesEvent, SimilarMoviesState> {
       yield SimilarMoviesLoading();
       try {
         final List<GenericMoviesModel> similar =
-            await tmdbRepository.fetchSimilarMovies(id: event.id);
+            await tmdbRepository!.fetchSimilarMovies(id: event.id);
         yield SimilarMoviesLoaded(similarMoviesMovies: similar);
       } catch (e) {
         yield SimilarMoviesError();

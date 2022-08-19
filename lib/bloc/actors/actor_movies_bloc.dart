@@ -24,7 +24,7 @@ class ActorMoviesLoadingNextPage extends ActorMoviesState {}
 class ActorMoviesLoaded extends ActorMoviesState {
   final List<GenericMoviesModel> actorMovies;
   ActorMoviesLoaded({
-    @required this.actorMovies,
+    required this.actorMovies,
   }) : assert(actorMovies != null);
 
   @override
@@ -42,12 +42,12 @@ abstract class ActorMoviesEvent extends Equatable {
 }
 
 class FetchActorMovies extends ActorMoviesEvent {
-  final int id;
+  final int? id;
   const FetchActorMovies({
     this.id,
   });
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 /*
@@ -59,7 +59,7 @@ class FetchActorMovies extends ActorMoviesEvent {
 class ActorMoviesBloc extends Bloc<ActorMoviesEvent, ActorMoviesState> {
   final TMDBRepository tmdbRepository;
 
-  ActorMoviesBloc({@required this.tmdbRepository})
+  ActorMoviesBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

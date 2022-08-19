@@ -18,7 +18,7 @@ class TMDBApiClient {
   final baseUrl = "https://api.themoviedb.org/3";
   final http.Client httpClient;
 
-  TMDBApiClient({@required this.httpClient}) : assert(httpClient != null);
+  TMDBApiClient({required this.httpClient}) : assert(httpClient != null);
 
   Future<List<GenresModel>> fetchCategories() async {
     List<GenresModel> genres = [];
@@ -86,7 +86,7 @@ class TMDBApiClient {
     return actors;
   }
 
-  Future<List<GenericMoviesModel>> fetchNowPlaying({int page}) async {
+  Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
     List<GenericMoviesModel> nowPlaying = [];
     final url =
         '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=$page';
@@ -100,7 +100,7 @@ class TMDBApiClient {
     return nowPlaying;
   }
 
-  Future<List<TVShowModel>> fetchPopularTvShows({int page}) async {
+  Future<List<TVShowModel>> fetchPopularTvShows({int? page}) async {
     List<TVShowModel> tvShows = [];
     // https://api.themoviedb.org/3/discover/tv?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false
     final url =
@@ -115,7 +115,7 @@ class TMDBApiClient {
     return tvShows;
   }
 
-  Future<MovieInfo> fetchMovieInfo({int id}) async {
+  Future<MovieInfo> fetchMovieInfo({int? id}) async {
     //https://api.themoviedb.org/3/movie/419704?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&append_to_response=videos
     final url =
         '$baseUrl/movie/$id?api_key=$apiKey&language=en-US&append_to_response=videos';
@@ -128,7 +128,7 @@ class TMDBApiClient {
     return movieInfo;
   }
 
-  Future<List<CastModel>> fetchMovieCasts({int id}) async {
+  Future<List<CastModel>> fetchMovieCasts({int? id}) async {
     List<CastModel> casts = [];
     final url = '$baseUrl/movie/$id/credits?api_key=$apiKey';
     final response = await httpClient.get(url);
@@ -140,7 +140,7 @@ class TMDBApiClient {
     return casts;
   }
 
-  Future<TvShowCreditsModel> fetchTvShowCredits({int id}) async {
+  Future<TvShowCreditsModel> fetchTvShowCredits({int? id}) async {
     final url = '$baseUrl/tv/$id/credits?api_key=$apiKey';
     final response = await httpClient.get(url);
     if (response.statusCode != 200) {
@@ -152,7 +152,7 @@ class TMDBApiClient {
     return tvShowCreditsModel;
   }
 
-  Future<ActorInfoModel> fetchActorInfo({int id}) async {
+  Future<ActorInfoModel> fetchActorInfo({int? id}) async {
     final url = '$baseUrl/person/$id?api_key=$apiKey&language=en-US';
     final response = await httpClient.get(url);
     final decodedJson = jsonDecode(response.body);
@@ -160,7 +160,7 @@ class TMDBApiClient {
     return actorInfoModel;
   }
 
-  Future<List<GenericMoviesModel>> fetchSimilarMovies({int id}) async {
+  Future<List<GenericMoviesModel>> fetchSimilarMovies({int? id}) async {
     List<GenericMoviesModel> similarMovies = [];
     final url =
         '$baseUrl/movie/$id/similar?api_key=$apiKey&language=en-US&page=1';
@@ -171,7 +171,7 @@ class TMDBApiClient {
     return similarMovies;
   }
 
-  Future<List<TVShowModel>> fetchSimilarTvShows({int id}) async {
+  Future<List<TVShowModel>> fetchSimilarTvShows({int? id}) async {
     List<TVShowModel> similarTvShows = [];
     final url = '$baseUrl/tv/$id/similar?api_key=$apiKey&language=en-US&page=1';
     final response = await httpClient.get(url);
@@ -182,7 +182,7 @@ class TMDBApiClient {
   }
 
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
-      {int id, int page}) async {
+      {int? id, int? page}) async {
     // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
     List<GenericMoviesModel> moviesByGenre = [];
     final url =
@@ -194,7 +194,7 @@ class TMDBApiClient {
     return moviesByGenre;
   }
 
-  Future<List<GenericMoviesModel>> fetchActorMovies({int id}) async {
+  Future<List<GenericMoviesModel>> fetchActorMovies({int? id}) async {
 //    https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_cast=16483
     List<GenericMoviesModel> actorMovies = [];
     final url =
@@ -206,7 +206,7 @@ class TMDBApiClient {
     return actorMovies;
   }
 
-  Future<List<SeasonModel>> fetchTvSeasons({int id}) async {
+  Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
     //  https://api.themoviedb.org/3/tv/456?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US
     List<SeasonModel> seasons = [];
     final url = '$baseUrl/tv/$id?api_key=$apiKey&language=en-US';
@@ -217,7 +217,7 @@ class TMDBApiClient {
     return seasons;
   }
 
-  Future fetchSearchResults({String type, String query, int page}) async {
+  Future fetchSearchResults({String? type, String? query, int? page}) async {
     switch (type) {
       case 'movie':
         final url =

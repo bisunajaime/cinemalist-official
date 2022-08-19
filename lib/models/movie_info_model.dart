@@ -3,17 +3,17 @@ import 'package:tmdbflutter/barrels/models.dart';
 import 'package:meta/meta.dart';
 
 class MovieInfoModel extends Equatable {
-  final String homepage, imdbId, status;
-  final int budget, revenue;
+  final String? homepage, imdbId, status;
+  final int? budget, revenue;
   final List<GenresModel> genres;
 
   MovieInfoModel({
-    @required this.homepage,
-    @required this.imdbId,
-    @required this.status,
-    @required this.budget,
-    @required this.revenue,
-    @required this.genres,
+    required this.homepage,
+    required this.imdbId,
+    required this.status,
+    required this.budget,
+    required this.revenue,
+    required this.genres,
   });
 
   factory MovieInfoModel.fromJson(Map<String, dynamic> json) {
@@ -25,17 +25,17 @@ class MovieInfoModel extends Equatable {
       status: json['status'],
       budget: json['budget'],
       revenue: json['revenue'],
-      genres: genres,
+      genres: genres as List<GenresModel>,
     );
   }
 
   @override
   List<Object> get props => [
-        homepage,
-        imdbId,
-        status,
-        budget,
-        revenue,
+        homepage!,
+        imdbId!,
+        status!,
+        budget!,
+        revenue!,
         genres,
       ];
 }

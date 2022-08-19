@@ -23,7 +23,7 @@ class TvSeasonsLoadingNextPage extends TvSeasonsState {}
 class TvSeasonsLoaded extends TvSeasonsState {
   final List<SeasonModel> tvSeasons;
   TvSeasonsLoaded({
-    @required this.tvSeasons,
+    required this.tvSeasons,
   }) : assert(tvSeasons != null);
 
   @override
@@ -41,12 +41,12 @@ abstract class TvSeasonsEvent extends Equatable {
 }
 
 class FetchTvSeasons extends TvSeasonsEvent {
-  final int id;
+  final int? id;
   const FetchTvSeasons({
     this.id,
   });
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 }
 
 /*
@@ -58,7 +58,7 @@ class FetchTvSeasons extends TvSeasonsEvent {
 class TvSeasonsBloc extends Bloc<TvSeasonsEvent, TvSeasonsState> {
   final TMDBRepository tmdbRepository;
 
-  TvSeasonsBloc({@required this.tmdbRepository})
+  TvSeasonsBloc({required this.tmdbRepository})
       : assert(tmdbRepository != null);
 
   @override

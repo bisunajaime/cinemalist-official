@@ -3,8 +3,8 @@ import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/crew_model.dart';
 
 class TvShowCreditsModel extends Equatable {
-  final List<CastModel> casts;
-  final List<CrewModel> crew;
+  final List<CastModel>? casts;
+  final List<CrewModel>? crew;
   TvShowCreditsModel({this.casts, this.crew});
 
   factory TvShowCreditsModel.fromJson(Map<String, dynamic> json) {
@@ -23,5 +23,5 @@ class TvShowCreditsModel extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object> get props => [casts, crew];
+  List<Object> get props => [casts!, crew!];
 }

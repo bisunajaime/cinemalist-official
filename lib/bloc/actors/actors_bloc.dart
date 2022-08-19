@@ -8,7 +8,7 @@ import '../../repository/tmdb_repository.dart';
 class ActorsBloc extends Bloc<ActorsEvent, ActorState> {
   final TMDBRepository tmdbRepository;
 
-  ActorsBloc({@required this.tmdbRepository}) : assert(tmdbRepository != null);
+  ActorsBloc({required this.tmdbRepository}) : assert(tmdbRepository != null);
 
   @override
   ActorState get initialState => ActorEmpty();

@@ -45,8 +45,8 @@ class MyApp extends StatelessWidget {
   final TMDBRepository repository;
 
   MyApp({
-    Key key,
-    @required this.repository,
+    required Key key,
+    required this.repository,
   })  : assert(repository != null),
         super(key: key);
   @override
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
 
 class MainPage extends StatefulWidget {
   final TMDBRepository repository;
-  MainPage({@required this.repository});
+  MainPage({required this.repository});
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -75,7 +75,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with AutomaticKeepAliveClientMixin {
   int index = 0;
-  PageController controller;
+  late PageController controller;
 
   @override
   void initState() {

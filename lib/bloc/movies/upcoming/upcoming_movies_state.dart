@@ -16,7 +16,7 @@ class UpcomingMoviesError extends UpcomingMoviesState {}
 
 class UpcomingMoviesLoaded extends UpcomingMoviesState {
   final List<GenericMoviesModel> upcomingMovies;
-  const UpcomingMoviesLoaded({@required this.upcomingMovies})
+  const UpcomingMoviesLoaded({required this.upcomingMovies})
       : assert(upcomingMovies != null);
 
   @override

@@ -9,17 +9,17 @@ abstract class SearchEvent extends Equatable {
 }
 
 class FetchSearchResults extends SearchEvent {
-  final String query;
-  final String type;
+  final String? query;
+  final String? type;
   const FetchSearchResults({this.query, this.type});
 
   @override
-  List<Object> get props => [query, type];
+  List<Object> get props => [query!, type!];
 }
 
 class ClearEvent extends SearchEvent {
-  final String query;
-  final String type;
+  final String? query;
+  final String? type;
   const ClearEvent({this.query, this.type});
   @override
   List<Object> get props => [];
@@ -41,16 +41,16 @@ class SearchError extends SearchState {}
 class ClearSearch extends SearchState {}
 
 class SearchResultsLoaded extends SearchState {
-  final List searchModel;
-  final bool hasReachedMax;
+  final List? searchModel;
+  final bool? hasReachedMax;
   const SearchResultsLoaded({
     this.searchModel,
     this.hasReachedMax,
   });
 
   SearchResultsLoaded copyWith({
-    List searchModel,
-    bool hasReachedMax,
+    List? searchModel,
+    bool? hasReachedMax,
   }) {
     return SearchResultsLoaded(
       searchModel: searchModel ?? this.searchModel,
@@ -59,16 +59,16 @@ class SearchResultsLoaded extends SearchState {
   }
 
   @override
-  List<Object> get props => [searchModel, hasReachedMax];
+  List<Object> get props => [searchModel!, hasReachedMax!];
   @override
   String toString() =>
-      "SearchResultsLoaded { searchModel: ${searchModel.length}, hasReachedMax: $hasReachedMax }";
+      "SearchResultsLoaded { searchModel: ${searchModel!.length}, hasReachedMax: $hasReachedMax }";
 }
 
 // BLOC
 
 class SearchResultBloc extends Bloc<SearchEvent, SearchState> {
-  final TMDBRepository tmdbRepository;
+  final TMDBRepository? tmdbRepository;
   int page = 1;
   SearchResultBloc({this.tmdbRepository});
 
@@ -79,7 +79,7 @@ class SearchResultBloc extends Bloc<SearchEvent, SearchState> {
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is FetchSearchResults) {
       yield SearchIsLoading();
-      final results = await tmdbRepository.fetchSearchResults(
+      final results = await tmdbRepository!.fetchSearchResults(
         query: event.query,
         type: event.type,
         page: 1,

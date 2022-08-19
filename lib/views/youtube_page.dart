@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePage extends StatefulWidget {
-  final String ytKey;
-  final String title;
+  final String? ytKey;
+  final String? title;
   YoutubePage({this.ytKey, this.title});
   @override
   _YoutubePageState createState() => _YoutubePageState();
 }
 
 class _YoutubePageState extends State<YoutubePage> {
-  YoutubePlayerController _controller;
+  late YoutubePlayerController _controller;
   bool _isPlayerReady = false;
-  PlayerState _playerState;
-  YoutubeMetaData _videoMetaData;
+  PlayerState? _playerState;
+  YoutubeMetaData? _videoMetaData;
 
   @override
   void initState() {
     super.initState();
     _controller = YoutubePlayerController(
-      initialVideoId: widget.ytKey,
+      initialVideoId: widget.ytKey!,
       flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
@@ -56,7 +56,7 @@ class _YoutubePageState extends State<YoutubePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title!),
         backgroundColor: Color(0xff0e0e0e),
         centerTitle: true,
       ),

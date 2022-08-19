@@ -14,7 +14,7 @@ import '../repository/tmdb_repository.dart';
 import '../styles/styles.dart';
 
 class ActorInfoPage extends StatefulWidget {
-  final int id;
+  final int? id;
   ActorInfoPage({this.id});
   @override
   _ActorInfoPageState createState() => _ActorInfoPageState();
@@ -169,11 +169,11 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                         ),
                         decoration: BoxDecoration(
                             image: DecorationImage(
-                          image: actorInfoModel.profilePath == null
+                          image: (actorInfoModel.profilePath == null
                               ? AssetImage(
                                   'assets/images/placeholder_actor.png')
                               : NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}'),
+                                  'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}')) as ImageProvider<Object>,
                           alignment: Alignment.center,
                           fit: BoxFit.cover,
                         )),
@@ -187,7 +187,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                         child: ListView(
                           children: <Widget>[
                             Text(
-                              actorInfoModel.name,
+                              actorInfoModel.name!,
                               style: Styles.mBold.copyWith(
                                 fontSize: 20,
                                 color: Colors.pinkAccent[100],
@@ -205,7 +205,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                             Text(
                               actorInfoModel.placeOfBirth == "?"
                                   ? "Not Specified"
-                                  : actorInfoModel.placeOfBirth,
+                                  : actorInfoModel.placeOfBirth!,
                               style: Styles.mReg.copyWith(
                                 fontSize: 10,
                               ),
@@ -220,7 +220,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                               ),
                             ),
                             Text(
-                              actorInfoModel.knownForDepartment,
+                              actorInfoModel.knownForDepartment!,
                               style: Styles.mReg.copyWith(
                                 fontSize: 10,
                               ),
@@ -238,7 +238,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                               actorInfoModel.birthday == "?"
                                   ? "Not Specified"
                                   : DateFormat.yMMMd().format(DateTime.tryParse(
-                                      actorInfoModel.birthday)),
+                                      actorInfoModel.birthday!)!),
                               style: Styles.mReg.copyWith(
                                 fontSize: 10,
                               ),
@@ -257,7 +257,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                                   ? "Not Specified"
                                   : (DateTime.now().year -
                                           DateTime.parse(
-                                                  actorInfoModel.birthday)
+                                                  actorInfoModel.birthday!)
                                               .year)
                                       .toString(),
                               style: Styles.mReg.copyWith(
@@ -276,7 +276,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                             Text(
                               actorInfoModel.deathday == "?"
                                   ? "Alive"
-                                  : actorInfoModel.deathday,
+                                  : actorInfoModel.deathday!,
                               style: Styles.mReg.copyWith(
                                 fontSize: 10,
                               ),
@@ -328,9 +328,9 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  actorInfoModel.biography.trim().length == 0
+                  actorInfoModel.biography!.trim().length == 0
                       ? 'Not Specified'
-                      : actorInfoModel.biography,
+                      : actorInfoModel.biography!,
                   style: Styles.mReg.copyWith(
                     fontSize: 10,
                   ),

@@ -20,8 +20,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../barrels/models.dart';
 
 class MoviePage extends StatefulWidget {
-  final GenericMoviesModel model;
-  final String tag;
+  final GenericMoviesModel? model;
+  final String? tag;
 
   MoviePage({
     this.model,
@@ -49,7 +49,7 @@ class _MoviePageState extends State<MoviePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.model.id);
+    print(widget.model!.id);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -89,7 +89,7 @@ class _MoviePageState extends State<MoviePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              widget.model.title,
+              widget.model!.title!,
               style: Styles.mBold.copyWith(
                 fontSize: 20,
                 color: Colors.pinkAccent[100],
@@ -105,7 +105,7 @@ class _MoviePageState extends State<MoviePage> {
               children: <Widget>[
                 Text(
                   DateFormat.yMMMd()
-                      .format(DateTime.parse(widget.model.releaseDate)),
+                      .format(DateTime.parse(widget.model!.releaseDate!)),
                   style: Styles.mMed.copyWith(
                     fontSize: 12,
                     color: Colors.amber,
@@ -122,7 +122,7 @@ class _MoviePageState extends State<MoviePage> {
                       size: 12,
                     ),
                     Text(
-                      widget.model.voteAverage.toString(),
+                      widget.model!.voteAverage.toString(),
                       style: Styles.mBold.copyWith(
                         fontSize: 12,
                       ),
@@ -138,7 +138,7 @@ class _MoviePageState extends State<MoviePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              widget.model.overview,
+              widget.model!.overview!,
               style: Styles.mReg.copyWith(
                 fontSize: 10,
                 height: 1.6,
@@ -164,7 +164,7 @@ class _MoviePageState extends State<MoviePage> {
           BlocBuilder<MovieInfoBloc, MovieInfoState>(builder: (context, state) {
             if (state is MovieInfoEmpty) {
               BlocProvider.of<MovieInfoBloc>(context)
-                  .add(FetchMovieInfo(id: widget.model.id));
+                  .add(FetchMovieInfo(id: widget.model!.id));
             }
             if (state is MovieInfoError) {
               return Center(child: Text('There was a problem'));
@@ -179,10 +179,10 @@ class _MoviePageState extends State<MoviePage> {
                       width: 8,
                     );
                   },
-                  itemCount: state.movieInfo.videos.results.length,
+                  itemCount: state.movieInfo.videos!.results!.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {
-                    Result videoResult = state.movieInfo.videos.results[index];
+                    Result videoResult = state.movieInfo.videos!.results![index];
                     return Padding(
                       padding: index == 0
                           ? EdgeInsets.only(left: 8)
@@ -255,7 +255,7 @@ class _MoviePageState extends State<MoviePage> {
             builder: (context, state) {
               if (state is MovieCastEmpty) {
                 BlocProvider.of<MovieCastBloc>(context)
-                    .add(FetchMovieCast(id: widget.model.id));
+                    .add(FetchMovieCast(id: widget.model!.id));
               }
               if (state is MovieCastError) {
                 return Text('There was a problem');
@@ -306,11 +306,11 @@ class _MoviePageState extends State<MoviePage> {
                                         decoration: BoxDecoration(
                                           color: Color(0xff252525),
                                           image: DecorationImage(
-                                            image: model.profilePath == null
+                                            image: (model.profilePath == null
                                                 ? AssetImage(
                                                     'assets/images/placeholder_actor.png')
                                                 : NetworkImage(
-                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}'),
+                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}')) as ImageProvider<Object>,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -320,7 +320,7 @@ class _MoviePageState extends State<MoviePage> {
                                       height: 5,
                                     ),
                                     Text(
-                                      model.name,
+                                      model.name!,
                                       style: Styles.mReg.copyWith(
                                         fontSize: 10,
                                       ),
@@ -376,7 +376,7 @@ class _MoviePageState extends State<MoviePage> {
             builder: (context, state) {
               if (state is SimilarMoviesEmpty) {
                 BlocProvider.of<SimilarMoviesBloc>(context)
-                    .add(FetchSimilarMoviesMovies(id: widget.model.id));
+                    .add(FetchSimilarMoviesMovies(id: widget.model!.id));
               }
 
               if (state is SimilarMoviesError) {
@@ -386,7 +386,7 @@ class _MoviePageState extends State<MoviePage> {
               }
 
               if (state is SimilarMoviesLoaded) {
-                if (state.similarMoviesMovies.isEmpty) {
+                if (state.similarMoviesMovies!.isEmpty) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -408,16 +408,16 @@ class _MoviePageState extends State<MoviePage> {
                   child: ListView.builder(
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
-                    itemCount: state.similarMoviesMovies.length,
+                    itemCount: state.similarMoviesMovies!.length,
                     itemBuilder: (context, i) {
                       return GestureDetector(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => MoviePage(
-                              model: state.similarMoviesMovies[i],
+                              model: state.similarMoviesMovies![i],
                               tag:
-                                  'similar${state.similarMoviesMovies[i].posterPath}',
+                                  'similar${state.similarMoviesMovies![i].posterPath}',
                             ),
                           ),
                         ),
@@ -430,13 +430,13 @@ class _MoviePageState extends State<MoviePage> {
                                 margin: EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: state.similarMoviesMovies[i]
+                                    image: (state.similarMoviesMovies![i]
                                                 .posterPath ==
                                             null
                                         ? AssetImage(
                                             'assets/images/placeholder.png')
                                         : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${state.similarMoviesMovies[i].posterPath}'),
+                                            'https://image.tmdb.org/t/p/w500${state.similarMoviesMovies![i].posterPath}')) as ImageProvider<Object>,
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
                                       Colors.black26,
@@ -456,7 +456,7 @@ class _MoviePageState extends State<MoviePage> {
                                       width: 2,
                                     ),
                                     Text(
-                                      state.similarMoviesMovies[i].voteAverage
+                                      state.similarMoviesMovies![i].voteAverage
                                           .toString(),
                                       style: Styles.mMed.copyWith(),
                                     ),
@@ -491,7 +491,7 @@ class _MoviePageState extends State<MoviePage> {
           height: double.infinity,
           width: double.infinity,
           child: Hero(
-            tag: widget.tag,
+            tag: widget.tag!,
             child: ShaderMask(
               shaderCallback: (rect) {
                 return LinearGradient(
@@ -512,7 +512,7 @@ class _MoviePageState extends State<MoviePage> {
               },
               blendMode: BlendMode.dstIn,
               child: Image.network(
-                'https://image.tmdb.org/t/p/w500${widget.model.posterPath}',
+                'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,

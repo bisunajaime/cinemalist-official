@@ -15,7 +15,7 @@ class ActorLoading extends ActorState {}
 
 class ActorLoaded extends ActorState {
   final List<ActorsModel> actors;
-  const ActorLoaded({@required this.actors}) : assert(actors != null);
+  const ActorLoaded({required this.actors}) : assert(actors != null);
 
   @override
   List<Object> get props => [actors];

@@ -16,7 +16,7 @@ class TrendingMoviesError extends TrendingMoviesState {}
 
 class TrendingMoviesLoaded extends TrendingMoviesState {
   final List<GenericMoviesModel> trendingMovies;
-  const TrendingMoviesLoaded({@required this.trendingMovies})
+  const TrendingMoviesLoaded({required this.trendingMovies})
       : assert(trendingMovies != null);
 
   @override

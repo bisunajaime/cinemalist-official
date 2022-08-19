@@ -18,7 +18,7 @@ import 'package:tmdbflutter/views/seasoninfo_page.dart';
 import '../styles/styles.dart';
 
 class TvShowPage extends StatefulWidget {
-  final TVShowModel model;
+  final TVShowModel? model;
 
   TvShowPage({this.model});
 
@@ -35,7 +35,7 @@ class _TvShowPageState extends State<TvShowPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.model.id);
+    print(widget.model!.id);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -72,7 +72,7 @@ class _TvShowPageState extends State<TvShowPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Text(
-              widget.model.name,
+              widget.model!.name!,
               style: Styles.mBold.copyWith(
                 fontSize: 20,
                 color: Colors.pinkAccent[100],
@@ -85,7 +85,7 @@ class _TvShowPageState extends State<TvShowPage> {
               children: <Widget>[
                 Text(
                   DateFormat.yMMMd()
-                      .format(DateTime.parse(widget.model.firstAirDate)),
+                      .format(DateTime.parse(widget.model!.firstAirDate!)),
                   style: Styles.mMed.copyWith(
                     fontSize: 12,
                     color: Colors.amber,
@@ -102,7 +102,7 @@ class _TvShowPageState extends State<TvShowPage> {
                       size: 12,
                     ),
                     Text(
-                      widget.model.voteAverage.toString(),
+                      widget.model!.voteAverage.toString(),
                       style: Styles.mBold.copyWith(
                         fontSize: 12,
                       ),
@@ -118,7 +118,7 @@ class _TvShowPageState extends State<TvShowPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              widget.model.overview,
+              widget.model!.overview!,
               style: Styles.mReg.copyWith(
                 fontSize: 10,
                 height: 1.6,
@@ -145,13 +145,13 @@ class _TvShowPageState extends State<TvShowPage> {
             builder: (context, state) {
               if (state is TvShowCreditsEmpty) {
                 BlocProvider.of<TvShowCreditsBloc>(context)
-                    .add(FetchTvShowCredits(id: widget.model.id));
+                    .add(FetchTvShowCredits(id: widget.model!.id));
               }
               if (state is TvShowCreditsError) {
                 return Text('There was a problem');
               }
               if (state is TvShowCreditsLoaded) {
-                int castsSize = state.tvShowCredits.casts.length;
+                int castsSize = state.tvShowCredits.casts!.length;
                 return Container(
                   height: 150,
                   width: double.infinity,
@@ -169,11 +169,11 @@ class _TvShowPageState extends State<TvShowPage> {
                         )
                       : ListView.builder(
                           physics: BouncingScrollPhysics(),
-                          itemCount: state.tvShowCredits.casts.length,
+                          itemCount: state.tvShowCredits.casts!.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, i) {
-                            if (state.tvShowCredits.casts.length == 0) {}
-                            CastModel model = state.tvShowCredits.casts[i];
+                            if (state.tvShowCredits.casts!.length == 0) {}
+                            CastModel model = state.tvShowCredits.casts![i];
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 5,
@@ -197,11 +197,11 @@ class _TvShowPageState extends State<TvShowPage> {
                                         decoration: BoxDecoration(
                                           color: Color(0xff252525),
                                           image: DecorationImage(
-                                            image: model.profilePath == null
+                                            image: (model.profilePath == null
                                                 ? AssetImage(
                                                     'assets/images/placeholder_actor.png')
                                                 : NetworkImage(
-                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}'),
+                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}')) as ImageProvider<Object>,
                                             fit: BoxFit.cover,
                                           ),
                                         ),
@@ -211,7 +211,7 @@ class _TvShowPageState extends State<TvShowPage> {
                                       height: 5,
                                     ),
                                     Text(
-                                      model.name,
+                                      model.name!,
                                       style: Styles.mReg.copyWith(
                                         fontSize: 10,
                                       ),
@@ -254,7 +254,7 @@ class _TvShowPageState extends State<TvShowPage> {
             builder: (context, state) {
               if (state is TvSeasonsEmpty) {
                 BlocProvider.of<TvSeasonsBloc>(context)
-                    .add(FetchTvSeasons(id: widget.model.id));
+                    .add(FetchTvSeasons(id: widget.model!.id));
               }
 
               if (state is TvSeasonsEmpty) {
@@ -295,7 +295,7 @@ class _TvShowPageState extends State<TvShowPage> {
                                   index: i,
                                   tvSeasons: state.tvSeasons,
                                   tvShow: model,
-                                  name: widget.model.name,
+                                  name: widget.model!.name,
                                 ),
                               ),
                             ),
@@ -307,11 +307,11 @@ class _TvShowPageState extends State<TvShowPage> {
                               decoration: BoxDecoration(
                                 color: Color(0xff2e2e2e),
                                 image: DecorationImage(
-                                    image: model.posterPath == null
+                                    image: (model.posterPath == null
                                         ? AssetImage(
                                             'assets/images/placeholder.png')
                                         : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${model.posterPath}'),
+                                            'https://image.tmdb.org/t/p/w500${model.posterPath}')) as ImageProvider<Object>,
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
                                       Colors.black26,
@@ -320,7 +320,7 @@ class _TvShowPageState extends State<TvShowPage> {
                               ),
                               alignment: Alignment.bottomLeft,
                               child: Text(
-                                model.name,
+                                model.name!,
                                 style: Styles.mBold,
                               ),
                             ),
@@ -354,7 +354,7 @@ class _TvShowPageState extends State<TvShowPage> {
             builder: (context, state) {
               if (state is SimilarTvShowsEmpty) {
                 BlocProvider.of<SimilarTvShowsBloc>(context)
-                    .add(FetchSimilarTvShows(id: widget.model.id));
+                    .add(FetchSimilarTvShows(id: widget.model!.id));
               }
 
               if (state is SimilarTvShowsError) {
@@ -364,7 +364,7 @@ class _TvShowPageState extends State<TvShowPage> {
               }
 
               if (state is SimilarTvShowsLoaded) {
-                if (state.similarTvShows.isEmpty) {
+                if (state.similarTvShows!.isEmpty) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -386,14 +386,14 @@ class _TvShowPageState extends State<TvShowPage> {
                   child: ListView.builder(
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
-                    itemCount: state.similarTvShows.length,
+                    itemCount: state.similarTvShows!.length,
                     itemBuilder: (context, i) {
                       return GestureDetector(
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TvShowPage(
-                              model: state.similarTvShows[i],
+                              model: state.similarTvShows![i],
                             ),
                           ),
                         ),
@@ -406,12 +406,12 @@ class _TvShowPageState extends State<TvShowPage> {
                                 margin: EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: state.similarTvShows[i].posterPath ==
+                                    image: (state.similarTvShows![i].posterPath ==
                                             null
                                         ? AssetImage(
                                             'assets/images/placeholder.png')
                                         : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${state.similarTvShows[i].posterPath}'),
+                                            'https://image.tmdb.org/t/p/w500${state.similarTvShows![i].posterPath}')) as ImageProvider<Object>,
                                     fit: BoxFit.cover,
                                     colorFilter: ColorFilter.mode(
                                       Colors.black26,
@@ -431,7 +431,7 @@ class _TvShowPageState extends State<TvShowPage> {
                                       width: 2,
                                     ),
                                     Text(
-                                      state.similarTvShows[i].voteAverage
+                                      state.similarTvShows![i].voteAverage
                                           .toString(),
                                       style: Styles.mMed.copyWith(),
                                     ),
@@ -487,7 +487,7 @@ class _TvShowPageState extends State<TvShowPage> {
             },
             blendMode: BlendMode.dstIn,
             child: Image.network(
-              'https://image.tmdb.org/t/p/w500${widget.model.posterPath}',
+              'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
               height: double.infinity,
               width: double.infinity,
               fit: BoxFit.cover,

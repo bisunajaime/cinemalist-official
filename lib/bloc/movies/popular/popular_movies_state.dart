@@ -16,7 +16,7 @@ class PopularMoviesError extends PopularMoviesState {}
 
 class PopularMoviesLoaded extends PopularMoviesState {
   final List<GenericMoviesModel> popularMovies;
-  const PopularMoviesLoaded({@required this.popularMovies})
+  const PopularMoviesLoaded({required this.popularMovies})
       : assert(popularMovies != null);
 
   @override

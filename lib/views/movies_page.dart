@@ -15,7 +15,7 @@ class _MoviesPageState extends State<MoviesPage>
     with AutomaticKeepAliveClientMixin {
   ScrollController controller = new ScrollController();
   final scrollThreshold = 200;
-  NowShowingBloc _nowShowingBloc;
+  late NowShowingBloc _nowShowingBloc;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class _MoviesPageState extends State<MoviesPage>
             );
           }
           if (state is NowShowingSuccess) {
-            if (state.nowShowingMovies.isEmpty) {
+            if (state.nowShowingMovies!.isEmpty) {
               return Center(
                 child: Text('No Posts'),
               );
@@ -110,14 +110,14 @@ class _MoviesPageState extends State<MoviesPage>
                   mainAxisSpacing: 5.0,
                   childAspectRatio: 0.7,
                 ),
-                itemCount: state.hasReachedMax
-                    ? state.nowShowingMovies.length
-                    : state.nowShowingMovies.length + 1,
+                itemCount: state.hasReachedMax!
+                    ? state.nowShowingMovies!.length
+                    : state.nowShowingMovies!.length + 1,
                 controller: controller,
                 itemBuilder: (context, i) {
-                  state.nowShowingMovies
+                  state.nowShowingMovies!
                       .removeWhere((element) => element.posterPath == null);
-                  return i >= state.nowShowingMovies.length
+                  return i >= state.nowShowingMovies!.length
                       ? Shimmer.fromColors(
                           child: Container(
                             color: Color(0xff232323),
@@ -126,7 +126,7 @@ class _MoviesPageState extends State<MoviesPage>
                           highlightColor: Color(0xff4A4A4A),
                         )
                       : buildNowShowingMovies(
-                          context, state.nowShowingMovies[i]);
+                          context, state.nowShowingMovies![i]);
                 },
               ),
             );
