@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage>
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.pinkAccent[400],
+                          Colors.pinkAccent[400]!,
                           Colors.redAccent,
                         ],
                         begin: Alignment.topLeft,

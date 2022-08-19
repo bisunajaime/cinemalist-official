@@ -45,10 +45,9 @@ class MyApp extends StatelessWidget {
   final TMDBRepository repository;
 
   MyApp({
-    required Key key,
     required this.repository,
-  })  : assert(repository != null),
-        super(key: key);
+  });
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -117,37 +116,25 @@ class _MainPageState extends State<MainPage>
             icon: Icon(
               Icons.home,
             ),
-            title: Text(
-              'Home',
-              style: Styles.mMed,
-            ),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.movie,
             ),
-            title: Text(
-              'Movie',
-              style: Styles.mMed,
-            ),
+            label: 'Movie',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.tv,
             ),
-            title: Text(
-              'TV',
-              style: Styles.mMed,
-            ),
+            label: 'TV',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.search,
             ),
-            title: Text(
-              'Search',
-              style: Styles.mMed,
-            ),
+            label: 'Search',
           ),
         ],
       ),
