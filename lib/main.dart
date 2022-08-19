@@ -21,7 +21,7 @@ import 'barrels/actors_barrel.dart';
 import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  // BlocSupervisor.delegate = SimpleBlocDelegate();
   final TMDBRepository repository = TMDBRepository(
     tmdbApiClient: TMDBApiClient(
       httpClient: http.Client(),
@@ -33,13 +33,13 @@ void main() {
 }
 
 // BLoc Delegate
-class SimpleBlocDelegate extends BlocDelegate {
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    print(transition);
-  }
-}
+// class SimpleBlocDelegate extends BlocDelegate {
+//   @override
+//   void onTransition(Bloc bloc, Transition transition) {
+//     super.onTransition(bloc, transition);
+//     print(transition);
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   final TMDBRepository repository;
