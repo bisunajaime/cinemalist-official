@@ -10,9 +10,6 @@
         android:name="${applicationName}"
         android:label="tmdbflutter"
         android:icon="@mipmap/launcher_icon">
-        <meta-data
-            android:name="flutterEmbedding"
-            android:value="2" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
