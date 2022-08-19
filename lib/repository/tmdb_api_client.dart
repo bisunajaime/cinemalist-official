@@ -14,12 +14,13 @@ import '../barrels/models.dart';
 
 class TMDBApiClient {
   final String apiKey = "efd2f9bdbe60bbb9414be9a5a20296b0";
-  final baseUrl = "https://api.themoviedb.org/3";
+  final baseUrl = "api.themoviedb.org";
+  final version = '/3';
   final http.Client httpClient;
   late final UriLoader uriLoader;
 
   TMDBApiClient({required this.httpClient}) {
-    uriLoader = HttpUriLoader(baseUrl);
+    uriLoader = TMDBUriLoader(baseUrl, version, apiKey);
   }
 
   Future<List<GenresModel>> fetchCategories() async {
@@ -37,9 +38,12 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchPopular() async {
     List<GenericMoviesModel> popularMovies = [];
-    final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=1';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final path = '/discover/movie';
+    final uri = uriLoader.generateUri(path, {
+      'sort_by': 'popularity.desc',
+      'page': '1',
+    });
+    final response = await httpClient.get(uri);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }

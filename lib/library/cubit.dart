@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart' as c;
+import 'package:tmdbflutter/repository/tmdb_repository.dart';
 
 abstract class Cubit<T> extends c.Cubit<T?> {
   Cubit(initialState) : super(null);
@@ -17,7 +18,14 @@ abstract class Cubit<T> extends c.Cubit<T?> {
 
   Future<void> loadData() async {
     setIsLoading(true);
-    emit(await loadFromServer());
+    final result = await loadFromServer();
+    // TODO: save locally and if there is no internet, use the local file
+    emit(result);
     setIsLoading(false);
   }
+}
+
+abstract class TMDBCubit<T> extends Cubit<T?> {
+  final TMDBRepository tmdbRepository;
+  TMDBCubit(this.tmdbRepository) : super(null);
 }

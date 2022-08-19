@@ -146,9 +146,8 @@ class _MainPageState extends State<MainPage>
             ),
           ),
           BlocProvider(
-            create: (context) => PopularMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
+            create: (context) =>
+                PopularMoviesCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
             create: (context) => UpcomingMoviesBloc(
