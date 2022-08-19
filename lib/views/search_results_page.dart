@@ -311,7 +311,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           ),
           suffixIcon: GestureDetector(
             onTap: () {
-              _searchResultBloc.drain();
               _searchResultBloc.add(FetchSearchResults(
                 type: widget.type,
                 query: searchController.text,
