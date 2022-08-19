@@ -141,28 +141,22 @@ class _MainPageState extends State<MainPage>
       body: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => GenresBloc(
-              tmdbRepository: widget.repository,
-            ),
+            create: (context) => GenresCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
             create: (context) =>
                 PopularMoviesCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
-            create: (context) => UpcomingMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
+            create: (context) =>
+                UpcomingMoviesCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
-            create: (context) => TrendingMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
+            create: (context) =>
+                TrendingMoviesCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
-            create: (context) => ActorsBloc(
-              tmdbRepository: widget.repository,
-            ),
+            create: (context) => ActorsCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
             create: (context) => NowShowingBloc(

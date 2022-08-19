@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 class GenresModel extends Equatable {
   final int? id;
   final String? name;
+  String? genreImage;
   GenresModel({this.id, this.name});
 
   factory GenresModel.fromJson(Map<String, dynamic> json) {

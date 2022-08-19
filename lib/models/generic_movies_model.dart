@@ -11,6 +11,7 @@ class GenericMoviesModel extends Equatable {
   final double? voteAverage;
   final String? overview;
   final String? releaseDate;
+  final List<int>? genreIds;
 
   GenericMoviesModel({
     this.popularity,
@@ -23,6 +24,7 @@ class GenericMoviesModel extends Equatable {
     this.voteAverage,
     this.overview,
     this.releaseDate,
+    this.genreIds,
   });
 
   @override
@@ -48,6 +50,7 @@ class GenericMoviesModel extends Equatable {
       id: json['id'],
       // adult: json['adult'],
       title: json['title'],
+      genreIds: json["genre_ids"].cast<int>(),
       voteAverage: json['vote_average'].toDouble(),
       overview: json['overview'],
       releaseDate: json['release_date'],

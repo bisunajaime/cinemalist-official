@@ -25,7 +25,7 @@ class TMDBApiClient {
 
   Future<List<GenresModel>> fetchCategories() async {
     List<GenresModel> genres = [];
-    final url = '$baseUrl/genre/movie/list?api_key=$apiKey&language=en-US';
+    final url = '/genre/movie/list';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -55,7 +55,7 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchUpcoming() async {
     List<GenericMoviesModel> upcomingMovies = [];
-    final url = '$baseUrl/movie/upcoming?api_key=$apiKey&language=en-US&page=1';
+    final url = '/movie/upcoming';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -68,7 +68,7 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchTrending() async {
     List<GenericMoviesModel> trendingMovies = [];
-    final url = '$baseUrl/trending/movie/week?api_key=$apiKey';
+    final url = '/trending/movie/week';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -81,7 +81,7 @@ class TMDBApiClient {
 
   Future<List<ActorsModel>> fetchActors() async {
     List<ActorsModel> actors = [];
-    final url = '$baseUrl/person/popular?api_key=$apiKey&language=en-US&page=1';
+    final url = '/person/popular';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -94,8 +94,7 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
     List<GenericMoviesModel> nowPlaying = [];
-    final url =
-        '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=$page';
+    final url = '/movie/now_playing&language=en-US&page=$page';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -110,7 +109,7 @@ class TMDBApiClient {
     List<TVShowModel> tvShows = [];
     // https://api.themoviedb.org/3/discover/tv?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false
     final url =
-        '$baseUrl/discover/tv?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=$page';
+        '/discover/tv&language=en-US&sort_by=popularity.desc&page=$page';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -123,8 +122,7 @@ class TMDBApiClient {
 
   Future<MovieInfo> fetchMovieInfo({int? id}) async {
     //https://api.themoviedb.org/3/movie/419704?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&append_to_response=videos
-    final url =
-        '$baseUrl/movie/$id?api_key=$apiKey&language=en-US&append_to_response=videos';
+    final url = '/movie/$id&language=en-US&append_to_response=videos';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -136,7 +134,7 @@ class TMDBApiClient {
 
   Future<List<CastModel>> fetchMovieCasts({int? id}) async {
     List<CastModel> casts = [];
-    final url = '$baseUrl/movie/$id/credits?api_key=$apiKey';
+    final url = '/movie/$id/credits';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -147,7 +145,7 @@ class TMDBApiClient {
   }
 
   Future<TvShowCreditsModel> fetchTvShowCredits({int? id}) async {
-    final url = '$baseUrl/tv/$id/credits?api_key=$apiKey';
+    final url = '/tv/$id/credits';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -159,7 +157,7 @@ class TMDBApiClient {
   }
 
   Future<ActorInfoModel> fetchActorInfo({int? id}) async {
-    final url = '$baseUrl/person/$id?api_key=$apiKey&language=en-US';
+    final url = '/person/$id&language=en-US';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodedJson = jsonDecode(response.body);
     ActorInfoModel actorInfoModel = ActorInfoModel.fromJson(decodedJson);
@@ -168,8 +166,7 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchSimilarMovies({int? id}) async {
     List<GenericMoviesModel> similarMovies = [];
-    final url =
-        '$baseUrl/movie/$id/similar?api_key=$apiKey&language=en-US&page=1';
+    final url = '/movie/$id/similar&language=en-US&page=1';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
@@ -179,7 +176,7 @@ class TMDBApiClient {
 
   Future<List<TVShowModel>> fetchSimilarTvShows({int? id}) async {
     List<TVShowModel> similarTvShows = [];
-    final url = '$baseUrl/tv/$id/similar?api_key=$apiKey&language=en-US&page=1';
+    final url = '/tv/$id/similar&language=en-US&page=1';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results']
@@ -192,7 +189,7 @@ class TMDBApiClient {
     // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
     List<GenericMoviesModel> moviesByGenre = [];
     final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
+        '/discover/movie&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
@@ -204,7 +201,7 @@ class TMDBApiClient {
 //    https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_cast=16483
     List<GenericMoviesModel> actorMovies = [];
     final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_cast=$id';
+        '/discover/movie&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_cast=$id';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
@@ -215,7 +212,7 @@ class TMDBApiClient {
   Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
     //  https://api.themoviedb.org/3/tv/456?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US
     List<SeasonModel> seasons = [];
-    final url = '$baseUrl/tv/$id?api_key=$apiKey&language=en-US';
+    final url = '/tv/$id&language=en-US';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['seasons']
@@ -226,8 +223,7 @@ class TMDBApiClient {
   Future fetchSearchResults({String? type, String? query, int? page}) async {
     switch (type) {
       case 'movie':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final url = '/search/$type&query=$query&page=$page';
         final response = await httpClient.get(uriLoader.generateUri(url));
         final decodeJson = jsonDecode(response.body);
         List<GenericMoviesModel> searchedMovies = [];
@@ -238,8 +234,7 @@ class TMDBApiClient {
             (movie) => searchedMovies.add(GenericMoviesModel.fromJson(movie)));
         return searchedMovies;
       case 'person':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final url = '/search/$type&query=$query&page=$page';
         final response = await httpClient.get(uriLoader.generateUri(url));
         final decodeJson = jsonDecode(response.body);
         List<ActorInfoModel> actorsInfo = [];
@@ -250,8 +245,7 @@ class TMDBApiClient {
             .forEach((actor) => actorsInfo.add(ActorInfoModel.fromJson(actor)));
         return actorsInfo;
       case 'tv':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
+        final url = '/search/$type&query=$query&page=$page';
         final response = await httpClient.get(uriLoader.generateUri(url));
         final decodeJson = jsonDecode(response.body);
         List<TVShowModel> searchedTvShows = [];
