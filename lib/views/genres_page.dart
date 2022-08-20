@@ -84,7 +84,7 @@ class _GenresPageState extends State<GenresPage> {
                     ],
                   ),
                 ),
-                titlePadding: EdgeInsets.all(18),
+                titlePadding: EdgeInsets.all(12),
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -97,6 +97,9 @@ class _GenresPageState extends State<GenresPage> {
                   height: double.infinity,
                 ),
               ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(height: 5),
             ),
             SliverToBoxAdapter(
               child: MoviesByGenreListWidget(),
