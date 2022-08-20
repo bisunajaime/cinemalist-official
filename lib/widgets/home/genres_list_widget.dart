@@ -7,7 +7,7 @@ import 'package:tmdbflutter/views/genres_page.dart';
 
 const genreColorPair = <String, List<Color>>{
   'action': [Colors.pinkAccent, Colors.redAccent],
-  'adventure': [Color(0xff7BD097), Color(0xff4FA380)],
+  'adventure': [Color(0xff4FA380), Color(0xff7BD097)],
   'animation': [Colors.blueAccent, Colors.blue],
   'comedy': [Colors.red, Colors.orange],
   'crime': [Color(0xff736665), Color(0xffA48B85)],
@@ -23,7 +23,7 @@ const genreColorPair = <String, List<Color>>{
   'science fiction': [Color(0xff437B9B), Color(0xff2E419A)],
   'tv movie': [Color(0xff9D9FB0), Color(0xff5861A5)],
   'thriller': [Color(0xff962118), Color(0xff7B1B14)],
-  'war': [Color(0xffA86533), Color(0xff462209)],
+  'war': [Color(0xff462209), Color(0xffA86533)],
   'western': [Color(0xff996A44), Color(0xff7E4632)],
 };
 
