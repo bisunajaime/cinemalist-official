@@ -126,9 +126,12 @@ class TMDBApiClient {
   }
 
   Future<MovieInfo> fetchMovieInfo({int? id}) async {
-    //https://api.themoviedb.org/3/movie/419704?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&append_to_response=videos
-    final url = '/movie/$id&language=en-US&append_to_response=videos';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final filters = FilterBuilder().appendToResponse();
+    final url = '/movie/$id';
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -169,10 +172,15 @@ class TMDBApiClient {
     return actorInfoModel;
   }
 
-  Future<List<GenericMoviesModel>> fetchSimilarMovies({int? id}) async {
+  Future<List<GenericMoviesModel>> fetchSimilarMovies(
+      {int? id, int? page}) async {
     List<GenericMoviesModel> similarMovies = [];
-    final url = '/movie/$id/similar&language=en-US&page=1';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final filters = FilterBuilder().page(page);
+    final url = '/movie/$id/similar';
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
