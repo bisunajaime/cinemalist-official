@@ -8,6 +8,7 @@ import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/widgets/genre/movies_by_genre_list.dart';
+import 'package:tmdbflutter/widgets/home/genres_list_widget.dart';
 import 'movie_page.dart';
 
 class GenresPage extends StatefulWidget {
@@ -46,7 +47,7 @@ class _GenresPageState extends State<GenresPage> {
               automaticallyImplyLeading: false,
               pinned: true,
               expandedHeight: MediaQuery.of(context).size.height * .2,
-              backgroundColor: Colors.pinkAccent[400]!,
+              backgroundColor: grabColorForGenre(widget.genre!).first,
               flexibleSpace: FlexibleSpaceBar(
                 collapseMode: CollapseMode.parallax,
                 title: Align(
@@ -87,10 +88,7 @@ class _GenresPageState extends State<GenresPage> {
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        Colors.pinkAccent[400]!,
-                        Colors.redAccent,
-                      ],
+                      colors: grabColorForGenre(widget.genre!),
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
