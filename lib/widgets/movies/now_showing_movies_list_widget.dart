@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class NowShowingMoviesListWidget extends StatefulWidget {
   const NowShowingMoviesListWidget();
@@ -118,14 +120,23 @@ class _NowShowingMoviesListWidgetState
         decoration: BoxDecoration(
           color: Color(0xff232323),
         ),
-        child: FadeInImage.assetNetwork(
-          placeholder: 'assets/images/placeholder_box.png',
-          image: 'https://image.tmdb.org/t/p/w500${movies.posterPath}',
-          fit: BoxFit.cover,
+        child: CachedNetworkImage(
+          imageUrl: 'https://image.tmdb.org/t/p/w500${movies.posterPath}',
+          cacheManager: DefaultCacheManager(),
           fadeInCurve: Curves.ease,
           fadeInDuration: Duration(milliseconds: 250),
           fadeOutDuration: Duration(milliseconds: 250),
           fadeOutCurve: Curves.ease,
+          fit: BoxFit.cover,
+          placeholder: (context, string) {
+            return Shimmer.fromColors(
+              child: Container(
+                color: Color(0xff232323),
+              ),
+              baseColor: Color(0xff313131),
+              highlightColor: Color(0xff4A4A4A),
+            );
+          },
         ),
       ),
     );
