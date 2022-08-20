@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/byGenre/moviesbygenre_cubit.dart';
+import 'package:tmdbflutter/views/movie_page.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
 import 'package:tmdbflutter/widgets/generic/generic_movie_grid_widget.dart';
 
@@ -14,8 +15,9 @@ class MoviesByGenreListWidget extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TvShowPage(
+                builder: (context) => MoviePage(
                   model: element,
+                  tag: 'genre${element.posterPath}',
                 ),
               ));
         });
