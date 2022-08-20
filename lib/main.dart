@@ -165,11 +165,6 @@ class _MainPageState extends State<MainPage>
             create: (context) =>
                 PopularTvShowsCubit(widget.repository)..loadData(),
           ),
-          BlocProvider(
-            create: (context) => MovieCastBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
         ],
         child: PageView(
           controller: controller,
