@@ -66,6 +66,7 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
     page = 1;
     initialLoading = true;
     final results = await loadFromServer();
+    logger.success('first page loaded');
     if (results == null) return null;
     state?.addAll(results.toList());
     initialLoading = false;
