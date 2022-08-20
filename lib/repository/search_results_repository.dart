@@ -29,7 +29,7 @@ class MovieSearchResults extends SearchResultsRepository<GenericMoviesModel> {
       '/search/$type',
       filters.toJson(),
     );
-    final response = await client.get(uriLoader.generateUri(uri));
+    final response = await client.get(uri);
     final decodeJson = jsonDecode(response.body);
     List<GenericMoviesModel> searchedMovies = [];
     if (decodeJson['results'] == null) {
