@@ -40,4 +40,7 @@ class GenresCubit extends TMDBCubit<List<GenresModel>?> {
       }
     });
   }
+
+  @override
+  String get name => 'GenresCubit';
 }

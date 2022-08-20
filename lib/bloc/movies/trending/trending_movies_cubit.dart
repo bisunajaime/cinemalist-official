@@ -9,4 +9,7 @@ class TrendingMoviesCubit extends TMDBCubit<List<GenericMoviesModel>?> {
   Future<List<GenericMoviesModel>?> loadFromServer() async {
     return await tmdbRepository.fetchTrending();
   }
+
+  @override
+  String get name => 'TrendingMoviesCubit';
 }

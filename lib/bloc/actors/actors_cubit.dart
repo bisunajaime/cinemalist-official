@@ -9,4 +9,7 @@ class ActorsCubit extends TMDBCubit<List<ActorsModel>?> {
   Future<List<ActorsModel>?> loadFromServer() async {
     return await tmdbRepository.fetchActors();
   }
+
+  @override
+  String get name => 'ActorsCubit';
 }

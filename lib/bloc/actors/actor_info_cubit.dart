@@ -1,6 +1,5 @@
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
-
 import '../../repository/tmdb_repository.dart';
 
 class ActorInfoCubit extends Cubit<ActorInfoModel?> {
@@ -18,4 +17,7 @@ class ActorInfoCubit extends Cubit<ActorInfoModel?> {
   Future<ActorInfoModel?> loadFromServer() async {
     return await tmdbRepository.fetchActorInfo();
   }
+
+  @override
+  String get name => 'ActorInfoCubit';
 }
