@@ -94,8 +94,12 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
     List<GenericMoviesModel> nowPlaying = [];
-    final url = '/movie/now_playing&language=en-US&page=$page';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final url = '/movie/now_playing';
+    final filters = FilterBuilder().page(page);
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
