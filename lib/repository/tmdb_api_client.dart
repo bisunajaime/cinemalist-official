@@ -201,8 +201,11 @@ class TMDBApiClient {
       {int? id, int? page}) async {
     List<GenericMoviesModel> moviesByGenre = [];
     final url = '/discover/movie';
-    final filters =
-        FilterBuilder().sortBy().includeAdult().page(page).withGenres(id);
+    final filters = FilterBuilder()
+        .sortBy()
+        .includeAdult(include: false)
+        .page(page)
+        .withGenres(id);
     final response =
         await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
