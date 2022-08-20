@@ -66,6 +66,7 @@ class _NowShowingMoviesListWidgetState
       );
     }
     nowShowingMovies!;
+    nowShowingMovies.removeWhere((element) => element?.posterPath == null);
     return RefreshIndicator(
       onRefresh: () async {
         cubit.refresh();
@@ -85,8 +86,6 @@ class _NowShowingMoviesListWidgetState
             : nowShowingMovies.length + 1,
         controller: controller,
         itemBuilder: (context, i) {
-          nowShowingMovies
-              .removeWhere((element) => element?.posterPath == null);
           return i >= nowShowingMovies.length
               ? Shimmer.fromColors(
                   child: Container(

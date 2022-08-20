@@ -111,10 +111,11 @@ class TMDBApiClient {
 
   Future<List<TVShowModel>> fetchPopularTvShows({int? page}) async {
     List<TVShowModel> tvShows = [];
-    // https://api.themoviedb.org/3/discover/tv?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false
-    final url =
-        '/discover/tv&language=en-US&sort_by=popularity.desc&page=$page';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+
+    final filters = FilterBuilder().sortBy().includeAdult().page(page);
+    final url = '/discover/tv';
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }

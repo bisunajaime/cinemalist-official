@@ -162,9 +162,8 @@ class _MainPageState extends State<MainPage>
             create: (context) => NowShowingCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
-            create: (context) => PopularTvShowsBloc(
-              tmdbRepository: widget.repository,
-            )..add(FetchPopularTvShows()),
+            create: (context) =>
+                PopularTvShowsCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
             create: (context) => MovieCastBloc(

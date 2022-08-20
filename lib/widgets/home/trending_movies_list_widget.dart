@@ -14,7 +14,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
     final trendingMovies = cubit.state;
     if (cubit.isLoading) {
       return Container(
-        height: MediaQuery.of(context).size.height * .4,
+        height: MediaQuery.of(context).size.height * .3,
         width: MediaQuery.of(context).size.width,
         child: ListView.builder(
           itemCount: 6,
@@ -42,7 +42,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
     }
     trendingMovies!;
     return Container(
-      height: MediaQuery.of(context).size.height * .4,
+      height: MediaQuery.of(context).size.height * .3,
       width: MediaQuery.of(context).size.width,
       child: ListView.builder(
         physics: BouncingScrollPhysics(),
