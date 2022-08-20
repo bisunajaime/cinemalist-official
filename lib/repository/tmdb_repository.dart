@@ -14,8 +14,7 @@ import '../barrels/models.dart';
 class TMDBRepository {
   final TMDBApiClient tmdbApiClient;
 
-  TMDBRepository({required this.tmdbApiClient})
-      : assert(tmdbApiClient != null);
+  TMDBRepository({required this.tmdbApiClient}) : assert(tmdbApiClient != null);
 
   Future<List<GenresModel>> fetchCategories() async {
     return await tmdbApiClient.fetchCategories();
@@ -61,8 +60,9 @@ class TMDBRepository {
     return await tmdbApiClient.fetchActorInfo(id: id);
   }
 
-  Future<List<GenericMoviesModel>> fetchSimilarMovies({int? id}) async {
-    return await tmdbApiClient.fetchSimilarMovies(id: id);
+  Future<List<GenericMoviesModel>> fetchSimilarMovies(
+      {int? id, int? page}) async {
+    return await tmdbApiClient.fetchSimilarMovies(id: id, page: page);
   }
 
   Future<List<TVShowModel>> fetchSimilarTvShows({int? id}) async {
