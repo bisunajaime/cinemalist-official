@@ -1,7 +1,11 @@
 import 'package:bloc/bloc.dart' as c;
+import 'package:tmdbflutter/repository/log.dart';
+import 'package:tmdbflutter/repository/logger_log.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 
 abstract class Cubit<T> extends c.Cubit<T?> {
+  String get name;
+  Log get logger => LoggerLog(name);
   Cubit(initialState) : super(null);
 
   bool isLoading = true;
@@ -17,15 +21,80 @@ abstract class Cubit<T> extends c.Cubit<T?> {
   Future<T?> loadFromServer();
 
   Future<void> loadData() async {
+    logger.waiting('loading data');
     setIsLoading(true);
     final result = await loadFromServer();
     // TODO: save locally and if there is no internet, use the local file
     emit(result);
     setIsLoading(false);
+    logger.success('data loaded');
   }
 }
 
 abstract class TMDBCubit<T> extends Cubit<T?> {
   final TMDBRepository tmdbRepository;
   TMDBCubit(this.tmdbRepository) : super(null);
+}
+
+abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
+  final TMDBRepository tmdbRepository;
+  PagedTMDBCubit(this.tmdbRepository) : super([]);
+  bool loadingNextPage = false;
+  bool initialLoading = true;
+  bool hasReachedMax = false;
+
+  @override
+  bool get loading => state?.isEmpty == true && initialLoading == true;
+
+  int page = 1;
+
+  Future<List<T>?> loadFromServerWithPage(int page);
+
+  Future<void> refresh() async {
+    logger.waiting('refreshing');
+    state?.clear();
+    page = 1;
+    hasReachedMax = false;
+    initialLoading = true;
+    loadingNextPage = false;
+    await loadFirstPage();
+    logger.success('refreshed');
+  }
+
+  Future<void> loadFirstPage() async {
+    logger.waiting('loading first page');
+    page = 1;
+    initialLoading = true;
+    final results = await loadFromServer();
+    if (results == null) return null;
+    state?.addAll(results.toList());
+    initialLoading = false;
+    emit(results);
+  }
+
+  Future<void> loadNextPage({required Function onComplete}) async {
+    if (loadingNextPage == true) return;
+    page++;
+    logger.waiting('loading next page: $page');
+    loadingNextPage = true;
+    final results = await loadFromServerWithPage(page);
+    if (results == null) {
+      logger.error('no results from server');
+      return;
+    }
+    state?.addAll(results.toList());
+    loadingNextPage = false;
+    if (results.isEmpty && state?.isNotEmpty == true) {
+      logger.info('reached max');
+      hasReachedMax = true;
+    }
+    logger.success('next page loaded for page: $page');
+    onComplete();
+    emit(state);
+  }
+
+  @override
+  Future<void> loadData() async {
+    await loadFirstPage();
+  }
 }
