@@ -19,7 +19,9 @@ class TvShowsPage extends StatelessWidget {
         SizedBox(
           height: 10,
         ),
-        TvShowsListWidget(),
+        Expanded(
+          child: TvShowsListWidget(),
+        ),
       ],
     );
   }

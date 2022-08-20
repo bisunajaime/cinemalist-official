@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
@@ -25,8 +26,19 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
     final cubit = context.watch<PopularMoviesCubit>();
     final popularMovies = cubit.state;
     if (cubit.isLoading) {
-      return Center(
-        child: CircularProgressIndicator(),
+      return Container(
+        height: MediaQuery.of(context).size.height * .6,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          height: double.infinity,
+          child: Shimmer.fromColors(
+            child: Container(
+              color: Colors.white,
+            ),
+            baseColor: Color(0xff313131),
+            highlightColor: Color(0xff4A4A4A),
+          ),
+        ),
       );
     }
     if (cubit.error) {
