@@ -40,17 +40,71 @@ class _GenresPageState extends State<GenresPage> {
       create: (context) => MoviesByGenreCubit(tmdbRepo, widget.id!),
       child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        appBar: AppBar(
-          title: Text(
-            widget.genre!,
-            style: Styles.mReg.copyWith(
-              color: Colors.pinkAccent[100],
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              automaticallyImplyLeading: false,
+              pinned: true,
+              expandedHeight: MediaQuery.of(context).size.height * .2,
+              backgroundColor: Colors.pinkAccent[400]!,
+              flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.parallax,
+                title: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        widget.genre!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                titlePadding: EdgeInsets.all(18),
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.pinkAccent[400]!,
+                        Colors.redAccent,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
             ),
-          ),
-          backgroundColor: Colors.transparent,
-          centerTitle: true,
+            SliverToBoxAdapter(
+              child: MoviesByGenreListWidget(),
+            ),
+          ],
         ),
-        body: MoviesByGenreListWidget(),
       ),
     );
   }
