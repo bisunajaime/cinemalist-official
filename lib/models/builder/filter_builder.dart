@@ -1,10 +1,14 @@
-enum SortFilterOrder {
+enum SortFilterOrderOptions {
   ascending,
   descending,
 }
 
-enum SortFilter {
+enum SortFilterOptions {
   popularity,
+}
+
+enum AppendToResponseOptions {
+  videos,
 }
 
 class FilterBuilder {
@@ -15,19 +19,24 @@ class FilterBuilder {
   int? _withGenres;
   String? _includeVideo;
   int? _page;
+  String? _appendToResponse;
 
-  static final _filterOptions = <SortFilter, String>{
-    SortFilter.popularity: 'popularity',
+  static final _filterOptions = <SortFilterOptions, String>{
+    SortFilterOptions.popularity: 'popularity',
   };
-  static final _filterOrderOptions = <SortFilterOrder, String>{
-    SortFilterOrder.ascending: 'asc',
-    SortFilterOrder.descending: 'desc',
+  static final _filterOrderOptions = <SortFilterOrderOptions, String>{
+    SortFilterOrderOptions.ascending: 'asc',
+    SortFilterOrderOptions.descending: 'desc',
+  };
+
+  static final _appendToResponseOptions = <AppendToResponseOptions, String>{
+    AppendToResponseOptions.videos: 'videos',
   };
 
   /// [sortBy] - defaults to sort by popularity and descending order
   FilterBuilder sortBy({
-    SortFilter filter = SortFilter.popularity,
-    SortFilterOrder order = SortFilterOrder.descending,
+    SortFilterOptions filter = SortFilterOptions.popularity,
+    SortFilterOrderOptions order = SortFilterOrderOptions.descending,
   }) {
     _sortBy = '${_filterOptions[filter]}.${_filterOrderOptions[order]}';
     return this;
@@ -63,6 +72,13 @@ class FilterBuilder {
     return this;
   }
 
+  FilterBuilder appendToResponse(
+      {AppendToResponseOptions appendToResponse =
+          AppendToResponseOptions.videos}) {
+    _appendToResponse = _appendToResponseOptions[appendToResponse];
+    return this;
+  }
+
   /// [defaultState]
   /// * page = 1
   /// * includes video
@@ -82,6 +98,7 @@ class FilterBuilder {
       'with_cast': '$_withCast',
       'with_genres': '$_withGenres',
       'query': '$_query',
+      'append_to_response': '$_appendToResponse',
     };
     json.removeWhere((key, value) => value == 'null');
     return json;
