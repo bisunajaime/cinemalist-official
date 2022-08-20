@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
+import 'package:tmdbflutter/models/builder/filter_builder.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
+import 'package:tmdbflutter/repository/search_results_repository.dart';
 import 'package:tmdbflutter/repository/uri_generator.dart';
 
 import '../barrels/models.dart';
@@ -39,10 +41,8 @@ class TMDBApiClient {
   Future<List<GenericMoviesModel>> fetchPopular() async {
     List<GenericMoviesModel> popularMovies = [];
     final path = '/discover/movie';
-    final uri = uriLoader.generateUri(path, {
-      'sort_by': 'popularity.desc',
-      'page': '1',
-    });
+    final filter = FilterBuilder().sortBy().page(1);
+    final uri = uriLoader.generateUri(path, filter.toJson());
     final response = await httpClient.get(uri);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
@@ -186,11 +186,12 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
       {int? id, int? page}) async {
-    // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
     List<GenericMoviesModel> moviesByGenre = [];
-    final url =
-        '/discover/movie&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final url = '/discover/movie';
+    final filters =
+        FilterBuilder().sortBy().includeAdult().page(page).withGenres(id);
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (movie) => moviesByGenre.add(GenericMoviesModel.fromJson(movie)));
@@ -198,11 +199,13 @@ class TMDBApiClient {
   }
 
   Future<List<GenericMoviesModel>> fetchActorMovies({int? id}) async {
-//    https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_cast=16483
     List<GenericMoviesModel> actorMovies = [];
-    final url =
-        '/discover/movie&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_cast=$id';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final url = '/discover/movie';
+    final filters = FilterBuilder();
+    final filterMap =
+        filters.sortBy().includeAdult().page(1).withCast(id).toJson();
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filterMap));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (movie) => actorMovies.add(GenericMoviesModel.fromJson(movie)));
@@ -221,45 +224,21 @@ class TMDBApiClient {
   }
 
   Future fetchSearchResults({String? type, String? query, int? page}) async {
+    SearchResultsRepository searchResults =
+        DefaultSearchResults(uriLoader, httpClient);
     switch (type) {
       case 'movie':
-        final url = '/search/$type&query=$query&page=$page';
-        final response = await httpClient.get(uriLoader.generateUri(url));
-        final decodeJson = jsonDecode(response.body);
-        List<GenericMoviesModel> searchedMovies = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results'].forEach(
-            (movie) => searchedMovies.add(GenericMoviesModel.fromJson(movie)));
-        return searchedMovies;
-      case 'person':
-        final url = '/search/$type&query=$query&page=$page';
-        final response = await httpClient.get(uriLoader.generateUri(url));
-        final decodeJson = jsonDecode(response.body);
-        List<ActorInfoModel> actorsInfo = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results']
-            .forEach((actor) => actorsInfo.add(ActorInfoModel.fromJson(actor)));
-        return actorsInfo;
-      case 'tv':
-        final url = '/search/$type&query=$query&page=$page';
-        final response = await httpClient.get(uriLoader.generateUri(url));
-        final decodeJson = jsonDecode(response.body);
-        List<TVShowModel> searchedTvShows = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results'].forEach(
-            (tvShow) => searchedTvShows.add(TVShowModel.fromJson(tvShow)));
-        return searchedTvShows;
-      case 'clear':
-        print('clear');
-        return [];
-      default:
+        searchResults = MovieSearchResults(uriLoader, httpClient);
         break;
+      case 'person':
+        searchResults = PersonSearchResults(uriLoader, httpClient);
+        break;
+      case 'tv':
+        searchResults = TvSearchResults(uriLoader, httpClient);
+        break;
+      case 'clear':
+        return [];
     }
+    return await searchResults.searchMovies(query, page);
   }
 }
