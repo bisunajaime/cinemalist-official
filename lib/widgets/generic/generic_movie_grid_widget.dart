@@ -58,28 +58,28 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
       );
     }
     list!;
-    return RefreshIndicator(
-      onRefresh: () async {
-        widget.pagedCubit.refresh();
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        final maxScroll = notification.metrics.maxScrollExtent;
+        final currentScroll = notification.metrics.pixels;
+        if (maxScroll - currentScroll <= scrollThreshold) {
+          widget.pagedCubit.loadNextPage(onComplete: () {
+            if (mounted) {
+              setState(() {});
+            }
+          });
+        }
+        return true;
       },
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
-          final maxScroll = notification.metrics.maxScrollExtent;
-          final currentScroll = notification.metrics.pixels;
-          if (maxScroll - currentScroll <= scrollThreshold) {
-            widget.pagedCubit.loadNextPage(onComplete: () {
-              if (mounted) {
-                setState(() {});
-              }
-            });
-          }
-          return true;
+      child: RefreshIndicator(
+        onRefresh: () async {
+          widget.pagedCubit.refresh();
         },
         child: GridView.builder(
           // controller: controller,
           shrinkWrap: true,
           padding: EdgeInsets.zero,
-          physics: BouncingScrollPhysics(),
+          physics: ClampingScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             crossAxisSpacing: 5.0,
