@@ -1,29 +1,34 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/movie_info_model.dart';
+import 'package:tmdbflutter/models/builder/filter_builder.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
+import 'package:tmdbflutter/repository/search_results_repository.dart';
+import 'package:tmdbflutter/repository/uri_generator.dart';
 
 import '../barrels/models.dart';
 
 class TMDBApiClient {
   final String apiKey = "efd2f9bdbe60bbb9414be9a5a20296b0";
-  final baseUrl = "https://api.themoviedb.org/3";
+  final baseUrl = "api.themoviedb.org";
+  final version = '/3';
   final http.Client httpClient;
+  late final UriLoader uriLoader;
 
-  TMDBApiClient({@required this.httpClient}) : assert(httpClient != null);
+  TMDBApiClient({required this.httpClient}) {
+    uriLoader = TMDBUriLoader(baseUrl, version, apiKey);
+  }
 
   Future<List<GenresModel>> fetchCategories() async {
     List<GenresModel> genres = [];
-    final url = '$baseUrl/genre/movie/list?api_key=$apiKey&language=en-US';
-    final response = await httpClient.get(url);
+    final url = '/genre/movie/list';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -35,9 +40,10 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchPopular() async {
     List<GenericMoviesModel> popularMovies = [];
-    final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=1';
-    final response = await httpClient.get(url);
+    final path = '/discover/movie';
+    final filter = FilterBuilder().sortBy().page(1);
+    final uri = uriLoader.generateUri(path, filter.toJson());
+    final response = await httpClient.get(uri);
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -49,8 +55,8 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchUpcoming() async {
     List<GenericMoviesModel> upcomingMovies = [];
-    final url = '$baseUrl/movie/upcoming?api_key=$apiKey&language=en-US&page=1';
-    final response = await httpClient.get(url);
+    final url = '/movie/upcoming';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -62,8 +68,8 @@ class TMDBApiClient {
 
   Future<List<GenericMoviesModel>> fetchTrending() async {
     List<GenericMoviesModel> trendingMovies = [];
-    final url = '$baseUrl/trending/movie/week?api_key=$apiKey';
-    final response = await httpClient.get(url);
+    final url = '/trending/movie/week';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -75,8 +81,8 @@ class TMDBApiClient {
 
   Future<List<ActorsModel>> fetchActors() async {
     List<ActorsModel> actors = [];
-    final url = '$baseUrl/person/popular?api_key=$apiKey&language=en-US&page=1';
-    final response = await httpClient.get(url);
+    final url = '/person/popular';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -86,11 +92,14 @@ class TMDBApiClient {
     return actors;
   }
 
-  Future<List<GenericMoviesModel>> fetchNowPlaying({int page}) async {
+  Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
     List<GenericMoviesModel> nowPlaying = [];
-    final url =
-        '$baseUrl/movie/now_playing?api_key=$apiKey&language=en-US&page=$page';
-    final response = await httpClient.get(url);
+    final url = '/movie/now_playing';
+    final filters = FilterBuilder().page(page);
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -100,12 +109,13 @@ class TMDBApiClient {
     return nowPlaying;
   }
 
-  Future<List<TVShowModel>> fetchPopularTvShows({int page}) async {
+  Future<List<TVShowModel>> fetchPopularTvShows({int? page}) async {
     List<TVShowModel> tvShows = [];
-    // https://api.themoviedb.org/3/discover/tv?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&page=1&timezone=America%2FNew_York&include_null_first_air_dates=false
-    final url =
-        '$baseUrl/discover/tv?api_key=$apiKey&language=en-US&sort_by=popularity.desc&page=$page';
-    final response = await httpClient.get(url);
+
+    final filters = FilterBuilder().sortBy().includeAdult().page(page);
+    final url = '/discover/tv';
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -115,11 +125,13 @@ class TMDBApiClient {
     return tvShows;
   }
 
-  Future<MovieInfo> fetchMovieInfo({int id}) async {
-    //https://api.themoviedb.org/3/movie/419704?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&append_to_response=videos
-    final url =
-        '$baseUrl/movie/$id?api_key=$apiKey&language=en-US&append_to_response=videos';
-    final response = await httpClient.get(url);
+  Future<MovieInfo> fetchMovieInfo({int? id}) async {
+    final filters = FilterBuilder().appendToResponse();
+    final url = '/movie/$id';
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -128,10 +140,10 @@ class TMDBApiClient {
     return movieInfo;
   }
 
-  Future<List<CastModel>> fetchMovieCasts({int id}) async {
+  Future<List<CastModel>> fetchMovieCasts({int? id}) async {
     List<CastModel> casts = [];
-    final url = '$baseUrl/movie/$id/credits?api_key=$apiKey';
-    final response = await httpClient.get(url);
+    final url = '/movie/$id/credits';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -140,9 +152,9 @@ class TMDBApiClient {
     return casts;
   }
 
-  Future<TvShowCreditsModel> fetchTvShowCredits({int id}) async {
-    final url = '$baseUrl/tv/$id/credits?api_key=$apiKey';
-    final response = await httpClient.get(url);
+  Future<TvShowCreditsModel> fetchTvShowCredits({int? id}) async {
+    final url = '/tv/$id/credits';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
@@ -152,29 +164,35 @@ class TMDBApiClient {
     return tvShowCreditsModel;
   }
 
-  Future<ActorInfoModel> fetchActorInfo({int id}) async {
-    final url = '$baseUrl/person/$id?api_key=$apiKey&language=en-US';
-    final response = await httpClient.get(url);
+  Future<ActorInfoModel> fetchActorInfo({int? id}) async {
+    final url = '/person/$id';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     final decodedJson = jsonDecode(response.body);
     ActorInfoModel actorInfoModel = ActorInfoModel.fromJson(decodedJson);
     return actorInfoModel;
   }
 
-  Future<List<GenericMoviesModel>> fetchSimilarMovies({int id}) async {
+  Future<List<GenericMoviesModel>> fetchSimilarMovies(
+      {int? id, int? page}) async {
     List<GenericMoviesModel> similarMovies = [];
-    final url =
-        '$baseUrl/movie/$id/similar?api_key=$apiKey&language=en-US&page=1';
-    final response = await httpClient.get(url);
+    final filters = FilterBuilder().page(page);
+    final url = '/movie/$id/similar';
+    final response = await httpClient.get(uriLoader.generateUri(
+      url,
+      filters.toJson(),
+    ));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
     return similarMovies;
   }
 
-  Future<List<TVShowModel>> fetchSimilarTvShows({int id}) async {
+  Future<List<TVShowModel>> fetchSimilarTvShows({int? id, int? page}) async {
     List<TVShowModel> similarTvShows = [];
-    final url = '$baseUrl/tv/$id/similar?api_key=$apiKey&language=en-US&page=1';
-    final response = await httpClient.get(url);
+    final filters = FilterBuilder().page(page);
+    final url = '/tv/$id/similar';
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results']
         .forEach((data) => similarTvShows.add(TVShowModel.fromJson(data)));
@@ -182,88 +200,63 @@ class TMDBApiClient {
   }
 
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
-      {int id, int page}) async {
-    // https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_genres=28
+      {int? id, int? page}) async {
     List<GenericMoviesModel> moviesByGenre = [];
-    final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=$page&with_genres=$id';
-    final response = await httpClient.get(url);
+    final url = '/discover/movie';
+    final filters = FilterBuilder()
+        .sortBy()
+        .includeAdult(include: false)
+        .page(page)
+        .withGenres(id);
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (movie) => moviesByGenre.add(GenericMoviesModel.fromJson(movie)));
     return moviesByGenre;
   }
 
-  Future<List<GenericMoviesModel>> fetchActorMovies({int id}) async {
-//    https://api.themoviedb.org/3/discover/movie?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=true&page=1&with_cast=16483
+  Future<List<GenericMoviesModel>> fetchActorMovies(
+      {int? id, int? page}) async {
     List<GenericMoviesModel> actorMovies = [];
-    final url =
-        '$baseUrl/discover/movie?api_key=$apiKey&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_cast=$id';
-    final response = await httpClient.get(url);
+    final url = '/discover/movie';
+    final filters = FilterBuilder();
+    final filterMap =
+        filters.sortBy().includeAdult().page(page).withCast(id).toJson();
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filterMap));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results'].forEach(
         (movie) => actorMovies.add(GenericMoviesModel.fromJson(movie)));
     return actorMovies;
   }
 
-  Future<List<SeasonModel>> fetchTvSeasons({int id}) async {
-    //  https://api.themoviedb.org/3/tv/456?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US
+  Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
     List<SeasonModel> seasons = [];
-    final url = '$baseUrl/tv/$id?api_key=$apiKey&language=en-US';
-    final response = await httpClient.get(url);
+    final url = '/tv/$id';
+    final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['seasons']
         .forEach((season) => seasons.add(SeasonModel.fromJson(season)));
     return seasons;
   }
 
-  Future fetchSearchResults({String type, String query, int page}) async {
+  Future fetchSearchResults({String? type, String? query, int? page}) async {
+    SearchResultsRepository searchResults =
+        DefaultSearchResults(uriLoader, httpClient);
     switch (type) {
       case 'movie':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
-        final response = await httpClient.get(Uri.encodeFull(url));
-        final decodeJson = jsonDecode(response.body);
-        List<GenericMoviesModel> searchedMovies = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results'].forEach(
-            (movie) => searchedMovies.add(GenericMoviesModel.fromJson(movie)));
-        return searchedMovies;
+        searchResults = MovieSearchResults(uriLoader, httpClient);
         break;
       case 'person':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
-        final response = await httpClient.get(Uri.encodeFull(url));
-        final decodeJson = jsonDecode(response.body);
-        List<ActorInfoModel> actorsInfo = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results']
-            .forEach((actor) => actorsInfo.add(ActorInfoModel.fromJson(actor)));
-        return actorsInfo;
+        searchResults = PersonSearchResults(uriLoader, httpClient);
         break;
       case 'tv':
-        final url =
-            '$baseUrl/search/$type?api_key=$apiKey&query=$query&page=$page';
-        final response = await httpClient.get(Uri.encodeFull(url));
-        final decodeJson = jsonDecode(response.body);
-        List<TVShowModel> searchedTvShows = [];
-        if (decodeJson['results'] == null) {
-          return [];
-        }
-        decodeJson['results'].forEach(
-            (tvShow) => searchedTvShows.add(TVShowModel.fromJson(tvShow)));
-        return searchedTvShows;
+        searchResults = TvSearchResults(uriLoader, httpClient);
         break;
       case 'clear':
-        print('clear');
         return [];
-        break;
-      default:
-        break;
     }
+    return await searchResults.searchMovies(query, page);
   }
 }

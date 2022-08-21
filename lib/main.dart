@@ -5,8 +5,9 @@ import 'package:tmdbflutter/barrels/genres_barrel.dart';
 import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
-import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
+import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
+import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,7 @@ import 'barrels/actors_barrel.dart';
 import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  // BlocSupervisor.delegate = SimpleBlocDelegate();
   final TMDBRepository repository = TMDBRepository(
     tmdbApiClient: TMDBApiClient(
       httpClient: http.Client(),
@@ -33,22 +34,21 @@ void main() {
 }
 
 // BLoc Delegate
-class SimpleBlocDelegate extends BlocDelegate {
-  @override
-  void onTransition(Bloc bloc, Transition transition) {
-    super.onTransition(bloc, transition);
-    print(transition);
-  }
-}
+// class SimpleBlocDelegate extends BlocDelegate {
+//   @override
+//   void onTransition(Bloc bloc, Transition transition) {
+//     super.onTransition(bloc, transition);
+//     print(transition);
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   final TMDBRepository repository;
 
   MyApp({
-    Key key,
-    @required this.repository,
-  })  : assert(repository != null),
-        super(key: key);
+    required this.repository,
+  });
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
 
 class MainPage extends StatefulWidget {
   final TMDBRepository repository;
-  MainPage({@required this.repository});
+  MainPage({required this.repository});
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -75,7 +75,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with AutomaticKeepAliveClientMixin {
   int index = 0;
-  PageController controller;
+  late PageController controller;
 
   @override
   void initState() {
@@ -89,120 +89,98 @@ class _MainPageState extends State<MainPage>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff0E0E0E),
-      bottomNavigationBar: BottomNavigationBar(
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        selectedItemColor: Colors.pinkAccent,
-        selectedFontSize: 10,
-        selectedLabelStyle: Styles.mBold.copyWith(
-          color: Colors.pinkAccent,
-        ),
-        unselectedFontSize: 9,
-        unselectedItemColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: index,
-        onTap: (i) {
-          controller.animateToPage(
-            i,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-          setState(() {
-            index = i;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-            ),
-            title: Text(
-              'Home',
-              style: Styles.mMed,
-            ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color(0xff0E0E0E),
+          selectedItemColor: Colors.pinkAccent,
+          selectedFontSize: 10,
+          selectedLabelStyle: Styles.mBold.copyWith(
+            color: Colors.pinkAccent,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.movie,
+          unselectedFontSize: 9,
+          unselectedItemColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: index,
+          onTap: (i) {
+            controller.animateToPage(
+              i,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease,
+            );
+            setState(() {
+              index = i;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: 'Home',
             ),
-            title: Text(
-              'Movie',
-              style: Styles.mMed,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.movie,
+              ),
+              label: 'Movie',
             ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.tv,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.tv,
+              ),
+              label: 'TV',
             ),
-            title: Text(
-              'TV',
-              style: Styles.mMed,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+              ),
+              label: 'Search',
             ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-            ),
-            title: Text(
-              'Search',
-              style: Styles.mMed,
-            ),
-          ),
-        ],
-      ),
-      body: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => GenresBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => PopularMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => UpcomingMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => TrendingMoviesBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => ActorsBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => NowShowingBloc(
-              tmdbRepository: widget.repository,
-            )..add(FetchNowShowingMovies()),
-          ),
-          BlocProvider(
-            create: (context) => PopularTvShowsBloc(
-              tmdbRepository: widget.repository,
-            )..add(FetchPopularTvShows()),
-          ),
-          BlocProvider(
-            create: (context) => MovieCastBloc(
-              tmdbRepository: widget.repository,
-            ),
-          ),
-        ],
-        child: PageView(
-          controller: controller,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            HomePage(),
-            MoviesPage(),
-            TvShowsPage(),
-            SearchPage(),
           ],
+        ),
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => GenresCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  PopularMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  UpcomingMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  TrendingMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) => ActorsCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) => NowShowingCubit(widget.repository),
+            ),
+            BlocProvider(
+              create: (context) => PopularTvShowsCubit(widget.repository),
+            ),
+            BlocProvider(
+              create: (context) => SearchCubit(widget.repository),
+            ),
+          ],
+          child: PageView(
+            controller: controller,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              HomePage(),
+              MoviesPage(),
+              TvShowsPage(),
+              SearchPage(),
+            ],
+          ),
         ),
       ),
     );

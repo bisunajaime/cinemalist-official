@@ -1,62 +1,73 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/search/search_bloc.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/search_results_page.dart';
-import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/widgets/search/search_widget.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          height: 30,
-        ),
-        buildTitle(),
-        SizedBox(height: 10),
-        Expanded(
-          child: GridView(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              crossAxisSpacing: 5.0,
-              mainAxisSpacing: 5.0,
-              childAspectRatio: 2,
+    super.build(context);
+    return NestedScrollView(
+      physics: BouncingScrollPhysics(),
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [
+          SliverAppBar(
+            backgroundColor: Color(0xff0E0E0E),
+            pinned: true,
+            // bottom: PreferredSize(
+            //   child: SearchField(),
+            //   preferredSize: Size.fromHeight(20),
+            // ),
+            expandedHeight: MediaQuery.of(context).size.height * .2,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.zero,
+              collapseMode: CollapseMode.none,
+              title: Align(
+                alignment: Alignment.bottomLeft,
+                child: buildTitle(),
+              ),
+              background: Container(
+                color: Color(0xff0E0E0E),
+                // child: MoviesSliverCarousel(),
+              ),
             ),
-            children: <Widget>[
-              _buildTypeWidget(
-                  'movie', context, 'assets/images/movie_search.jpg'),
-              _buildTypeWidget('tv', context, 'assets/images/tv_search.jpg'),
-              _buildTypeWidget(
-                  'person', context, 'assets/images/actor_search.jpg'),
-            ],
           ),
-        )
-      ],
+          SliverPersistentHeader(
+            delegate: SearchHeaderDelegate(58),
+            pinned: true,
+          )
+        ];
+      },
+      body: SearchWidget(),
     );
   }
 
   Padding buildTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Text(
-            'Select Type',
-            style: Styles.mBold.copyWith(
-              fontSize: 30,
-            ),
-          ),
           Text(
             'SEARCH',
             style: Styles.mBold.copyWith(
               color: Colors.pinkAccent,
+              fontSize: 10,
+            ),
+          ),
+          Text(
+            'Find everything',
+            style: Styles.mBold.copyWith(
+              fontSize: 20,
             ),
           ),
         ],
@@ -64,46 +75,28 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeWidget(String type, BuildContext context, String imageUrl) {
-    TMDBRepository tmdbRepo = TMDBRepository(
-      tmdbApiClient: TMDBApiClient(
-        httpClient: http.Client(),
-      ),
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: GestureDetector(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BlocProvider(
-              create: (context) => SearchResultBloc(
-                tmdbRepository: tmdbRepo,
-              ),
-              child: SearchResultsPage(
-                type: type,
-              ),
-            ),
-          ),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(imageUrl),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              type.toUpperCase(),
-              style: Styles.mBold.copyWith(
-                fontSize: 30,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final double height;
+
+  SearchHeaderDelegate(this.height);
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SearchField();
+  }
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

@@ -1,16 +1,17 @@
 import 'package:equatable/equatable.dart';
 
 class GenericMoviesModel extends Equatable {
-  final double popularity;
-  final int voteCount;
-  final bool video;
-  final String posterPath;
-  final int id;
-  final bool adult;
-  final String title;
-  final double voteAverage;
-  final String overview;
-  final String releaseDate;
+  final double? popularity;
+  final int? voteCount;
+  final bool? video;
+  final String? posterPath;
+  final int? id;
+  final bool? adult;
+  final String? title;
+  final double? voteAverage;
+  final String? overview;
+  final String? releaseDate;
+  final List<int>? genreIds;
 
   GenericMoviesModel({
     this.popularity,
@@ -23,20 +24,21 @@ class GenericMoviesModel extends Equatable {
     this.voteAverage,
     this.overview,
     this.releaseDate,
+    this.genreIds,
   });
 
   @override
   List<Object> get props => [
-        popularity,
-        voteCount,
-        video,
-        posterPath,
-        id,
-        adult,
-        title,
-        voteAverage,
-        overview,
-        releaseDate,
+        popularity!,
+        voteCount!,
+        video!,
+        posterPath!,
+        id!,
+        adult!,
+        title!,
+        voteAverage!,
+        overview!,
+        releaseDate!,
       ];
 
   factory GenericMoviesModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +50,7 @@ class GenericMoviesModel extends Equatable {
       id: json['id'],
       // adult: json['adult'],
       title: json['title'],
+      genreIds: json["genre_ids"].cast<int>(),
       voteAverage: json['vote_average'].toDouble(),
       overview: json['overview'],
       releaseDate: json['release_date'],
