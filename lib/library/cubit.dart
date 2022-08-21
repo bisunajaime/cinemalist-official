@@ -36,6 +36,17 @@ abstract class TMDBCubit<T> extends Cubit<T?> {
   TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState ?? null);
 }
 
+abstract class SearchTMDBCubit<T> extends Cubit<T?> {
+  final TMDBRepository tmdbRepository;
+  bool didSearch = false;
+  String query = '';
+
+  SearchTMDBCubit(this.tmdbRepository, {initialState})
+      : super(initialState ?? null);
+
+  void clearResults();
+}
+
 abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
   final TMDBRepository tmdbRepository;
   PagedTMDBCubit(this.tmdbRepository, {initialState})
