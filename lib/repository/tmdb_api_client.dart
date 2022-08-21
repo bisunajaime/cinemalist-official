@@ -165,7 +165,7 @@ class TMDBApiClient {
   }
 
   Future<ActorInfoModel> fetchActorInfo({int? id}) async {
-    final url = '/person/$id&language=en-US';
+    final url = '/person/$id';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodedJson = jsonDecode(response.body);
     ActorInfoModel actorInfoModel = ActorInfoModel.fromJson(decodedJson);
