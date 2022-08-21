@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
 class ActorInfoModel extends Equatable {
@@ -12,7 +11,7 @@ class ActorInfoModel extends Equatable {
       homePage,
       profilePath,
       deathday;
-  late List<GenericMoviesModel> knownFor;
+  late final List<GenericMoviesModel> knownFor;
   final int id;
   final double popularity;
 
@@ -32,15 +31,15 @@ class ActorInfoModel extends Equatable {
 
   factory ActorInfoModel.fromJson(Map<String, dynamic> json) {
     return ActorInfoModel(
-      birthday: json['birthday'] ?? "?",
-      knownForDepartment: json['known_for_department'] ?? "?",
-      name: json['name'] ?? "?",
-      biography: json['biography'] ?? "?",
-      placeOfBirth: json['place_of_birth'] ?? "?",
-      imdbId: json['imdb_id'] ?? "?",
-      homePage: json['homepage'] ?? "?",
+      birthday: json['birthday'],
+      knownForDepartment: json['known_for_department'],
+      name: json['name'],
+      biography: json['biography'],
+      placeOfBirth: json['place_of_birth'],
+      imdbId: json['imdb_id'],
+      homePage: json['homepage'],
       profilePath: json['profile_path'],
-      deathday: json['deathday'] ?? "?",
+      deathday: json['deathday'],
 //      knownFor: knownFor ?? [],
       id: json['id'] ?? 0,
       popularity: json['popularity'].toDouble() ?? 0,
