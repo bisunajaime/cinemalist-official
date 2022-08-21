@@ -58,6 +58,7 @@ class ActorsListWidget extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ActorInfoPage(
                     id: actors[i].id,
+                    name: actors[i].name,
                   ),
                 ),
               ),

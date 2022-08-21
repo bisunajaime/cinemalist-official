@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 
 class ActorInfoWidget extends StatelessWidget {
@@ -39,27 +38,26 @@ class ActorInfoWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Container(
-          height: MediaQuery.of(context).size.height * 0.35,
+          height: MediaQuery.of(context).size.height * 0.3,
           width: double.infinity,
           child: Row(
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Container(
-                  height: double.infinity,
-                  margin: EdgeInsets.only(
-                    left: 10,
+                child: AspectRatio(
+                  aspectRatio: 2 / 3,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      image: (actorInfoModel.profilePath == null
+                              ? AssetImage('assets/images/placeholder_actor.png')
+                              : NetworkImage(
+                                  'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}'))
+                          as ImageProvider<Object>,
+                      alignment: Alignment.center,
+                      fit: BoxFit.cover,
+                    )),
                   ),
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                    image: (actorInfoModel.profilePath == null
-                            ? AssetImage('assets/images/placeholder_actor.png')
-                            : NetworkImage(
-                                'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}'))
-                        as ImageProvider<Object>,
-                    alignment: Alignment.center,
-                    fit: BoxFit.cover,
-                  )),
                 ),
               ),
               Expanded(
@@ -69,16 +67,16 @@ class ActorInfoWidget extends StatelessWidget {
                   padding: EdgeInsets.all(5),
                   child: ListView(
                     children: <Widget>[
-                      Text(
-                        actorInfoModel.name!,
-                        style: Styles.mBold.copyWith(
-                          fontSize: 20,
-                          color: Colors.pinkAccent[100],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
+                      // Text(
+                      //   actorInfoModel.name!,
+                      //   style: Styles.mBold.copyWith(
+                      //     fontSize: 20,
+                      //     color: Colors.pinkAccent[100],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 2,
+                      // ),
                       Text(
                         "Birthplace",
                         style: Styles.mBold.copyWith(

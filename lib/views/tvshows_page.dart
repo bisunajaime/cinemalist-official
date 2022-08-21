@@ -22,6 +22,7 @@ class _TvShowsPageState extends State<TvShowsPage>
             pinned: true,
             expandedHeight: MediaQuery.of(context).size.height * .2,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.zero,
               stretchModes: [StretchMode.blurBackground],
               collapseMode: CollapseMode.parallax,
               title: Align(
@@ -42,8 +43,9 @@ class _TvShowsPageState extends State<TvShowsPage>
 
   Padding buildTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

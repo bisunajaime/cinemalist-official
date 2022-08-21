@@ -12,7 +12,11 @@ import '../styles/styles.dart';
 
 class ActorInfoPage extends StatefulWidget {
   final int? id;
-  ActorInfoPage({this.id});
+  final String? name;
+  ActorInfoPage({
+    this.id,
+    required this.name,
+  });
   @override
   _ActorInfoPageState createState() => _ActorInfoPageState();
 }
@@ -37,38 +41,118 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
       ],
       child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        appBar: buildAppBar(),
-        body: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                "Movies",
-                style: Styles.mBold.copyWith(
-                  fontSize: 15,
-                  color: Colors.pinkAccent[100],
+        body: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerScrolled) {
+            return [
+              SliverAppBar(
+                backgroundColor: Colors.pinkAccent,
+                automaticallyImplyLeading: false,
+                pinned: true,
+                centerTitle: false,
+                expandedHeight: MediaQuery.of(context).size.height * .2,
+                flexibleSpace: FlexibleSpaceBar(
+                  titlePadding: EdgeInsets.zero,
+                  stretchModes: [StretchMode.blurBackground],
+                  collapseMode: CollapseMode.parallax,
+                  centerTitle: false,
+                  title: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: buildTitle(),
+                  ),
+                  background: Container(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                      colors: [Colors.pinkAccent, Colors.redAccent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )),
+                    // child: MoviesSliverCarousel(),
+                  ),
                 ),
               ),
-            ),
-            ActorInfoWidget(),
-            SizedBox(height: 10),
-            ActorMoviesWidget(),
-            SizedBox(height: 50),
-          ],
+            ];
+          },
+          body: ListView(
+            padding: EdgeInsets.zero,
+            scrollDirection: Axis.vertical,
+            children: <Widget>[
+              ActorInfoWidget(),
+              SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  "Movies",
+                  style: Styles.mBold.copyWith(
+                    fontSize: 15,
+                    color: Colors.pinkAccent[100],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              ActorMoviesWidget(),
+              SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      title: Text(
-        'Actor Info',
-        style: Styles.mReg.copyWith(
-          fontSize: 15,
+  Padding buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
+      ),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 2,
+                  ),
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  '${widget.name}',
+                  maxLines: 999,
+                  style: Styles.mBold.copyWith(
+                    color: Colors.yellow,
+                    fontSize: 10,
+                  ),
+                ),
+                Text(
+                  'Actor Details',
+                  maxLines: 1,
+                  style: Styles.mBold.copyWith(
+                    fontSize: 20,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

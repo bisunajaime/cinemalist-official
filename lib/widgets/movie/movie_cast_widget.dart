@@ -73,6 +73,7 @@ class MovieCastWidget extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => ActorInfoPage(
                                 id: model.id,
+                                name: model.name,
                               )),
                     ),
                     child: Column(

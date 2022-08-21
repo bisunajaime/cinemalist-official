@@ -27,18 +27,21 @@ class _MoviesPageState extends State<MoviesPage>
             backgroundColor: Color(0xff0E0E0E),
             automaticallyImplyLeading: false,
             pinned: true,
+            centerTitle: false,
             expandedHeight: MediaQuery.of(context).size.height * .2,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.zero,
               stretchModes: [StretchMode.blurBackground],
               collapseMode: CollapseMode.parallax,
+              centerTitle: false,
               title: Align(
                 alignment: Alignment.bottomLeft,
                 child: buildTitle(),
               ),
-              background: Container(
-                color: Color(0xff0E0E0E),
-                // child: MoviesSliverCarousel(),
-              ),
+              // background: Sizedbox(
+              //   color: Color(0xff0E0E0E),
+              //   // child: MoviesSliverCarousel(),
+              // ),
             ),
           ),
         ];
@@ -49,8 +52,9 @@ class _MoviesPageState extends State<MoviesPage>
 
   Padding buildTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

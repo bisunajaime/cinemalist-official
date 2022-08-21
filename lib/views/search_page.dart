@@ -25,6 +25,7 @@ class _SearchPageState extends State<SearchPage>
             // ),
             expandedHeight: MediaQuery.of(context).size.height * .2,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.zero,
               collapseMode: CollapseMode.none,
               title: Align(
                 alignment: Alignment.bottomLeft,
@@ -48,8 +49,9 @@ class _SearchPageState extends State<SearchPage>
 
   Padding buildTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
