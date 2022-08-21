@@ -4,17 +4,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
 import 'package:tmdbflutter/widgets/movies/now_showing_movies_list_widget.dart';
 
-class MoviesPage extends StatelessWidget {
+class MoviesPage extends StatefulWidget {
+  @override
+  State<MoviesPage> createState() => _MoviesPageState();
+}
+
+class _MoviesPageState extends State<MoviesPage>
+    with AutomaticKeepAliveClientMixin<MoviesPage> {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return NestedScrollView(
       physics: BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -69,6 +73,9 @@ class MoviesPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class MoviesSliverCarousel extends StatefulWidget {

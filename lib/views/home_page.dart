@@ -6,9 +6,16 @@ import 'package:tmdbflutter/widgets/home/popular_movies_widget.dart';
 import 'package:tmdbflutter/widgets/home/trending_movies_list_widget.dart';
 import 'package:tmdbflutter/widgets/home/upcoming_movies_list_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin<HomePage> {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView(
       padding: EdgeInsets.zero,
       physics: BouncingScrollPhysics(),

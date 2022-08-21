@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/tvshows/trending/populartvshows_bloc.dart';
 import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/tvshow_page.dart';
 import 'package:tmdbflutter/widgets/tv/tv_shows_list_widget.dart';
 
-class TvShowsPage extends StatelessWidget {
+class TvShowsPage extends StatefulWidget {
+  @override
+  State<TvShowsPage> createState() => _TvShowsPageState();
+}
+
+class _TvShowsPageState extends State<TvShowsPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return NestedScrollView(
       physics: BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -63,4 +66,7 @@ class TvShowsPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

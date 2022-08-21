@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/widgets/search/search_widget.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return NestedScrollView(
       physics: BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -65,6 +72,9 @@ class SearchPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
