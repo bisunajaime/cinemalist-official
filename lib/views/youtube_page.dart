@@ -12,6 +12,7 @@ class YoutubePage extends StatefulWidget {
 class _YoutubePageState extends State<YoutubePage> {
   late YoutubePlayerController _controller;
   bool _isPlayerReady = false;
+  bool isFullScreen = false;
   PlayerState? _playerState;
   YoutubeMetaData? _videoMetaData;
 
@@ -24,6 +25,7 @@ class _YoutubePageState extends State<YoutubePage> {
         autoPlay: false,
         mute: false,
         controlsVisibleAtStart: true,
+        forceHD: true,
       ),
     )..addListener(listener);
     _playerState = PlayerState.unknown;
@@ -31,6 +33,10 @@ class _YoutubePageState extends State<YoutubePage> {
   }
 
   void listener() {
+    if (mounted && isFullScreen != _controller.value.isFullScreen) {
+      isFullScreen = _controller.value.isFullScreen;
+      setState(() {});
+    }
     if (mounted && !_controller.value.isFullScreen) {
       setState(() {
         _playerState = _controller.value.playerState;
@@ -55,18 +61,20 @@ class _YoutubePageState extends State<YoutubePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title!),
-        backgroundColor: Color(0xff0e0e0e),
-        centerTitle: true,
-      ),
+      appBar: isFullScreen == true
+          ? null
+          : AppBar(
+              title: Text(widget.title!),
+              backgroundColor: Color(0xff0e0e0e),
+              centerTitle: true,
+            ),
       backgroundColor: Color(0xff0e0e0e),
       body: Center(
         child: YoutubePlayer(
           progressColors: ProgressBarColors(
-            handleColor: Colors.pinkAccent,
-            backgroundColor: Colors.pinkAccent,
-            bufferedColor: Colors.pinkAccent,
+            handleColor: Colors.red,
+            backgroundColor: Colors.red,
+            bufferedColor: Colors.red,
           ),
           controller: _controller,
           liveUIColor: Colors.amber,
