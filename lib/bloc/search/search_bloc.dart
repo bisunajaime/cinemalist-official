@@ -1,9 +1,11 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:tmdbflutter/barrels/models.dart';
+import 'package:tmdbflutter/library/cubit.dart';
+import 'package:tmdbflutter/models/actor_info_model.dart';
+import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 
 // EVENTS
-
+/*
 abstract class SearchEvent extends Equatable {
   const SearchEvent();
 }
@@ -123,4 +125,69 @@ class SearchResultBloc extends Bloc<SearchEvent, SearchState> {
 
   // bool _hasReachedMax(SearchState state) =>
   //     state is SearchResultsLoaded && state.hasReachedMax;
+}*/
+
+class SearchModel {
+  final List<ActorInfoModel> actors;
+  final List<GenericMoviesModel> movies;
+  final List<TVShowModel> tvShows;
+
+  SearchModel(this.actors, this.movies, this.tvShows);
+
+  factory SearchModel.initial() {
+    return SearchModel([], [], []);
+  }
+
+  SearchModel copyWith({
+    List<ActorInfoModel>? actors,
+    List<GenericMoviesModel>? movies,
+    List<TVShowModel>? tvShows,
+  }) {
+    return SearchModel(
+      actors ?? this.actors,
+      movies ?? this.movies,
+      tvShows ?? this.tvShows,
+    );
+  }
+}
+
+class SearchCubit extends TMDBCubit<SearchModel> {
+  static final types = <String>[
+    'movie',
+    'person',
+    'tv',
+  ];
+
+  SearchCubit(TMDBRepository tmdbRepository)
+      : super(tmdbRepository, initialState: SearchModel.initial());
+
+  Future<void> search(String searchString) async {
+    isLoading = true;
+    final actorsResults = tmdbRepository.fetchSearchResults(
+        type: 'person', query: searchString, page: 1);
+    final movieResults = tmdbRepository.fetchSearchResults(
+        type: 'movie', query: searchString, page: 1);
+    final tvResults = tmdbRepository.fetchSearchResults(
+        type: 'tv', query: searchString, page: 1);
+    final results = await Future.wait([
+      actorsResults,
+      movieResults,
+      tvResults,
+    ]);
+    emit(state?.copyWith(
+      actors: results[0],
+      movies: results[1],
+      tvShows: results[2],
+    ));
+    isLoading = false;
+  }
+
+  @override
+  String get name => 'SearchCubit';
+
+  @override
+  Future<SearchModel?> loadFromServer() {
+    // TODO: implement loadFromServer
+    throw UnimplementedError();
+  }
 }
