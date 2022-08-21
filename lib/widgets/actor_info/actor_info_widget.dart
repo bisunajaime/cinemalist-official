@@ -52,10 +52,10 @@ class ActorInfoWidget extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                    image: (actorInfoModel?.profilePath == null
+                    image: (actorInfoModel.profilePath == null
                             ? AssetImage('assets/images/placeholder_actor.png')
                             : NetworkImage(
-                                'https://image.tmdb.org/t/p/w500${actorInfoModel!.profilePath}'))
+                                'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}'))
                         as ImageProvider<Object>,
                     alignment: Alignment.center,
                     fit: BoxFit.cover,
