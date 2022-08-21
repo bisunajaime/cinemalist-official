@@ -7,6 +7,7 @@ import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
+import 'package:tmdbflutter/bloc/search/search_bloc.dart';
 import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
@@ -88,93 +89,98 @@ class _MainPageState extends State<MainPage>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff0E0E0E),
-      bottomNavigationBar: BottomNavigationBar(
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        selectedItemColor: Colors.pinkAccent,
-        selectedFontSize: 10,
-        selectedLabelStyle: Styles.mBold.copyWith(
-          color: Colors.pinkAccent,
-        ),
-        unselectedFontSize: 9,
-        unselectedItemColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: index,
-        onTap: (i) {
-          controller.animateToPage(
-            i,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-          setState(() {
-            index = i;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color(0xff0E0E0E),
+          selectedItemColor: Colors.pinkAccent,
+          selectedFontSize: 10,
+          selectedLabelStyle: Styles.mBold.copyWith(
+            color: Colors.pinkAccent,
+          ),
+          unselectedFontSize: 9,
+          unselectedItemColor: Colors.white,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: index,
+          onTap: (i) {
+            controller.animateToPage(
+              i,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.ease,
+            );
+            setState(() {
+              index = i;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
+              ),
+              label: 'Home',
             ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.movie,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.movie,
+              ),
+              label: 'Movie',
             ),
-            label: 'Movie',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.tv,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.tv,
+              ),
+              label: 'TV',
             ),
-            label: 'TV',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.search,
+              ),
+              label: 'Search',
             ),
-            label: 'Search',
-          ),
-        ],
-      ),
-      body: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => GenresCubit(widget.repository)..loadData(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                PopularMoviesCubit(widget.repository)..loadData(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                UpcomingMoviesCubit(widget.repository)..loadData(),
-          ),
-          BlocProvider(
-            create: (context) =>
-                TrendingMoviesCubit(widget.repository)..loadData(),
-          ),
-          BlocProvider(
-            create: (context) => ActorsCubit(widget.repository)..loadData(),
-          ),
-          BlocProvider(
-            create: (context) => NowShowingCubit(widget.repository),
-          ),
-          BlocProvider(
-            create: (context) =>
-                PopularTvShowsCubit(widget.repository)..loadData(),
-          ),
-        ],
-        child: PageView(
-          controller: controller,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            HomePage(),
-            MoviesPage(),
-            TvShowsPage(),
-            SearchPage(),
           ],
+        ),
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => GenresCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  PopularMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  UpcomingMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  TrendingMoviesCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) => ActorsCubit(widget.repository)..loadData(),
+            ),
+            BlocProvider(
+              create: (context) => NowShowingCubit(widget.repository),
+            ),
+            BlocProvider(
+              create: (context) => PopularTvShowsCubit(widget.repository),
+            ),
+            BlocProvider(
+              create: (context) => SearchCubit(widget.repository),
+            ),
+          ],
+          child: PageView(
+            controller: controller,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              HomePage(),
+              MoviesPage(),
+              TvShowsPage(),
+              SearchPage(),
+            ],
+          ),
         ),
       ),
     );
