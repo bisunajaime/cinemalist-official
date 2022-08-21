@@ -73,7 +73,7 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
       },
       child: RefreshIndicator(
         onRefresh: () async {
-          widget.pagedCubit.refresh();
+          await widget.pagedCubit.refresh();
         },
         child: GridView.builder(
           // controller: controller,

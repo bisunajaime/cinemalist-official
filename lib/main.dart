@@ -159,7 +159,7 @@ class _MainPageState extends State<MainPage>
             create: (context) => ActorsCubit(widget.repository)..loadData(),
           ),
           BlocProvider(
-            create: (context) => NowShowingCubit(widget.repository)..loadData(),
+            create: (context) => NowShowingCubit(widget.repository),
           ),
           BlocProvider(
             create: (context) =>
