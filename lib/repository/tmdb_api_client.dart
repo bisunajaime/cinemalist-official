@@ -216,12 +216,13 @@ class TMDBApiClient {
     return moviesByGenre;
   }
 
-  Future<List<GenericMoviesModel>> fetchActorMovies({int? id}) async {
+  Future<List<GenericMoviesModel>> fetchActorMovies(
+      {int? id, int? page}) async {
     List<GenericMoviesModel> actorMovies = [];
     final url = '/discover/movie';
     final filters = FilterBuilder();
     final filterMap =
-        filters.sortBy().includeAdult().page(1).withCast(id).toJson();
+        filters.sortBy().includeAdult().page(page).withCast(id).toJson();
     final response =
         await httpClient.get(uriLoader.generateUri(url, filterMap));
     final decodeJson = jsonDecode(response.body);
@@ -231,9 +232,8 @@ class TMDBApiClient {
   }
 
   Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
-    //  https://api.themoviedb.org/3/tv/456?api_key=efd2f9bdbe60bbb9414be9a5a20296b0&language=en-US
     List<SeasonModel> seasons = [];
-    final url = '/tv/$id&language=en-US';
+    final url = '/tv/$id';
     final response = await httpClient.get(uriLoader.generateUri(url));
     final decodeJson = jsonDecode(response.body);
     decodeJson['seasons']

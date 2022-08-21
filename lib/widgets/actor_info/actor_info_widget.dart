@@ -11,7 +11,7 @@ class ActorInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<ActorInfoCubit>();
-    ActorInfoModel? actorInfoModel = cubit.state;
+    final actorInfoModel = cubit.state;
     if (cubit.loading) {
       return Container(
         width: double.infinity,
@@ -29,7 +29,7 @@ class ActorInfoWidget extends StatelessWidget {
     if (cubit.error) {
       return GestureDetector(
         onTap: () {
-          cubit.loadActorInfo();
+          cubit.loadFromServer();
         },
         child: Icon(Icons.refresh),
       );
@@ -86,7 +86,7 @@ class ActorInfoWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        actorInfoModel.placeOfBirth == "?"
+                        actorInfoModel.placeOfBirth == null
                             ? "Not Specified"
                             : actorInfoModel.placeOfBirth!,
                         style: Styles.mReg.copyWith(
@@ -118,7 +118,7 @@ class ActorInfoWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        actorInfoModel.birthday == "?"
+                        actorInfoModel.birthday == null
                             ? "Not Specified"
                             : DateFormat.yMMMd().format(
                                 DateTime.tryParse(actorInfoModel.birthday!)!),
@@ -136,7 +136,7 @@ class ActorInfoWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        actorInfoModel.birthday == "?"
+                        actorInfoModel.birthday == null
                             ? "Not Specified"
                             : (DateTime.now().year -
                                     DateTime.parse(actorInfoModel.birthday!)
@@ -156,9 +156,9 @@ class ActorInfoWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        actorInfoModel.deathday == "?"
-                            ? "Alive"
-                            : actorInfoModel.deathday!,
+                        actorInfoModel.deathday != null
+                            ? actorInfoModel.deathday!
+                            : "Alive",
                         style: Styles.mReg.copyWith(
                           fontSize: 10,
                         ),

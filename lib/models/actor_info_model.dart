@@ -42,7 +42,7 @@ class ActorInfoModel extends Equatable {
       deathday: json['deathday'],
 //      knownFor: knownFor ?? [],
       id: json['id'] ?? 0,
-      popularity: json['popularity'].toDouble() ?? 0,
+      popularity: json['popularity'] ?? 0,
     );
   }
 

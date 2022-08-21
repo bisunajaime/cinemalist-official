@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:tmdbflutter/widgets/actor_info/actor_info_widget.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_movies_widget.dart';
 
 import '../repository/tmdb_api_client.dart';
@@ -32,10 +28,11 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ActorInfoCubit(tmdbRepo)..loadData(),
+          create: (context) => ActorInfoCubit(tmdbRepo, widget.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) => ActorMoviesCubit(tmdbRepo, widget.id),
+          create: (context) =>
+              ActorMoviesCubit(tmdbRepo, widget.id)..loadData(),
         ),
       ],
       child: Scaffold(
@@ -55,6 +52,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                 ),
               ),
             ),
+            ActorInfoWidget(),
             SizedBox(height: 10),
             ActorMoviesWidget(),
             SizedBox(height: 50),
@@ -76,43 +74,3 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
     );
   }
 }
-
-/*
-BlocBuilder<ActorMoviesBloc, ActorMoviesState>(
-              builder: (context, state) {
-                if (state is ActorMoviesEmpty) {
-                  BlocProvider.of<ActorMoviesBloc>(context).add(
-                    FetchActorMovies(
-                      id: widget.id,
-                    ),
-                  );
-                }
-
-                if (state is ActorMoviesError) {
-                  return Text('There was a problem');
-                }
-
-                if (state is ActorMoviesLoaded) {
-                  return Container(
-                    height: 150,
-                    width: double.infinity,
-                    color: Colors.redAccent,
-                  );
-                }
-                return Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.all(5),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.pinkAccent[100],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xff2e2e2e),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-
-
-*/

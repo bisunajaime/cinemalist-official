@@ -4,18 +4,12 @@ import '../../repository/tmdb_repository.dart';
 
 class ActorInfoCubit extends Cubit<ActorInfoModel?> {
   final TMDBRepository tmdbRepository;
-  ActorInfoCubit(this.tmdbRepository) : super(null);
-
-  Future<void> loadActorInfo() async {
-    setIsLoading(true);
-    final actorInfo = await tmdbRepository.fetchActorInfo();
-    setIsLoading(false);
-    emit(actorInfo);
-  }
+  final int? id;
+  ActorInfoCubit(this.tmdbRepository, this.id) : super(null);
 
   @override
   Future<ActorInfoModel?> loadFromServer() async {
-    return await tmdbRepository.fetchActorInfo();
+    return await tmdbRepository.fetchActorInfo(id: id);
   }
 
   @override

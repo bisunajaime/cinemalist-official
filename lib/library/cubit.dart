@@ -34,6 +34,13 @@ abstract class Cubit<T> extends c.Cubit<T?> {
 abstract class TMDBCubit<T> extends Cubit<T?> {
   final TMDBRepository tmdbRepository;
   TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState ?? null);
+
+  Future<void> refresh() async {
+    logger.info('pulled to refresh');
+    isLoading = true;
+    emit(null);
+    await loadData();
+  }
 }
 
 abstract class SearchTMDBCubit<T> extends Cubit<T?> {
@@ -86,7 +93,10 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
   }
 
   Future<void> loadNextPage({required Function onComplete}) async {
-    if (loadingNextPage == true) return;
+    if (loadingNextPage == true || hasReachedMax) {
+      logger.info('reached max');
+      return;
+    }
     page++;
     logger.waiting('loading next page: $page');
     loadingNextPage = true;
