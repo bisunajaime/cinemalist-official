@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/builder/filter_builder.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
@@ -45,12 +46,12 @@ class MovieSearchResults extends SearchResultsRepository<GenericMoviesModel> {
 }
 
 // person results
-class PersonSearchResults extends SearchResultsRepository<ActorInfoModel> {
+class PersonSearchResults extends SearchResultsRepository<ActorsModel> {
   PersonSearchResults(UriLoader uriLoader, http.Client client)
       : super(uriLoader, client);
 
   @override
-  Future<List<ActorInfoModel>> searchMovies(String? query, int? page) async {
+  Future<List<ActorsModel>> searchMovies(String? query, int? page) async {
     final filters = FilterBuilder().query(query).page(page);
     final uri = uriLoader.generateUri(
       '/search/$type',
@@ -58,12 +59,12 @@ class PersonSearchResults extends SearchResultsRepository<ActorInfoModel> {
     );
     final response = await client.get(uri);
     final decodeJson = jsonDecode(response.body);
-    List<ActorInfoModel> actorsInfo = [];
+    List<ActorsModel> actorsInfo = [];
     if (decodeJson['results'] == null) {
       return [];
     }
     decodeJson['results']
-        .forEach((actor) => actorsInfo.add(ActorInfoModel.fromJson(actor)));
+        .forEach((actor) => actorsInfo.add(ActorsModel.fromJson(actor)));
     return actorsInfo;
   }
 
@@ -78,8 +79,10 @@ class TvSearchResults extends SearchResultsRepository<TVShowModel> {
 
   @override
   Future<List<TVShowModel>> searchMovies(String? query, int? page) async {
-    final url = '/search/$type&query=$query&page=$page';
-    final response = await client.get(uriLoader.generateUri(url));
+    final filters = FilterBuilder().query(query).page(page);
+    final url = '/search/$type';
+    final response =
+        await client.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
     List<TVShowModel> searchedTvShows = [];
     if (decodeJson['results'] == null) {
