@@ -6,7 +6,7 @@ import 'package:tmdbflutter/repository/tmdb_repository.dart';
 abstract class Cubit<T> extends c.Cubit<T?> {
   String get name;
   Log get logger => LoggerLog(name);
-  Cubit(initialState) : super(null);
+  Cubit(initialState) : super(initialState ?? null);
 
   bool isLoading = true;
 
@@ -33,12 +33,13 @@ abstract class Cubit<T> extends c.Cubit<T?> {
 
 abstract class TMDBCubit<T> extends Cubit<T?> {
   final TMDBRepository tmdbRepository;
-  TMDBCubit(this.tmdbRepository) : super(null);
+  TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState ?? null);
 }
 
 abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
   final TMDBRepository tmdbRepository;
-  PagedTMDBCubit(this.tmdbRepository) : super([]);
+  PagedTMDBCubit(this.tmdbRepository, {initialState})
+      : super(initialState ?? <T>[]);
   bool loadingNextPage = false;
   bool initialLoading = true;
   bool hasReachedMax = false;
