@@ -41,70 +41,71 @@ class _GenresPageState extends State<GenresPage> {
       create: (context) => MoviesByGenreCubit(tmdbRepo, widget.id!),
       child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              pinned: true,
-              expandedHeight: MediaQuery.of(context).size.height * .2,
-              backgroundColor: grabColorForGenre(widget.genre!).first,
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.parallax,
-                title: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            shape: BoxShape.circle,
-                            border: Border.all(
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                pinned: true,
+                expandedHeight: MediaQuery.of(context).size.height * .2,
+                backgroundColor: grabColorForGenre(widget.genre!).first,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  title: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
                               color: Colors.white,
-                              width: 2,
+                              size: 18,
                             ),
                           ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                            size: 18,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          widget.genre!,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
                           ),
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        widget.genre!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                titlePadding: EdgeInsets.all(12),
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: grabColorForGenre(widget.genre!),
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      ],
                     ),
                   ),
-                  width: double.infinity,
-                  height: double.infinity,
+                  titlePadding: EdgeInsets.all(12),
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: grabColorForGenre(widget.genre!),
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: 5),
-            ),
-            SliverToBoxAdapter(
-              child: MoviesByGenreListWidget(),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: SizedBox(height: 5),
+              ),
+            ];
+          },
+          floatHeaderSlivers: true,
+          body: MoviesByGenreListWidget(),
         ),
       ),
     );
