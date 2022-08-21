@@ -187,10 +187,12 @@ class TMDBApiClient {
     return similarMovies;
   }
 
-  Future<List<TVShowModel>> fetchSimilarTvShows({int? id}) async {
+  Future<List<TVShowModel>> fetchSimilarTvShows({int? id, int? page}) async {
     List<TVShowModel> similarTvShows = [];
-    final url = '/tv/$id/similar&language=en-US&page=1';
-    final response = await httpClient.get(uriLoader.generateUri(url));
+    final filters = FilterBuilder().page(page);
+    final url = '/tv/$id/similar';
+    final response =
+        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
     final decodeJson = jsonDecode(response.body);
     decodeJson['results']
         .forEach((data) => similarTvShows.add(TVShowModel.fromJson(data)));

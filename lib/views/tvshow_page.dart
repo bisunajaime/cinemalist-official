@@ -14,6 +14,9 @@ import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/views/actor_info_page.dart';
 import 'package:tmdbflutter/views/seasoninfo_page.dart';
+import 'package:tmdbflutter/widgets/tv/similar_tv_shows_widget.dart';
+import 'package:tmdbflutter/widgets/tv/tv_show_credits_widget.dart';
+import 'package:tmdbflutter/widgets/tv/tv_show_seasons_widget.dart';
 
 import '../styles/styles.dart';
 
@@ -39,13 +42,16 @@ class _TvShowPageState extends State<TvShowPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => TvShowCreditsBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              TvShowCreditsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) => TvSeasonsBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              TvSeasonsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) => SimilarTvShowsBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              SimilarTvShowsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
       ],
       child: Scaffold(
@@ -141,199 +147,11 @@ class _TvShowPageState extends State<TvShowPage> {
           SizedBox(
             height: 5,
           ),
-          BlocBuilder<TvShowCreditsBloc, TvShowCreditsState>(
-            builder: (context, state) {
-              if (state is TvShowCreditsEmpty) {
-                BlocProvider.of<TvShowCreditsBloc>(context)
-                    .add(FetchTvShowCredits(id: widget.model!.id));
-              }
-              if (state is TvShowCreditsError) {
-                return Text('There was a problem');
-              }
-              if (state is TvShowCreditsLoaded) {
-                int castsSize = state.tvShowCredits.casts!.length;
-                return Container(
-                  height: 150,
-                  width: double.infinity,
-                  child: castsSize == 0
-                      ? Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: Color(0xff252525),
-                          child: Center(
-                            child: Text(
-                              'Casts Not Updated',
-                              style: Styles.mBold,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          itemCount: state.tvShowCredits.casts!.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, i) {
-                            if (state.tvShowCredits.casts!.length == 0) {}
-                            CastModel model = state.tvShowCredits.casts![i];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              child: GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ActorInfoPage(
-                                      id: model.id,
-                                    ),
-                                  ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        height: double.infinity,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xff252525),
-                                          image: DecorationImage(
-                                            image: (model.profilePath == null
-                                                ? AssetImage(
-                                                    'assets/images/placeholder_actor.png')
-                                                : NetworkImage(
-                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}')) as ImageProvider<Object>,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      model.name!,
-                                      style: Styles.mReg.copyWith(
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                );
-              }
-              return Container(
-                height: 150,
-                width: double.infinity,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (context, i) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Shimmer.fromColors(
-                        child: Container(
-                          height: double.infinity,
-                          width: 100,
-                        ),
-                        baseColor: Color(0xff313131),
-                        highlightColor: Color(0xff4A4A4A),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
+          TvShowCreditsWidget(),
           SizedBox(
             height: 10,
           ),
-          BlocBuilder<TvSeasonsBloc, TvSeasonsState>(
-            builder: (context, state) {
-              if (state is TvSeasonsEmpty) {
-                BlocProvider.of<TvSeasonsBloc>(context)
-                    .add(FetchTvSeasons(id: widget.model!.id));
-              }
-
-              if (state is TvSeasonsEmpty) {
-                return Text('Not Available');
-              }
-
-              if (state is TvSeasonsLoaded) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '${state.tvSeasons.length} Seasons',
-                        style: Styles.mBold.copyWith(
-                          fontSize: 20,
-                          color: Colors.pinkAccent[100],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: state.tvSeasons.length,
-                        itemBuilder: (context, i) {
-                          SeasonModel model = state.tvSeasons[i];
-                          return GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SeasonInfoPage(
-                                  index: i,
-                                  tvSeasons: state.tvSeasons,
-                                  tvShow: model,
-                                  name: widget.model!.name,
-                                ),
-                              ),
-                            ),
-                            child: Container(
-                              height: double.infinity,
-                              width: 130,
-                              margin: EdgeInsets.all(2),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Color(0xff2e2e2e),
-                                image: DecorationImage(
-                                    image: (model.posterPath == null
-                                        ? AssetImage(
-                                            'assets/images/placeholder.png')
-                                        : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${model.posterPath}')) as ImageProvider<Object>,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black26,
-                                      BlendMode.darken,
-                                    )),
-                              ),
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                model.name!,
-                                style: Styles.mBold,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              }
-              return CircularProgressIndicator();
-            },
-          ),
+          TvShowSeasonsWidget(tvShowModel: widget.model!),
           SizedBox(
             height: 10,
           ),
@@ -350,105 +168,7 @@ class _TvShowPageState extends State<TvShowPage> {
           SizedBox(
             height: 5,
           ),
-          BlocBuilder<SimilarTvShowsBloc, SimilarTvShowsState>(
-            builder: (context, state) {
-              if (state is SimilarTvShowsEmpty) {
-                BlocProvider.of<SimilarTvShowsBloc>(context)
-                    .add(FetchSimilarTvShows(id: widget.model!.id));
-              }
-
-              if (state is SimilarTvShowsError) {
-                return Center(
-                  child: Text('There was a problem'),
-                );
-              }
-
-              if (state is SimilarTvShowsLoaded) {
-                if (state.similarTvShows!.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 20,
-                      ),
-                      child: Text(
-                        'None',
-                        style: Styles.mBold.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return Container(
-                  height: 250,
-                  width: double.infinity,
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.similarTvShows!.length,
-                    itemBuilder: (context, i) {
-                      return GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TvShowPage(
-                              model: state.similarTvShows![i],
-                            ),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                width: 170,
-                                margin: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: (state.similarTvShows![i].posterPath ==
-                                            null
-                                        ? AssetImage(
-                                            'assets/images/placeholder.png')
-                                        : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${state.similarTvShows![i].posterPath}')) as ImageProvider<Object>,
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black26,
-                                      BlendMode.darken,
-                                    ),
-                                  ),
-                                ),
-                                alignment: Alignment.bottomLeft,
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.amberAccent,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      state.similarTvShows![i].voteAverage
-                                          .toString(),
-                                      style: Styles.mMed.copyWith(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }
-              return CircularProgressIndicator();
-            },
-          ),
+          SimilarTvShowsWidget(),
           SizedBox(
             height: 50,
           ),

@@ -54,7 +54,7 @@ class _SimilarMoviesListState extends State<SimilarMoviesList> {
           return true;
         },
         child: ListView.builder(
-          physics: BouncingScrollPhysics(),
+          physics: ClampingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           itemCount: widget.movies.length,
           itemBuilder: (context, i) {
