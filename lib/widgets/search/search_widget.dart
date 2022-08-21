@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/search/search_bloc.dart';
+import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/widgets/search/actor_search_results_widget.dart';
