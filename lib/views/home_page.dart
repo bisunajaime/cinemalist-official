@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tmdbflutter/bloc/movies/popular/popular_movies_cubit.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/widgets/home/actors_list_widget.dart';
 import 'package:tmdbflutter/widgets/home/genres_list_widget.dart';
@@ -16,83 +18,88 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ListView(
-      padding: EdgeInsets.zero,
-      physics: BouncingScrollPhysics(),
-      children: <Widget>[
-        PopularMoviesWidget(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'Genres',
-            style: Styles.mBold,
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<PopularMoviesCubit>().refresh();
+      },
+      child: ListView(
+        padding: EdgeInsets.zero,
+        physics: BouncingScrollPhysics(),
+        children: <Widget>[
+          PopularMoviesWidget(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Genres',
+              style: Styles.mBold,
+            ),
           ),
-        ),
-        GenresListWidget(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Upcoming',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+          GenresListWidget(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Upcoming',
+                  style: Styles.mBold,
                 ),
-              ),
-            ],
-          ),
-        ),
-        UpcomingMoviesListWidget(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Actors',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        ActorsListWidget(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Trending',
-                style: Styles.mBold,
-              ),
-              Text(
-                'See more',
-                style: Styles.mReg.copyWith(
-                  color: Colors.pinkAccent,
-                  fontSize: 10,
+          UpcomingMoviesListWidget(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Actors',
+                  style: Styles.mBold,
                 ),
-              ),
-            ],
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        TrendingMoviesListWidget(),
-      ],
+          ActorsListWidget(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Trending',
+                  style: Styles.mBold,
+                ),
+                Text(
+                  'See more',
+                  style: Styles.mReg.copyWith(
+                    color: Colors.pinkAccent,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TrendingMoviesListWidget(),
+        ],
+      ),
     );
   }
 
