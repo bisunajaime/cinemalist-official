@@ -8,6 +8,7 @@ import 'package:tmdbflutter/repository/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
 import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
 import 'package:tmdbflutter/widgets/movie/movie_info_widget.dart';
 import 'package:tmdbflutter/widgets/movie/similar_movies_widget.dart';
@@ -83,6 +84,10 @@ class _MoviePageState extends State<MoviePage> {
               ),
             ),
           ),
+          SizedBox(
+            height: 5,
+          ),
+          GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
           SizedBox(
             height: 5,
           ),
