@@ -2,10 +2,10 @@ import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import '../../repository/tmdb_repository/tmdb_repository.dart';
 
-class ActorInfoCubit extends Cubit<ActorInfoModel?> {
-  final TMDBRepository tmdbRepository;
+class ActorInfoCubit extends TMDBCubit<ActorInfoModel?> {
   final int? id;
-  ActorInfoCubit(this.tmdbRepository, this.id) : super(null);
+  ActorInfoCubit(TMDBRepository tmdbRepository, this.id)
+      : super(tmdbRepository);
 
   @override
   Future<ActorInfoModel?> loadFromServer() async {

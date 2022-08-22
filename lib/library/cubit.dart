@@ -1,12 +1,25 @@
 import 'package:bloc/bloc.dart' as c;
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:tmdbflutter/models/generic_movies_model.dart';
+import 'package:tmdbflutter/repository/localstorage_repository/localstorage_repository.dart';
 import 'package:tmdbflutter/repository/log.dart';
 import 'package:tmdbflutter/repository/logger_log.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
 abstract class Cubit<T> extends c.Cubit<T?> {
   String get name;
+
+  /// [fileName] - must be a .json file
+  String? get fileName;
+  String? get toJson;
   Log get logger => LoggerLog(name);
-  Cubit(initialState) : super(initialState ?? null);
+  late final LocalStorageRepository localRepository;
+  Cubit(initialState) : super(initialState ?? null) {
+    if (fileName != null) {
+      assert(fileName!.contains('.json'));
+      localRepository = FileLocalStorageRepository(fileName!);
+    }
+  }
 
   bool isLoading = true;
 
@@ -20,20 +33,48 @@ abstract class Cubit<T> extends c.Cubit<T?> {
 
   Future<T?> loadFromServer();
 
+  Future<void> saveLocal() async {
+    if (fileName != null && toJson != null) {
+      await localRepository.save(toJson!);
+    }
+  }
+
+  Future<bool> hasInternet() async {
+    final connectivity = Connectivity();
+    final result = await connectivity.checkConnectivity();
+    return result != ConnectivityResult.none;
+  }
+
   Future<void> loadData() async {
-    logger.waiting('loading data');
-    setIsLoading(true);
-    final result = await loadFromServer();
-    // TODO: save locally and if there is no internet, use the local file
-    emit(result);
-    setIsLoading(false);
-    logger.success('data loaded');
+    try {
+      logger.waiting('loading data');
+      setIsLoading(true);
+      var result;
+      if (await hasInternet()) {
+        result = await loadFromServer();
+      } else {
+        // TODO:
+        // result = await loadFromFile();
+      }
+      emit(result);
+      setIsLoading(false);
+      await saveLocal();
+      logger.success('data loaded');
+    } catch (e) {
+      logger.error('there was a problem: $e');
+    }
   }
 }
 
 abstract class TMDBCubit<T> extends Cubit<T?> {
   final TMDBRepository tmdbRepository;
   TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState ?? null);
+
+  @override
+  String? get fileName => null;
+
+  @override
+  String? get toJson => null;
 
   Future<void> refresh() async {
     logger.info('pulled to refresh');
@@ -48,6 +89,11 @@ abstract class SearchTMDBCubit<T> extends Cubit<T?> {
   bool didSearch = false;
   String query = '';
 
+  @override
+  String? get fileName => null;
+  @override
+  String? get toJson => null;
+
   SearchTMDBCubit(this.tmdbRepository, {initialState})
       : super(initialState ?? null);
 
@@ -61,6 +107,11 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
   bool loadingNextPage = false;
   bool initialLoading = true;
   bool hasReachedMax = false;
+
+  @override
+  String? get fileName => null;
+  @override
+  String? get toJson => null;
 
   @override
   bool get loading => state?.isEmpty == true && initialLoading == true;

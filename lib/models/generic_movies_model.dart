@@ -1,6 +1,10 @@
-import 'package:equatable/equatable.dart';
+import 'dart:convert';
 
-class GenericMoviesModel extends Equatable {
+abstract class SerializableClass {
+  Map<String, dynamic> toJson();
+}
+
+class GenericMoviesModel extends SerializableClass {
   final double? popularity;
   final int? voteCount;
   final bool? video;
@@ -27,20 +31,6 @@ class GenericMoviesModel extends Equatable {
     this.genreIds,
   });
 
-  @override
-  List<Object> get props => [
-        popularity!,
-        voteCount!,
-        video!,
-        posterPath!,
-        id!,
-        adult!,
-        title!,
-        voteAverage!,
-        overview!,
-        releaseDate!,
-      ];
-
   factory GenericMoviesModel.fromJson(Map<String, dynamic> json) {
     return GenericMoviesModel(
       // popularity: json['popularity'],
@@ -56,28 +46,16 @@ class GenericMoviesModel extends Equatable {
       releaseDate: json['release_date'],
     );
   }
-}
 
-/**
- * 
- * {
-      "popularity": 167.729,
-      "vote_count": 3823,
-      "video": false,
-      "poster_path": "/xBHvZcjRiWyobQ9kxBhO6B2dtRI.jpg",
-      "id": 419704,
-      "adult": false,
-      "backdrop_path": "/5BwqwxMEjeFtdknRV792Svo0K1v.jpg",
-      "original_language": "en",
-      "original_title": "Ad Astra",
-      "genre_ids": [
-        18,
-        878
-      ],
-      "title": "Ad Astra",
-      "vote_average": 6.1,
-      "overview": "The near future, a time when both hope and hardships drive humanity to look to the stars and beyond. While a mysterious phenomenon menaces to destroy life on planet Earth, astronaut Roy McBride undertakes a mission across the immensity of space and its many perils to uncover the truth about a lost expedition that decades before boldly faced emptiness and silence in search of the unknown.",
-      "release_date": "2019-09-17"
-    },
- * 
- */
+  @override
+  Map<String, dynamic> toJson() => {
+        "genre_ids": genreIds?.map((e) => e.toString()).toList() ?? [],
+        "id": id,
+        "overview": overview,
+        "popularity": popularity,
+        "poster_path": posterPath,
+        "release_date": releaseDate,
+        "title": title,
+        "vote_average": voteAverage,
+      };
+}

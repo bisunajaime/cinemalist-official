@@ -14,6 +14,7 @@ class TMDBLocalClient implements TMDBClient {
   final LocalStorageRepository localRepository;
 
   TMDBLocalClient(this.localRepository);
+
   @override
   Future<ActorInfoModel> fetchActorInfo({int? id}) {
     // TODO: implement fetchActorInfo
