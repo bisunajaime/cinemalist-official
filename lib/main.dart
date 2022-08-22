@@ -51,23 +51,48 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TheMovieDB',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MainPage(
-        repository: repository,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => GenresCubit(repository)..loadData(),
+        ),
+        BlocProvider(
+          create: (context) => PopularMoviesCubit(repository)..loadData(),
+        ),
+        BlocProvider(
+          create: (context) => UpcomingMoviesCubit(repository)..loadData(),
+        ),
+        BlocProvider(
+          create: (context) => TrendingMoviesCubit(repository)..loadData(),
+        ),
+        BlocProvider(
+          create: (context) => ActorsCubit(repository)..loadData(),
+        ),
+        BlocProvider(
+          create: (context) => NowShowingCubit(repository),
+        ),
+        BlocProvider(
+          create: (context) => PopularTvShowsCubit(repository),
+        ),
+        BlocProvider(
+          create: (context) => SearchCubit(repository),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'TheMovieDB',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: MainPage(),
       ),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
-  final TMDBRepository repository;
-  MainPage({required this.repository});
+  MainPage();
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -141,46 +166,15 @@ class _MainPageState extends State<MainPage>
             ),
           ],
         ),
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => GenresCubit(widget.repository)..loadData(),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  PopularMoviesCubit(widget.repository)..loadData(),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  UpcomingMoviesCubit(widget.repository)..loadData(),
-            ),
-            BlocProvider(
-              create: (context) =>
-                  TrendingMoviesCubit(widget.repository)..loadData(),
-            ),
-            BlocProvider(
-              create: (context) => ActorsCubit(widget.repository)..loadData(),
-            ),
-            BlocProvider(
-              create: (context) => NowShowingCubit(widget.repository),
-            ),
-            BlocProvider(
-              create: (context) => PopularTvShowsCubit(widget.repository),
-            ),
-            BlocProvider(
-              create: (context) => SearchCubit(widget.repository),
-            ),
+        body: PageView(
+          controller: controller,
+          physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            HomePage(),
+            MoviesPage(),
+            TvShowsPage(),
+            SearchPage(),
           ],
-          child: PageView(
-            controller: controller,
-            physics: NeverScrollableScrollPhysics(),
-            children: <Widget>[
-              HomePage(),
-              MoviesPage(),
-              TvShowsPage(),
-              SearchPage(),
-            ],
-          ),
         ),
       ),
     );
