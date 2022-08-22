@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 abstract class SerializableClass {
+  int? id;
   Map<String, dynamic> toJson();
 }
 
@@ -49,7 +50,7 @@ class GenericMoviesModel extends SerializableClass {
 
   @override
   Map<String, dynamic> toJson() => {
-        "genre_ids": genreIds?.map((e) => e.toString()).toList() ?? [],
+        "genre_ids": genreIds?.map((e) => e).toList() ?? [],
         "id": id,
         "overview": overview,
         "popularity": popularity,

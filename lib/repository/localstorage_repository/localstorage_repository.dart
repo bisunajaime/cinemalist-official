@@ -43,7 +43,8 @@ class FileLocalStorageRepository implements LocalStorageRepository {
       final file = await getFile();
       if (await file.exists()) {
         logger.success('successfully retrieved file');
-        return await file.readAsString();
+        final result = await file.readAsString();
+        return result;
       }
       return null;
     } catch (e) {

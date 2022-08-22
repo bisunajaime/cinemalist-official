@@ -1,15 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/library/cubit.dart';
+import 'package:tmdbflutter/utils/delayed_runner.dart';
 
 class GenericMovieGridWidget extends StatefulWidget {
   final PagedTMDBCubit pagedCubit;
+  final LocalStorageCubit localCubit;
   final Function(dynamic) onTap;
   const GenericMovieGridWidget({
     Key? key,
     required this.pagedCubit,
+    required this.localCubit,
     required this.onTap,
   }) : super(key: key);
 
@@ -18,6 +23,7 @@ class GenericMovieGridWidget extends StatefulWidget {
 }
 
 class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
+  final _runner = DelayedRunner(milliseconds: 250);
   final scrollThreshold = 200;
 
   @override
@@ -99,30 +105,61 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
               );
             }
             final element = list[i]!;
+            final isSaved = widget.localCubit.ids.contains(element.id);
             return GestureDetector(
               onTap: () => widget.onTap(element),
               child: Container(
                 decoration: BoxDecoration(
                   color: Color(0xff232323),
                 ),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      'https://image.tmdb.org/t/p/w500${element.posterPath}',
-                  cacheManager: DefaultCacheManager(),
-                  fadeInCurve: Curves.ease,
-                  fadeInDuration: Duration(milliseconds: 250),
-                  fadeOutDuration: Duration(milliseconds: 250),
-                  fadeOutCurve: Curves.ease,
-                  fit: BoxFit.cover,
-                  placeholder: (context, string) {
-                    return Shimmer.fromColors(
-                      child: Container(
-                        color: Color(0xff232323),
+                child: Stack(
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl:
+                          'https://image.tmdb.org/t/p/w500${element.posterPath}',
+                      cacheManager: DefaultCacheManager(),
+                      fadeInCurve: Curves.ease,
+                      width: double.infinity,
+                      fadeInDuration: Duration(milliseconds: 250),
+                      fadeOutDuration: Duration(milliseconds: 250),
+                      fadeOutCurve: Curves.ease,
+                      fit: BoxFit.cover,
+                      placeholder: (context, string) {
+                        return Shimmer.fromColors(
+                          child: Container(
+                            color: Color(0xff232323),
+                          ),
+                          baseColor: Color(0xff313131),
+                          highlightColor: Color(0xff4A4A4A),
+                        );
+                      },
+                    ),
+                    Positioned(
+                      bottom: 4,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: () {
+                          _runner.run(() {
+                            widget.localCubit.save(element);
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.pinkAccent,
+                          ),
+                          child: Icon(
+                            isSaved
+                                ? Icons.bookmark
+                                : Icons.bookmark_add_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
-                      baseColor: Color(0xff313131),
-                      highlightColor: Color(0xff4A4A4A),
-                    );
-                  },
+                    )
+                  ],
                 ),
               ),
             );

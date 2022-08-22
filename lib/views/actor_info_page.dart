@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
+import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_info_widget.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_movies_widget.dart';
 import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
+import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
 
 import '../repository/tmdb_client/tmdb_api_client.dart';
 import '../repository/tmdb_repository/tmdb_repository.dart';
@@ -43,7 +46,25 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
       ],
       child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
-        floatingActionButton: FABGoHome(),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // TODO:
+            // FABSaveRecord<ActorInfoModel>(
+            //   tag: 'movie-${widget.id!}',
+            //   isSaved:
+            //   context.watch<SavedActorsCubit>().isSaved(widget.model!),
+            //   record: widget.model!,
+            //   onTap: (elem) async {
+            //     _runner.run(() async {
+            //       await context.read<MoviesWatchLaterCubit>().save(elem);
+            //     });
+            //   },
+            // ),
+            SizedBox(width: 8),
+            FABGoHome(),
+          ],
+        ),
         body: NestedScrollView(
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerScrolled) {

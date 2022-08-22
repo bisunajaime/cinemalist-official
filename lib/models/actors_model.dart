@@ -26,7 +26,7 @@ class ActorsModel extends SerializableClass {
         'id': id,
         'popularity': popularity,
         'department': department,
-        'profilePath': profilePath,
+        'profile_path': profilePath,
         'name': name,
       };
 }

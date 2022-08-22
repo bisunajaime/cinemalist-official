@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
 
-enum RecordType {
-  movie,
-  tv,
-  actor,
-}
-
-final _typeToString = <RecordType, String>{
-  RecordType.movie: 'movie',
-  RecordType.tv: 'tv',
-  RecordType.actor: 'actor',
-};
-
 class FABSaveRecord<T> extends StatelessWidget {
-  final RecordType type;
   final T record;
+  final String tag;
   final Function(T) onTap;
+  final bool isSaved;
   const FABSaveRecord({
-    required this.type,
+    required this.tag,
+    required this.isSaved,
     required this.record,
     required this.onTap,
   });
@@ -27,12 +17,13 @@ class FABSaveRecord<T> extends StatelessWidget {
     return FloatingActionButton(
       tooltip: 'Save movie',
       elevation: 0,
+      heroTag: tag,
       onPressed: () async {
         await onTap(record);
       },
       backgroundColor: Colors.red,
       child: Icon(
-        Icons.bookmark_add_outlined,
+        isSaved ? Icons.bookmark : Icons.bookmark_add_outlined,
         color: Colors.white,
       ),
     );
