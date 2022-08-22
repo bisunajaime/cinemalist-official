@@ -5,7 +5,10 @@ import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
+
+final _runner = DelayedRunner(milliseconds: 250);
 
 class SavedActorsWidget extends StatelessWidget {
   const SavedActorsWidget({Key? key}) : super(key: key);
@@ -41,25 +44,56 @@ class SavedActorsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Color(0xff2e2e2e),
-                    backgroundImage: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
-                    radius: 45,
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Color(0xff2e2e2e),
+                        backgroundImage: NetworkImage(
+                            'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
+                        radius: 45,
+                      ),
+                      SizedBox(
+                        height: 1,
+                      ),
+                      Text(
+                        actors[i].name!,
+                        style: Styles.mMed.copyWith(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 1,
-                  ),
-                  Text(
-                    actors[i].name!,
-                    style: Styles.mMed.copyWith(
-                      fontSize: 12,
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () {
+                        _runner.run(() {
+                          cubit.save(actors[i]);
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        margin: EdgeInsets.only(
+                          right: 8,
+                          bottom: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.pinkAccent,
+                        ),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
