@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
@@ -28,8 +29,8 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
-  TMDBRepository tmdbRepo = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  TMDBRepository tmdbRepo = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );

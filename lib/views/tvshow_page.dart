@@ -8,8 +8,9 @@ import 'package:tmdbflutter/bloc/tvshows/similar/similar_tv_bloc.dart';
 import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/views/actor_info_page.dart';
@@ -30,8 +31,8 @@ class TvShowPage extends StatefulWidget {
 }
 
 class _TvShowPageState extends State<TvShowPage> {
-  TMDBRepository tmdbRepo = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  TMDBRepository tmdbRepo = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );

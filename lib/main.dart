@@ -8,8 +8,9 @@ import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
@@ -23,8 +24,8 @@ import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
   // BlocSupervisor.delegate = SimpleBlocDelegate();
-  final TMDBRepository repository = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  final TMDBRepository repository = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );

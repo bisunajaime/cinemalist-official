@@ -10,11 +10,12 @@ import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
 import 'package:tmdbflutter/repository/search_results_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_client.dart';
 import 'package:tmdbflutter/repository/uri_generator.dart';
 
-import '../barrels/models.dart';
+import '../../barrels/models.dart';
 
-class TMDBApiClient {
+class TMDBApiClient implements TMDBClient {
   final String apiKey = "efd2f9bdbe60bbb9414be9a5a20296b0";
   final baseUrl = "api.themoviedb.org";
   final version = '/3';
@@ -25,6 +26,7 @@ class TMDBApiClient {
     uriLoader = TMDBUriLoader(baseUrl, version, apiKey);
   }
 
+  @override
   Future<List<GenresModel>> fetchCategories() async {
     List<GenresModel> genres = [];
     final url = '/genre/movie/list';
@@ -38,6 +40,7 @@ class TMDBApiClient {
     return genres;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchPopular() async {
     List<GenericMoviesModel> popularMovies = [];
     final path = '/discover/movie';
@@ -53,6 +56,7 @@ class TMDBApiClient {
     return popularMovies;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchUpcoming() async {
     List<GenericMoviesModel> upcomingMovies = [];
     final url = '/movie/upcoming';
@@ -66,6 +70,7 @@ class TMDBApiClient {
     return upcomingMovies;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchTrending() async {
     List<GenericMoviesModel> trendingMovies = [];
     final url = '/trending/movie/week';
@@ -79,6 +84,7 @@ class TMDBApiClient {
     return trendingMovies;
   }
 
+  @override
   Future<List<ActorsModel>> fetchActors() async {
     List<ActorsModel> actors = [];
     final url = '/person/popular';
@@ -92,6 +98,7 @@ class TMDBApiClient {
     return actors;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
     List<GenericMoviesModel> nowPlaying = [];
     final url = '/movie/now_playing';
@@ -109,6 +116,7 @@ class TMDBApiClient {
     return nowPlaying;
   }
 
+  @override
   Future<List<TVShowModel>> fetchPopularTvShows({int? page}) async {
     List<TVShowModel> tvShows = [];
 
@@ -125,6 +133,7 @@ class TMDBApiClient {
     return tvShows;
   }
 
+  @override
   Future<MovieInfo> fetchMovieInfo({int? id}) async {
     final filters = FilterBuilder().appendToResponse();
     final url = '/movie/$id';
@@ -140,6 +149,7 @@ class TMDBApiClient {
     return movieInfo;
   }
 
+  @override
   Future<List<CastModel>> fetchMovieCasts({int? id}) async {
     List<CastModel> casts = [];
     final url = '/movie/$id/credits';
@@ -152,6 +162,7 @@ class TMDBApiClient {
     return casts;
   }
 
+  @override
   Future<TvShowCreditsModel> fetchTvShowCredits({int? id}) async {
     final url = '/tv/$id/credits';
     final response = await httpClient.get(uriLoader.generateUri(url));
@@ -164,6 +175,7 @@ class TMDBApiClient {
     return tvShowCreditsModel;
   }
 
+  @override
   Future<ActorInfoModel> fetchActorInfo({int? id}) async {
     final url = '/person/$id';
     final response = await httpClient.get(uriLoader.generateUri(url));
@@ -172,6 +184,7 @@ class TMDBApiClient {
     return actorInfoModel;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchSimilarMovies(
       {int? id, int? page}) async {
     List<GenericMoviesModel> similarMovies = [];
@@ -187,6 +200,7 @@ class TMDBApiClient {
     return similarMovies;
   }
 
+  @override
   Future<List<TVShowModel>> fetchSimilarTvShows({int? id, int? page}) async {
     List<TVShowModel> similarTvShows = [];
     final filters = FilterBuilder().page(page);
@@ -199,6 +213,7 @@ class TMDBApiClient {
     return similarTvShows;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchMoviesByGenre(
       {int? id, int? page}) async {
     List<GenericMoviesModel> moviesByGenre = [];
@@ -216,6 +231,7 @@ class TMDBApiClient {
     return moviesByGenre;
   }
 
+  @override
   Future<List<GenericMoviesModel>> fetchActorMovies(
       {int? id, int? page}) async {
     List<GenericMoviesModel> actorMovies = [];
@@ -231,6 +247,7 @@ class TMDBApiClient {
     return actorMovies;
   }
 
+  @override
   Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
     List<SeasonModel> seasons = [];
     final url = '/tv/$id';
