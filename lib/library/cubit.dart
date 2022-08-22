@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart' as c;
 import 'package:tmdbflutter/repository/log.dart';
 import 'package:tmdbflutter/repository/logger_log.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository.dart';
 
 abstract class Cubit<T> extends c.Cubit<T?> {
   String get name;
