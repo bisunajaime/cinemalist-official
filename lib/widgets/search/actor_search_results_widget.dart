@@ -71,7 +71,8 @@ class ActorSearchResultsWidget extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: Color(0xff2e2e2e),
-                    backgroundImage: NetworkImage(actors[i].profilePath!),
+                    backgroundImage: NetworkImage(
+                        'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
                     radius: 35,
                   ),
                   SizedBox(
