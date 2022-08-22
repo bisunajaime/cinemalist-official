@@ -10,6 +10,9 @@ import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
 import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
+import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
+import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
 import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
 import 'package:tmdbflutter/widgets/movie/movie_info_widget.dart';
 import 'package:tmdbflutter/widgets/movie/similar_movies_widget.dart';
@@ -64,6 +67,20 @@ class _MoviePageState extends State<MoviePage> {
           ],
         ),
         floatingActionButton: FABGoHome(),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FABSaveRecord<GenericMoviesModel>(
+              type: RecordType.movie,
+              record: widget.model!,
+              onTap: (elem) async {
+                // TODO: save
+              },
+            ),
+            SizedBox(width: 8),
+            FABGoHome(),
+          ],
+        ),
       ),
     );
   }
