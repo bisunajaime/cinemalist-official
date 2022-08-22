@@ -5,6 +5,7 @@ import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/utils/genre_utils.dart';
 import 'package:tmdbflutter/widgets/genre/movies_by_genre_list.dart';
 import 'package:tmdbflutter/widgets/home/genres_list_widget.dart';
 
