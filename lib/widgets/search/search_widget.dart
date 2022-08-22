@@ -136,10 +136,10 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   final _runner = DelayedRunner(milliseconds: 700);
+  final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SearchCubit>();
-    // cubit.search('a');
     return Container(
       color: Color(0xff0E0E0E),
       padding: EdgeInsets.only(
@@ -148,15 +148,30 @@ class _SearchFieldState extends State<SearchField> {
         bottom: 10,
       ),
       child: TextField(
+        controller: controller,
         onChanged: (value) async {
           _runner.run(() async {
-            await cubit.search(value);
+            await cubit.search(controller.text);
           });
         },
         style: Styles.mReg.copyWith(
           color: Colors.white,
+          fontSize: 18,
         ),
         decoration: InputDecoration(
+          suffixIcon: GestureDetector(
+            onTap: () {
+              controller.clear();
+              _runner.run(() async {
+                await cubit.search('');
+              });
+            },
+            child: Icon(
+              Icons.clear,
+              color: Colors.white,
+            ),
+          ),
+          contentPadding: EdgeInsets.all(12),
           prefixIcon: Icon(
             Icons.search,
             color: Colors.white,
@@ -166,6 +181,7 @@ class _SearchFieldState extends State<SearchField> {
           hintText: 'Search here',
           hintStyle: Styles.mReg.copyWith(
             color: Colors.white,
+            fontSize: 18,
           ),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
