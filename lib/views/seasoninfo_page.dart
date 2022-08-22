@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
 
 class SeasonInfoPage extends StatefulWidget {
   final List<SeasonModel>? tvSeasons;
@@ -37,6 +38,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
           buildSliverToBoxAdapter()
         ],
       ),
+      floatingActionButton: FABGoHome(),
     );
   }
 
@@ -123,9 +125,10 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                       color: Color(0xff2e2e2e),
                       image: DecorationImage(
                           image: (tv![i].posterPath == null
-                              ? AssetImage('assets/images/placeholder.png')
-                              : NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${tv![i].posterPath}')) as ImageProvider<Object>,
+                                  ? AssetImage('assets/images/placeholder.png')
+                                  : NetworkImage(
+                                      'https://image.tmdb.org/t/p/w500${tv![i].posterPath}'))
+                              as ImageProvider<Object>,
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black26,

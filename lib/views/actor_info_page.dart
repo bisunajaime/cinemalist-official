@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_info_widget.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_movies_widget.dart';
+import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
 
 import '../repository/tmdb_api_client.dart';
 import '../repository/tmdb_repository.dart';
@@ -41,6 +42,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
       ],
       child: Scaffold(
         backgroundColor: Color(0xff0E0E0E),
+        floatingActionButton: FABGoHome(),
         body: NestedScrollView(
           floatHeaderSlivers: true,
           headerSliverBuilder: (context, innerScrolled) {
