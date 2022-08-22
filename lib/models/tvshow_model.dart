@@ -5,6 +5,7 @@ class TVShowModel extends Equatable {
   final String? originalName, name, firstAirDate, posterPath, overview;
   final double? popularity, voteAverage;
   final int? voteCount, id;
+  final List<int>? genreIds;
   TVShowModel({
     required this.id,
     required this.originalName,
@@ -15,6 +16,7 @@ class TVShowModel extends Equatable {
     required this.popularity,
     required this.voteAverage,
     required this.voteCount,
+    required this.genreIds,
   });
 
   factory TVShowModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class TVShowModel extends Equatable {
       popularity: json['popularity'].toDouble(),
       voteAverage: json['vote_average'].toDouble(),
       voteCount: json['vote_count'],
+      genreIds: json["genre_ids"]?.cast<int>() ?? [],
     );
   }
 

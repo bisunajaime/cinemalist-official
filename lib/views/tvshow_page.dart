@@ -14,7 +14,7 @@ import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/views/actor_info_page.dart';
 import 'package:tmdbflutter/views/seasoninfo_page.dart';
-import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
+import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
 import 'package:tmdbflutter/widgets/tv/similar_tv_shows_widget.dart';
 import 'package:tmdbflutter/widgets/tv/tv_show_credits_widget.dart';
 import 'package:tmdbflutter/widgets/tv/tv_show_seasons_widget.dart';
@@ -86,6 +86,13 @@ class _TvShowPageState extends State<TvShowPage> {
                 color: Colors.pinkAccent[100],
               ),
             ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
+          SizedBox(
+            height: 5,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
