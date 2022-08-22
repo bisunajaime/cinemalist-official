@@ -1,6 +1,6 @@
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/season_model.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
 class TvSeasonsCubit extends TMDBCubit<List<SeasonModel>> {
   final int? movieId;

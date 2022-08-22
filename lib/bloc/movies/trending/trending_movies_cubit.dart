@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
 class TrendingMoviesCubit extends TMDBCubit<List<GenericMoviesModel>?> {
   TrendingMoviesCubit(TMDBRepository tmdbRepository) : super(tmdbRepository);
@@ -12,4 +14,10 @@ class TrendingMoviesCubit extends TMDBCubit<List<GenericMoviesModel>?> {
 
   @override
   String get name => 'TrendingMoviesCubit';
+
+  @override
+  String? get fileName => 'trending_movies.json';
+
+  @override
+  String? get toJson => jsonEncode(state?.map((e) => e.toJson()).toList());
 }

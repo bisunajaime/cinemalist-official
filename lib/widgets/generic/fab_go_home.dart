@@ -7,6 +7,7 @@ class FABGoHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       tooltip: 'Tap to go home',
+      heroTag: 'home',
       elevation: 0,
       onPressed: () {
         while (Navigator.canPop(context)) {

@@ -1,7 +1,7 @@
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 
-import '../../../repository/tmdb_repository.dart';
+import '../../../repository/tmdb_repository/tmdb_repository.dart';
 
 class SimilarTvShowsCubit extends PagedTMDBCubit<TVShowModel> {
   final int? movieId;

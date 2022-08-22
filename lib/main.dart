@@ -8,12 +8,15 @@ import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
+import 'package:tmdbflutter/views/saved_records_view.dart';
 import 'package:tmdbflutter/views/search_page.dart';
 import 'package:tmdbflutter/views/tvshows_page.dart';
 
@@ -23,8 +26,8 @@ import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
   // BlocSupervisor.delegate = SimpleBlocDelegate();
-  final TMDBRepository repository = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  final TMDBRepository repository = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );
@@ -76,6 +79,15 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SearchCubit(repository),
+        ),
+        BlocProvider(
+          create: (context) => MoviesWatchLaterCubit(),
+        ),
+        BlocProvider(
+          create: (context) => TvWatchLaterCubit(),
+        ),
+        BlocProvider(
+          create: (context) => SavedActorsCubit(),
         ),
       ],
       child: MaterialApp(
@@ -160,6 +172,12 @@ class _MainPageState extends State<MainPage>
             ),
             BottomNavigationBarItem(
               icon: Icon(
+                Icons.bookmark,
+              ),
+              label: 'Saved',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
                 Icons.search,
               ),
               label: 'Search',
@@ -173,6 +191,7 @@ class _MainPageState extends State<MainPage>
             HomePage(),
             MoviesPage(),
             TvShowsPage(),
+            SavedRecordsPage(),
             SearchPage(),
           ],
         ),

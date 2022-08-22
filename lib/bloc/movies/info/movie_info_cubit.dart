@@ -1,6 +1,6 @@
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
 class MovieInfoCubit extends TMDBCubit<MovieInfo?> {
   final int? movieId;

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/byGenre/moviesbygenre_cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/utils/genre_utils.dart';
 import 'package:tmdbflutter/widgets/genre/movies_by_genre_list.dart';
@@ -29,8 +30,8 @@ class _GenresPageState extends State<GenresPage> {
 
   @override
   Widget build(BuildContext context) {
-    TMDBRepository tmdbRepo = TMDBRepository(
-      tmdbApiClient: TMDBApiClient(
+    TMDBRepository tmdbRepo = TMDBAPIRepository(
+      tmdbClient: TMDBApiClient(
         httpClient: http.Client(),
       ),
     );

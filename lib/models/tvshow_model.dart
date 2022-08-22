@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:tmdbflutter/models/generic_movies_model.dart';
 
-class TVShowModel extends Equatable {
+class TVShowModel extends SerializableClass {
   final String? originalName, name, firstAirDate, posterPath, overview;
   final double? popularity, voteAverage;
   final int? voteCount, id;
@@ -28,27 +29,28 @@ class TVShowModel extends Equatable {
       posterPath: json['poster_path'],
       overview: json['overview'],
       popularity: json['popularity'].toDouble(),
-      voteAverage: json['vote_average'].toDouble(),
+      voteAverage: json['vote_average']?.toDouble(),
       voteCount: json['vote_count'],
       genreIds: json["genre_ids"]?.cast<int>() ?? [],
     );
   }
 
   @override
-  List<Object> get props => [
-        id!,
-        originalName!,
-        name!,
-        firstAirDate!,
-        posterPath!,
-        overview!,
-        popularity!,
-        voteAverage!,
-        voteCount!,
-      ];
+  String toString() => 'TvShow { id: $id }';
 
   @override
-  String toString() => 'TvShow { id: $id }';
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'original_name': originalName,
+        'name': name,
+        'first_air_date': firstAirDate,
+        'poster_path': posterPath,
+        'overview': overview,
+        'popularity': popularity,
+        'vote_average': voteAverage,
+        'vote_count': voteCount,
+        "genre_ids": genreIds?.map((e) => e).toList() ?? [],
+      };
 }
 
 /*

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:tmdbflutter/models/generic_movies_model.dart';
 
-class ActorsModel extends Equatable {
+class ActorsModel extends SerializableClass {
   final int? id;
   final double? popularity;
   final String? department, profilePath, name;
@@ -21,10 +22,11 @@ class ActorsModel extends Equatable {
   }
 
   @override
-  List<Object> get props => [
-        popularity!,
-        department!,
-        profilePath!,
-        name!,
-      ];
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'popularity': popularity,
+        'department': department,
+        'profile_path': profilePath,
+        'name': name,
+      };
 }

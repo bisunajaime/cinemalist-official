@@ -1,7 +1,7 @@
 import 'package:tmdbflutter/library/cubit.dart';
 
 import '../../../models/tvshow_model.dart';
-import '../../../repository/tmdb_repository.dart';
+import '../../../repository/tmdb_repository/tmdb_repository.dart';
 
 class PopularTvShowsCubit extends PagedTMDBCubit<TVShowModel?> {
   PopularTvShowsCubit(TMDBRepository tmdbRepository) : super(tmdbRepository);

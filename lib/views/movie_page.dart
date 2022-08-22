@@ -4,12 +4,16 @@ import 'package:intl/intl.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
+import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
 import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
 import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
 import 'package:tmdbflutter/widgets/movie/movie_info_widget.dart';
 import 'package:tmdbflutter/widgets/movie/similar_movies_widget.dart';
@@ -30,8 +34,9 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
-  TMDBRepository tmdbRepo = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  final _runner = DelayedRunner(milliseconds: 250);
+  TMDBRepository tmdbRepo = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );
@@ -63,7 +68,24 @@ class _MoviePageState extends State<MoviePage> {
             buildSliverToBoxAdapter(),
           ],
         ),
-        floatingActionButton: FABGoHome(),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FABSaveRecord<GenericMoviesModel>(
+              tag: 'movie-${widget.model!.id!}',
+              isSaved:
+                  context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
+              record: widget.model!,
+              onTap: (elem) async {
+                _runner.run(() async {
+                  await context.read<MoviesWatchLaterCubit>().save(elem);
+                });
+              },
+            ),
+            SizedBox(width: 8),
+            FABGoHome(),
+          ],
+        ),
       ),
     );
   }
