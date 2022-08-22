@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
 
@@ -74,6 +75,7 @@ class MovieCastWidget extends StatelessWidget {
                           builder: (context) => ActorInfoPage(
                                 id: model.id,
                                 name: model.name,
+                                model: GenericActorModel.fromCastModel(model),
                               )),
                     ),
                     child: Column(

@@ -5,7 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_info_widget.dart';
 import 'package:tmdbflutter/widgets/actor_info/actor_movies_widget.dart';
 import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
@@ -18,15 +20,18 @@ import '../styles/styles.dart';
 class ActorInfoPage extends StatefulWidget {
   final int? id;
   final String? name;
+  final GenericActorModel model;
   ActorInfoPage({
     this.id,
     required this.name,
+    required this.model,
   });
   @override
   _ActorInfoPageState createState() => _ActorInfoPageState();
 }
 
 class _ActorInfoPageState extends State<ActorInfoPage> {
+  final _runner = DelayedRunner(milliseconds: 250);
   TMDBRepository tmdbRepo = TMDBAPIRepository(
     tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
@@ -50,17 +55,16 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             // TODO:
-            // FABSaveRecord<ActorInfoModel>(
-            //   tag: 'movie-${widget.id!}',
-            //   isSaved:
-            //   context.watch<SavedActorsCubit>().isSaved(widget.model!),
-            //   record: widget.model!,
-            //   onTap: (elem) async {
-            //     _runner.run(() async {
-            //       await context.read<MoviesWatchLaterCubit>().save(elem);
-            //     });
-            //   },
-            // ),
+            FABSaveRecord<GenericActorModel>(
+              tag: 'movie-${widget.id!}',
+              isSaved: context.watch<SavedActorsCubit>().isSaved(widget.model),
+              record: widget.model,
+              onTap: (elem) async {
+                _runner.run(() async {
+                  await context.read<SavedActorsCubit>().save(elem);
+                });
+              },
+            ),
             SizedBox(width: 8),
             FABGoHome(),
           ],

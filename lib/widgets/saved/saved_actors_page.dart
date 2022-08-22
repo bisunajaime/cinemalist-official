@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
 
@@ -18,7 +19,7 @@ class SavedActorsWidget extends StatelessWidget {
     }
 
     return Container(
-      height: 100,
+      height: 110,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -36,6 +37,7 @@ class SavedActorsWidget extends StatelessWidget {
                   builder: (context) => ActorInfoPage(
                     id: actors[i].id,
                     name: actors[i].name,
+                    model: actors[i],
                   ),
                 ),
               ),
@@ -45,8 +47,9 @@ class SavedActorsWidget extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: Color(0xff2e2e2e),
-                    backgroundImage: NetworkImage(actors[i].profilePath!),
-                    radius: 35,
+                    backgroundImage: NetworkImage(
+                        'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
+                    radius: 45,
                   ),
                   SizedBox(
                     height: 1,
@@ -54,7 +57,7 @@ class SavedActorsWidget extends StatelessWidget {
                   Text(
                     actors[i].name!,
                     style: Styles.mMed.copyWith(
-                      fontSize: 8,
+                      fontSize: 12,
                     ),
                   ),
                 ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/bloc/tvshows/credits/tvshow_credits_bloc.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
 
@@ -71,6 +72,7 @@ class TvShowCreditsWidget extends StatelessWidget {
                         builder: (context) => ActorInfoPage(
                           id: model.id,
                           name: model.name,
+                          model: GenericActorModel.fromCastModel(model),
                         ),
                       ),
                     ),

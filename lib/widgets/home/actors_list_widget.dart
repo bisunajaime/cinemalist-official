@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/barrels/actors_barrel.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/actor_info_page.dart';
 
@@ -59,6 +60,7 @@ class ActorsListWidget extends StatelessWidget {
                   builder: (context) => ActorInfoPage(
                     id: actors[i].id,
                     name: actors[i].name,
+                    model: GenericActorModel.fromActorModel(actors[i]),
                   ),
                 ),
               ),
@@ -68,7 +70,8 @@ class ActorsListWidget extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: Color(0xff2e2e2e),
-                    backgroundImage: NetworkImage(actors[i].profilePath!),
+                    backgroundImage: NetworkImage(
+                        'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
                     radius: 35,
                   ),
                   SizedBox(

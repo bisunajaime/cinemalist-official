@@ -14,9 +14,7 @@ class ActorsModel extends SerializableClass {
       id: json['id'],
       popularity: json['popularity'],
       department: json['department'],
-      profilePath: json['profile_path'] != null
-          ? 'https://image.tmdb.org/t/p/w500${json['profile_path']}'
-          : 'https://via.placeholder.com/400',
+      profilePath: json['profile_path'],
       name: json['name'],
     );
   }

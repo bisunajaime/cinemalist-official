@@ -6,6 +6,7 @@ import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/library/cubit.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/repository/localstorage_repository/localstorage_repository.dart';
 
@@ -41,18 +42,18 @@ class TvWatchLaterCubit extends LocalStorageCubit<TVShowModel> {
   }
 }
 
-class SavedActorsCubit extends LocalStorageCubit<ActorsModel> {
+class SavedActorsCubit extends LocalStorageCubit<GenericActorModel> {
   SavedActorsCubit() : super([]);
 
   @override
   String get fileName => 'saved_actors.json';
 
   @override
-  Future<List<ActorsModel>> retrieve() async {
+  Future<List<GenericActorModel>> retrieve() async {
     final data = await localStorageRepository.retrieve();
     if (data == null) return [];
     return (jsonDecode(data) as List)
-        .map((e) => ActorsModel.fromJson(e))
+        .map((e) => GenericActorModel.fromJson(e))
         .toList();
   }
 }
