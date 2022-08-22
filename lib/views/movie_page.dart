@@ -86,13 +86,7 @@ class _MoviePageState extends State<MoviePage> {
               ),
             ),
           ),
-          SizedBox(
-            height: 5,
-          ),
           GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
-          SizedBox(
-            height: 5,
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(

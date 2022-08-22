@@ -12,10 +12,15 @@ class GenresOfMovieListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final genreCubit = context.read<GenresCubit>();
-    if (genreIds == null) return Container();
+    final state = genreCubit.state;
+    if (genreIds == null ||
+        genreIds?.isEmpty == true ||
+        state == null ||
+        state.isEmpty == true) return Container(height: 5);
     final genres = loadGenreIds(genreIds!, genreCubit.state!);
     return Container(
       height: 30,
+      margin: EdgeInsets.symmetric(vertical: 5),
       child: ListView(
         scrollDirection: Axis.horizontal,
         children:
