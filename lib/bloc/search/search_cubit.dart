@@ -24,6 +24,10 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
       tvResults?.isNotEmpty == true;
 
   Future<void> search(String searchString) async {
+    if (searchString.isEmpty) {
+      clearResults();
+      return;
+    }
     if (query.toLowerCase() == searchString.toLowerCase()) {
       return;
     }

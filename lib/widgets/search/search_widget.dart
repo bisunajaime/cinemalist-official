@@ -149,10 +149,6 @@ class _SearchFieldState extends State<SearchField> {
       ),
       child: TextField(
         onChanged: (value) async {
-          if (value.trim().isEmpty) {
-            cubit.clearResults();
-            return;
-          }
           _runner.run(() async {
             await cubit.search(value);
           });
