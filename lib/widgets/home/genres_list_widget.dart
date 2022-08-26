@@ -46,12 +46,18 @@ class GenresListWidget extends StatelessWidget {
     genres!;
 
     return Container(
-      height: MediaQuery.of(context).size.height * .1,
+      height: 180,
       width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
+      child: GridView.builder(
         physics: BouncingScrollPhysics(),
         itemCount: genres.length,
         scrollDirection: Axis.horizontal,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 130,
+          childAspectRatio: 0.5,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
         itemBuilder: (context, i) {
           final genre = genres[i];
           return GestureDetector(
@@ -96,7 +102,7 @@ class GenresListWidget extends StatelessWidget {
               child: Text(
                 genre.name!,
                 style: Styles.mBold.copyWith(
-                  fontSize: 20,
+                  fontSize: 16,
                 ),
               ),
             ),
