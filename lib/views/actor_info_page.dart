@@ -105,14 +105,15 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
             scrollDirection: Axis.vertical,
             children: <Widget>[
               ActorInfoWidget(),
-              SizedBox(height: 10),
+              SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   "Movies",
+                  textAlign: TextAlign.center,
                   style: Styles.mBold.copyWith(
-                    fontSize: 15,
-                    color: Colors.pinkAccent[100],
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

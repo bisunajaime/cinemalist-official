@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
+import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 
 class ActorInfoWidget extends StatelessWidget {
@@ -35,188 +36,160 @@ class ActorInfoWidget extends StatelessWidget {
     }
     actorInfoModel!;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        SizedBox(height: 30),
         Container(
-          height: MediaQuery.of(context).size.height * 0.3,
-          width: double.infinity,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: AspectRatio(
-                  aspectRatio: 2 / 3,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      image: (actorInfoModel.profilePath == null
-                              ? AssetImage('assets/images/placeholder_actor.png')
-                              : NetworkImage(
-                                  'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}'))
-                          as ImageProvider<Object>,
-                      alignment: Alignment.center,
-                      fit: BoxFit.cover,
-                    )),
+          width: MediaQuery.of(context).size.height * .2,
+          child: AspectRatio(
+            aspectRatio: 2 / 3,
+            child: actorInfoModel.hasProfilePic
+                ? Image.network(
+                    'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}',
+                    alignment: Alignment.center,
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/images/placeholder_actor.png',
+                    alignment: Alignment.center,
+                    fit: BoxFit.cover,
                   ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  color: Colors.transparent,
-                  padding: EdgeInsets.all(5),
-                  child: ListView(
-                    children: <Widget>[
-                      // Text(
-                      //   actorInfoModel.name!,
-                      //   style: Styles.mBold.copyWith(
-                      //     fontSize: 20,
-                      //     color: Colors.pinkAccent[100],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 2,
-                      // ),
-                      Text(
-                        "Birthplace",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.placeOfBirth == null
-                            ? "Not Specified"
-                            : actorInfoModel.placeOfBirth!,
-                        style: Styles.mReg.copyWith(
-                          fontSize: 10,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "Department",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.knownForDepartment!,
-                        style: Styles.mReg.copyWith(
-                          fontSize: 10,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "Birthday",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.birthday == null
-                            ? "Not Specified"
-                            : DateFormat.yMMMd().format(
-                                DateTime.tryParse(actorInfoModel.birthday!)!),
-                        style: Styles.mReg.copyWith(
-                          fontSize: 10,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "Age",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.birthday == null
-                            ? "Not Specified"
-                            : (DateTime.now().year -
-                                    DateTime.parse(actorInfoModel.birthday!)
-                                        .year)
-                                .toString(),
-                        style: Styles.mReg.copyWith(
-                          fontSize: 10,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "Status",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.deathday != null
-                            ? actorInfoModel.deathday!
-                            : "Alive",
-                        style: Styles.mReg.copyWith(
-                          fontSize: 10,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Text(
-                        "Popularity",
-                        style: Styles.mBold.copyWith(
-                          fontSize: 13,
-                        ),
-                      ),
-                      Text(
-                        actorInfoModel.popularity.toString(),
-                        style: Styles.mBold.copyWith(
-                          fontSize: 10,
-                          color: actorInfoModel.popularity > 5
-                              ? Colors.greenAccent
-                              : Colors.redAccent,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 15),
         Divider(
           color: Colors.white,
           indent: 40.0,
           endIndent: 40.0,
         ),
+        SizedBox(height: 15),
+        ActorDetailsWidget(actorInfoModel: actorInfoModel),
+        SizedBox(height: 30),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             "Biography",
             style: Styles.mBold.copyWith(
-              fontSize: 15,
-              color: Colors.pinkAccent[100],
+              fontSize: 24,
             ),
           ),
         ),
-        SizedBox(
-          height: 5,
-        ),
+        SizedBox(height: 14),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             actorInfoModel.biography!.trim().length == 0
                 ? 'Not Specified'
                 : actorInfoModel.biography!,
+            textAlign: TextAlign.center,
             style: Styles.mReg.copyWith(
-              fontSize: 10,
+              fontSize: 14,
+              color: Colors.white.withOpacity(.75),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class ActorDetailsWidget extends StatelessWidget {
+  final ActorInfoModel actorInfoModel;
+  const ActorDetailsWidget({Key? key, required this.actorInfoModel})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              ActorDetailWidget(
+                label: 'Age',
+                content: actorInfoModel.age,
+              ),
+              SizedBox(width: 6),
+              ActorDetailWidget(
+                label: 'Department',
+                content: actorInfoModel.knownForDepartment!,
+              ),
+              SizedBox(width: 6),
+              ActorDetailWidget(
+                label: 'Status',
+                content: actorInfoModel.status,
+              ),
+            ],
+          ),
+          SizedBox(height: 6),
+          Row(
+            children: [
+              ActorDetailWidget(
+                label: 'Birthplace',
+                content: actorInfoModel.placeOfBirth == null
+                    ? "Not Specified"
+                    : actorInfoModel.placeOfBirth!,
+              ),
+              SizedBox(width: 6),
+              ActorDetailWidget(
+                label: 'Birthday',
+                content: actorInfoModel.dateOfBirth,
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class ActorDetailWidget extends StatelessWidget {
+  final String label;
+  final String content;
+  const ActorDetailWidget({
+    Key? key,
+    required this.label,
+    required this.content,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color(0xff181818),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.pinkAccent,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              content,
+              maxLines: 1,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

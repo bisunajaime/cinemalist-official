@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
 class ActorInfoModel extends SerializableClass {
@@ -16,6 +17,17 @@ class ActorInfoModel extends SerializableClass {
   final int id;
   final int? gender;
   final double popularity;
+
+  bool get hasBirthday => birthday != null;
+  bool get hasProfilePic => profilePath != null;
+
+  String get dateOfBirth => hasBirthday
+      ? DateFormat.yMMMd().format(DateTime.tryParse(birthday!)!)
+      : 'Not Specified';
+  String get age => hasBirthday ? computeAge(birthday!) : 'Not Specified';
+  String get status => deathday == null ? 'Alive' : deathday!;
+
+  bool get isPopular => popularity > 5;
 
   ActorInfoModel({
     required this.birthday,
@@ -71,4 +83,11 @@ class ActorInfoModel extends SerializableClass {
         'credit_id': creditId,
         'gender': gender,
       };
+}
+
+String computeAge(String dateOfBirth) {
+  final now = DateTime.now();
+  final dob = DateTime.parse(dateOfBirth);
+  final age = now.year - dob.year;
+  return age.toString();
 }
