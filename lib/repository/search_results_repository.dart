@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/builder/filter_builder.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/barrels/models.dart';
+import 'package:tmdbflutter/models/builder/filter_builder.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/repository/uri_generator.dart';
 

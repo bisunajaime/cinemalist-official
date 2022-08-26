@@ -1,6 +1,5 @@
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/actors_model.dart';
-import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:tmdbflutter/models/genres_model.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
@@ -31,7 +30,7 @@ abstract class TMDBClient {
 
   Future<MovieInfo> fetchMovieInfo({int? id});
 
-  Future<List<CastModel>> fetchMovieCasts({int? id});
+  Future<List<ActorInfoModel>> fetchMovieCasts({int? id});
 
   Future<TvShowCreditsModel> fetchTvShowCredits({int? id});
 

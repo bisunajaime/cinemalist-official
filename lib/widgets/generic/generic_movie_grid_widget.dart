@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 

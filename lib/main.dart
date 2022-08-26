@@ -1,18 +1,16 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/genres_barrel.dart';
 import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
-import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
-import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
@@ -20,8 +18,8 @@ import 'package:tmdbflutter/views/saved_records_view.dart';
 import 'package:tmdbflutter/views/search_page.dart';
 import 'package:tmdbflutter/views/tvshows_page.dart';
 
-import 'barrels/genres_barrel.dart';
 import 'barrels/actors_barrel.dart';
+import 'barrels/genres_barrel.dart';
 import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {

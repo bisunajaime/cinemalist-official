@@ -1,5 +1,3 @@
-import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 
 class TVShowModel extends SerializableClass {

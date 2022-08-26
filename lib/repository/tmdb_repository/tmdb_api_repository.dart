@@ -1,10 +1,9 @@
+import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/models/tvshowcredits_model.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
@@ -53,7 +52,7 @@ class TMDBAPIRepository implements TMDBRepository {
   }
 
   @override
-  Future<List<CastModel>> fetchMovieCasts({int? id}) async {
+  Future<List<ActorInfoModel>> fetchMovieCasts({int? id}) async {
     return await tmdbClient.fetchMovieCasts(id: id);
   }
 

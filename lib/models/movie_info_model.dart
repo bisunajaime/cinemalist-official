@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:tmdbflutter/barrels/models.dart';
-import 'package:meta/meta.dart';
 
 class MovieInfoModel extends Equatable {
   final String? homepage, imdbId, status;

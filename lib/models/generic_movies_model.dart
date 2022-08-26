@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 abstract class SerializableClass {
   int? id;
   Map<String, dynamic> toJson();

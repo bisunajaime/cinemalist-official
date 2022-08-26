@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 class CrewModel extends Equatable {
   final String? creditId, department, name, job, profilePath;

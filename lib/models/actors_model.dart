@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 
 class ActorsModel extends SerializableClass {

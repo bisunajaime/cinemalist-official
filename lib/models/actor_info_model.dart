@@ -1,7 +1,6 @@
-import 'package:equatable/equatable.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 
-class ActorInfoModel extends Equatable {
+class ActorInfoModel extends SerializableClass {
   final String? birthday,
       knownForDepartment,
       name,
@@ -10,9 +9,12 @@ class ActorInfoModel extends Equatable {
       imdbId,
       homePage,
       profilePath,
-      deathday;
+      deathday,
+      character,
+      creditId;
   late final List<GenericMoviesModel> knownFor;
   final int id;
+  final int? gender;
   final double popularity;
 
   ActorInfoModel({
@@ -27,6 +29,9 @@ class ActorInfoModel extends Equatable {
     required this.deathday,
     required this.id,
     required this.popularity,
+    required this.character,
+    required this.creditId,
+    required this.gender,
   });
 
   factory ActorInfoModel.fromJson(Map<String, dynamic> json) {
@@ -43,21 +48,27 @@ class ActorInfoModel extends Equatable {
 //      knownFor: knownFor ?? [],
       id: json['id'] ?? 0,
       popularity: json['popularity'] ?? 0,
+      character: json['character'],
+      creditId: json['credit_id'],
+      gender: json['gender'],
     );
   }
 
   @override
-  List<Object> get props => [
-        birthday!,
-        knownForDepartment!,
-        name!,
-        biography!,
-        placeOfBirth!,
-        imdbId!,
-        homePage!,
-        deathday!,
-        knownFor,
-        id,
-        popularity,
-      ];
+  Map<String, dynamic> toJson() => {
+        'birthday': birthday,
+        'known_for_department': knownForDepartment,
+        'name': name,
+        'biography': biography,
+        'place_of_birth': placeOfBirth,
+        'imdb_id': imdbId,
+        'homepage': homePage,
+        'profile_path': profilePath,
+        'deathday': deathday,
+        'id': id,
+        'popularity': popularity,
+        'character': character,
+        'credit_id': creditId,
+        'gender': gender,
+      };
 }

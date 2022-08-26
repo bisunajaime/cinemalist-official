@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
 import 'package:http/http.dart' as http;
+import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
 import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';

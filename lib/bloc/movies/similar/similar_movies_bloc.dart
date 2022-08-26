@@ -1,5 +1,3 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 
 import '../../../barrels/models.dart';

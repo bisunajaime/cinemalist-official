@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
 import 'package:tmdbflutter/models/builder/filter_builder.dart';
-import 'package:tmdbflutter/models/cast_model.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
 import 'package:tmdbflutter/models/season_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
@@ -150,15 +149,16 @@ class TMDBApiClient implements TMDBClient {
   }
 
   @override
-  Future<List<CastModel>> fetchMovieCasts({int? id}) async {
-    List<CastModel> casts = [];
+  Future<List<ActorInfoModel>> fetchMovieCasts({int? id}) async {
+    List<ActorInfoModel> casts = [];
     final url = '/movie/$id/credits';
     final response = await httpClient.get(uriLoader.generateUri(url));
     if (response.statusCode != 200) {
       throw new Exception('There was a problem.');
     }
     final decodeJson = jsonDecode(response.body);
-    decodeJson['cast'].forEach((data) => casts.add(CastModel.fromJson(data)));
+    decodeJson['cast']
+        .forEach((data) => casts.add(ActorInfoModel.fromJson(data)));
     return casts;
   }
 

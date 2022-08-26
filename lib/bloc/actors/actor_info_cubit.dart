@@ -1,5 +1,6 @@
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
+
 import '../../repository/tmdb_repository/tmdb_repository.dart';
 
 class ActorInfoCubit extends TMDBCubit<ActorInfoModel?> {

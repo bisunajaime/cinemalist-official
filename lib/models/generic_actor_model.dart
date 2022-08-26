@@ -1,6 +1,5 @@
 import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/cast_model.dart';
 
 class GenericActorModel extends SerializableClass {
   final int? id;
@@ -8,7 +7,7 @@ class GenericActorModel extends SerializableClass {
 
   GenericActorModel(this.id, this.name, this.profilePath);
 
-  factory GenericActorModel.fromCastModel(CastModel model) {
+  factory GenericActorModel.fromCastModel(ActorInfoModel model) {
     return GenericActorModel(model.id, model.name, model.profilePath);
   }
 

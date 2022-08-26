@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/saved/saved_movies_widget.dart';
 import 'package:tmdbflutter/widgets/saved/saved_records_widget.dart';
 
 class SavedRecordsPage extends StatefulWidget {
