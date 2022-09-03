@@ -95,9 +95,6 @@ class SavedMoviesWidget extends StatelessWidget {
                       context: context,
                       builder: (context) => ShowRemoveConfirmationDialog(
                         type: savedMovies[i].title!,
-                        onActionTap: (confirm) {
-                          Navigator.pop(context, confirm);
-                        },
                       ),
                     );
                     if (result != true) return;

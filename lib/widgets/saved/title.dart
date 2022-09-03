@@ -34,9 +34,6 @@ class SavedRecordsTitle extends StatelessWidget {
                 context: context,
                 builder: (context) => ShowRemoveConfirmationDialog(
                   type: 'all $title',
-                  onActionTap: (confirm) {
-                    Navigator.pop(context, confirm);
-                  },
                 ),
               );
               if (result != true) return;

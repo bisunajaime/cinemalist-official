@@ -93,9 +93,6 @@ class SavedTvShowsWidget extends StatelessWidget {
                         context: context,
                         builder: (context) => ShowRemoveConfirmationDialog(
                           type: savedTVShows[i].name!,
-                          onActionTap: (confirm) {
-                            Navigator.pop(context, confirm);
-                          },
                         ),
                       );
                       if (result != true) return;

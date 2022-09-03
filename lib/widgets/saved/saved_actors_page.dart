@@ -74,9 +74,6 @@ class SavedActorsWidget extends StatelessWidget {
                           context: context,
                           builder: (context) => ShowRemoveConfirmationDialog(
                             type: actors[i].name!,
-                            onActionTap: (confirm) {
-                              Navigator.pop(context, confirm);
-                            },
                           ),
                         );
                         if (result != true) return;
