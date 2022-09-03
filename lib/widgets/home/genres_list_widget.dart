@@ -77,15 +77,7 @@ class GenresListWidget extends StatelessWidget {
                 right: 30,
                 bottom: 8,
               ),
-              margin: EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(
-                // image: genre.genreImage == null
-                //     ? null
-                //     : DecorationImage(
-                //         image: NetworkImage(
-                //             'https://image.tmdb.org/t/p/w500${genre.genreImage}'),
-                //         fit: BoxFit.cover,
-                //       ),
                 gradient: LinearGradient(
                   colors: grabColorForGenre(genre.name!),
                   begin: Alignment.topLeft,
