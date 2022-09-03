@@ -8,6 +8,8 @@ class Result {
   int? size;
   String? type;
 
+  String get youtubeTrailerUrl => 'https://www.youtube.com/watch?v=$key';
+
   Result(
       {this.id,
       this.iso_3166_1,
