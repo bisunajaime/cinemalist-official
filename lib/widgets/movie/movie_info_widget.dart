@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
+import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
+import 'package:tmdbflutter/models/movieinfo/Result.dart';
+import 'package:tmdbflutter/utils/link_sharing.dart';
+import 'package:tmdbflutter/utils/url_opener.dart';
 import 'package:tmdbflutter/views/youtube_page.dart';
+import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
 
 class MovieInfoWidget extends StatelessWidget {
   const MovieInfoWidget({Key? key}) : super(key: key);
@@ -65,16 +70,57 @@ class MovieInfoWidget extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      width: 160,
+                      width: 200,
                       alignment: Alignment.bottomLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.play_arrow_rounded,
-                            color: Colors.white,
-                            size: 30,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await openLink(
+                                          context, info, videoResult);
+                                    },
+                                    child: Icon(
+                                      Icons.link,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                  ),
+                                  SizedBox(width: 14),
+                                  GestureDetector(
+                                    onTap: () {
+                                      shareTrailerLink(
+                                        info.title!,
+                                        videoResult!.name!,
+                                        videoResult.key!,
+                                      );
+                                    },
+                                    child: Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                           Expanded(child: SizedBox()),
                           Text(
@@ -96,5 +142,17 @@ class MovieInfoWidget extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> openLink(
+      BuildContext context, MovieInfo info, Result? videoResult) async {
+    // final result = await showDialog(
+    //   context: context,
+    //   builder: (context) => ShowOpenTrailerLinkDialog(
+    //       trailerName: videoResult?.name, movieName: info.title!),
+    // );
+    // if (!result) return;
+    if (videoResult?.key == null) return;
+    await openUrl('https://www.youtube.com/watch?v=${videoResult!.key}');
   }
 }
