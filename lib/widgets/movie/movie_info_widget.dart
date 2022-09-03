@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
 import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
@@ -97,6 +98,17 @@ class MovieInfoWidget extends StatelessWidget {
                                       await openLink(
                                           context, info, videoResult);
                                     },
+                                    onLongPress: () {
+                                      Clipboard.setData(ClipboardData(
+                                              text: videoResult!
+                                                  .youtubeTrailerUrl))
+                                          .then((value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Successfully copied link')));
+                                      });
+                                    },
                                     child: Icon(
                                       Icons.link,
                                       color: Colors.white,
@@ -109,7 +121,7 @@ class MovieInfoWidget extends StatelessWidget {
                                       shareTrailerLink(
                                         info.title!,
                                         videoResult!.name!,
-                                        videoResult.key!,
+                                        videoResult.youtubeTrailerUrl,
                                       );
                                     },
                                     child: Icon(
@@ -146,13 +158,7 @@ class MovieInfoWidget extends StatelessWidget {
 
   Future<void> openLink(
       BuildContext context, MovieInfo info, Result? videoResult) async {
-    // final result = await showDialog(
-    //   context: context,
-    //   builder: (context) => ShowOpenTrailerLinkDialog(
-    //       trailerName: videoResult?.name, movieName: info.title!),
-    // );
-    // if (!result) return;
     if (videoResult?.key == null) return;
-    await openUrl('https://www.youtube.com/watch?v=${videoResult!.key}');
+    await openUrl(videoResult!.youtubeTrailerUrl);
   }
 }
