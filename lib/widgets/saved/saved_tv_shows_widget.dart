@@ -6,6 +6,7 @@ import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
+import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
 
 final _runner = DelayedRunner(milliseconds: 250);
 
@@ -87,7 +88,17 @@ class SavedTvShowsWidget extends StatelessWidget {
                   bottom: 0,
                   right: 0,
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => ShowRemoveConfirmationDialog(
+                          type: savedTVShows[i].name!,
+                          onActionTap: (confirm) {
+                            Navigator.pop(context, confirm);
+                          },
+                        ),
+                      );
+                      if (result != true) return;
                       _runner.run(() {
                         cubit.save(savedTVShows[i]);
                       });

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
 
 class SavedRecordsTitle extends StatelessWidget {
   final String title;
@@ -28,7 +29,19 @@ class SavedRecordsTitle extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => localCubit.remove(),
+            onTap: () async {
+              final result = await showDialog(
+                context: context,
+                builder: (context) => ShowRemoveConfirmationDialog(
+                  type: 'all $title',
+                  onActionTap: (confirm) {
+                    Navigator.pop(context, confirm);
+                  },
+                ),
+              );
+              if (result != true) return;
+              localCubit.remove();
+            },
             child: Container(
               padding: EdgeInsets.all(8),
               margin: EdgeInsets.only(right: 4),
