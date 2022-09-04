@@ -2,6 +2,10 @@
 
 TheMovieDB API Build with Flutter using BLoC Pattern
 
+### Versions
+* Flutter 3.3.0
+* Dart 2.18.0
+
 ## Sample Images
 
 <img src="github_image/intro.png"/>
