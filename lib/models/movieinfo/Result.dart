@@ -1,12 +1,14 @@
 class Result {
-  String id;
-  String iso_3166_1;
-  String iso_639_1;
-  String key;
-  String name;
-  String site;
-  int size;
-  String type;
+  String? id;
+  String? iso_3166_1;
+  String? iso_639_1;
+  String? key;
+  String? name;
+  String? site;
+  int? size;
+  String? type;
+
+  String get youtubeTrailerUrl => 'https://www.youtube.com/watch?v=$key';
 
   Result(
       {this.id,

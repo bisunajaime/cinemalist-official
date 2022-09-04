@@ -1,8 +1,8 @@
 class BelongsToCollection {
-  String backdrop_path;
-  int id;
-  String name;
-  String poster_path;
+  String? backdrop_path;
+  int? id;
+  String? name;
+  String? poster_path;
 
   BelongsToCollection(
       {this.backdrop_path, this.id, this.name, this.poster_path});

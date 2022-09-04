@@ -6,32 +6,32 @@ import 'package:tmdbflutter/models/movieinfo/SpokenLanguage.dart';
 import 'package:tmdbflutter/models/movieinfo/Videos.dart';
 
 class MovieInfo {
-  bool adult;
-  String backdrop_path;
-  BelongsToCollection belongs_to_collection;
-  int budget;
-  List<Genre> genres;
-  String homepage;
-  int id;
-  String imdb_id;
-  String original_language;
-  String original_title;
-  String overview;
-  double popularity;
-  String poster_path;
-  List<ProductionCompany> production_companies;
-  List<ProductionCountry> production_countries;
-  String release_date;
-  int revenue;
-  int runtime;
-  List<SpokenLanguage> spoken_languages;
-  String status;
-  String tagline;
-  String title;
-  bool video;
-  Videos videos;
-  double vote_average;
-  int vote_count;
+  bool? adult;
+  String? backdrop_path;
+  BelongsToCollection? belongs_to_collection;
+  int? budget;
+  List<Genre>? genres;
+  String? homepage;
+  int? id;
+  String? imdb_id;
+  String? original_language;
+  String? original_title;
+  String? overview;
+  double? popularity;
+  String? poster_path;
+  List<ProductionCompany>? production_companies;
+  List<ProductionCountry>? production_countries;
+  String? release_date;
+  int? revenue;
+  int? runtime;
+  List<SpokenLanguage>? spoken_languages;
+  String? status;
+  String? tagline;
+  String? title;
+  bool? video;
+  Videos? videos;
+  double? vote_average;
+  int? vote_count;
 
   MovieInfo(
       {this.adult,
@@ -131,25 +131,25 @@ class MovieInfo {
     data['vote_average'] = this.vote_average;
     data['vote_count'] = this.vote_count;
     if (this.belongs_to_collection != null) {
-      data['belongs_to_collection'] = this.belongs_to_collection.toJson();
+      data['belongs_to_collection'] = this.belongs_to_collection!.toJson();
     }
     if (this.genres != null) {
-      data['genres'] = this.genres.map((v) => v.toJson()).toList();
+      data['genres'] = this.genres!.map((v) => v.toJson()).toList();
     }
     if (this.production_companies != null) {
       data['production_companies'] =
-          this.production_companies.map((v) => v.toJson()).toList();
+          this.production_companies!.map((v) => v.toJson()).toList();
     }
     if (this.production_countries != null) {
       data['production_countries'] =
-          this.production_countries.map((v) => v.toJson()).toList();
+          this.production_countries!.map((v) => v.toJson()).toList();
     }
     if (this.spoken_languages != null) {
       data['spoken_languages'] =
-          this.spoken_languages.map((v) => v.toJson()).toList();
+          this.spoken_languages!.map((v) => v.toJson()).toList();
     }
     if (this.videos != null) {
-      data['videos'] = this.videos.toJson();
+      data['videos'] = this.videos!.toJson();
     }
     return data;
   }

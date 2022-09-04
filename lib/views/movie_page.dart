@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/movies/cast/movie_cast_bloc.dart';
-import 'package:tmdbflutter/bloc/movies/info/movie_info_bloc.dart';
-import 'package:tmdbflutter/bloc/movies/info/movie_info_event.dart';
-import 'package:tmdbflutter/bloc/movies/info/movie_info_state.dart';
-import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:tmdbflutter/models/cast_model.dart';
-import 'package:tmdbflutter/models/movieinfo/Result.dart';
-import 'package:tmdbflutter/repository/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository.dart';
-import 'package:tmdbflutter/styles/styles.dart';
 import 'package:http/http.dart' as http;
-import 'package:tmdbflutter/views/actor_info_page.dart';
-import 'package:tmdbflutter/views/youtube_page.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
+import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
+import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
+import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
+import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/utils/delayed_runner.dart';
+import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
+import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
+import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
+import 'package:tmdbflutter/widgets/movie/movie_info_widget.dart';
+import 'package:tmdbflutter/widgets/movie/similar_movies_widget.dart';
 
 import '../barrels/models.dart';
 
 class MoviePage extends StatefulWidget {
-  final GenericMoviesModel model;
-  final String tag;
+  final GenericMoviesModel? model;
+  final String? tag;
 
   MoviePage({
     this.model,
@@ -33,36 +34,29 @@ class MoviePage extends StatefulWidget {
 }
 
 class _MoviePageState extends State<MoviePage> {
-  TMDBRepository tmdbRepo = TMDBRepository(
-    tmdbApiClient: TMDBApiClient(
+  final _runner = DelayedRunner(milliseconds: 250);
+  TMDBRepository tmdbRepo = TMDBAPIRepository(
+    tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
     ),
   );
 
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    print(widget.model.id);
+    print(widget.model!.id);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => MovieInfoBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              MovieInfoCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) => MovieCastBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              MovieCastCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) => SimilarMoviesBloc(tmdbRepository: tmdbRepo),
-        ),
-        BlocProvider(
-          create: (context) => MovieInfoBloc(tmdbRepository: tmdbRepo),
+          create: (context) =>
+              SimilarMoviesCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
       ],
       child: Scaffold(
@@ -72,6 +66,24 @@ class _MoviePageState extends State<MoviePage> {
           slivers: <Widget>[
             buildSliverAppBar(context),
             buildSliverToBoxAdapter(),
+          ],
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FABSaveRecord<GenericMoviesModel>(
+              tag: 'movie-${widget.model!.id!}',
+              isSaved:
+                  context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
+              record: widget.model!,
+              onTap: (elem) async {
+                _runner.run(() async {
+                  await context.read<MoviesWatchLaterCubit>().save(elem);
+                });
+              },
+            ),
+            SizedBox(width: 8),
+            FABGoHome(),
           ],
         ),
       ),
@@ -89,23 +101,21 @@ class _MoviePageState extends State<MoviePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              widget.model.title,
+              widget.model!.title!,
               style: Styles.mBold.copyWith(
                 fontSize: 20,
                 color: Colors.pinkAccent[100],
               ),
             ),
           ),
-          SizedBox(
-            height: 5,
-          ),
+          GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               children: <Widget>[
                 Text(
                   DateFormat.yMMMd()
-                      .format(DateTime.parse(widget.model.releaseDate)),
+                      .format(DateTime.parse(widget.model!.releaseDate!)),
                   style: Styles.mMed.copyWith(
                     fontSize: 12,
                     color: Colors.amber,
@@ -122,7 +132,7 @@ class _MoviePageState extends State<MoviePage> {
                       size: 12,
                     ),
                     Text(
-                      widget.model.voteAverage.toString(),
+                      widget.model!.voteAverage.toString(),
                       style: Styles.mBold.copyWith(
                         fontSize: 12,
                       ),
@@ -138,7 +148,7 @@ class _MoviePageState extends State<MoviePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
-              widget.model.overview,
+              widget.model!.overview!,
               style: Styles.mReg.copyWith(
                 fontSize: 10,
                 height: 1.6,
@@ -161,80 +171,7 @@ class _MoviePageState extends State<MoviePage> {
           SizedBox(
             height: 10,
           ),
-          BlocBuilder<MovieInfoBloc, MovieInfoState>(builder: (context, state) {
-            if (state is MovieInfoEmpty) {
-              BlocProvider.of<MovieInfoBloc>(context)
-                  .add(FetchMovieInfo(id: widget.model.id));
-            }
-            if (state is MovieInfoError) {
-              return Center(child: Text('There was a problem'));
-            }
-            if (state is MovieInfoLoaded) {
-              return Container(
-                height: 80,
-                width: double.infinity,
-                child: ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return SizedBox(
-                      width: 8,
-                    );
-                  },
-                  itemCount: state.movieInfo.videos.results.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    Result videoResult = state.movieInfo.videos.results[index];
-                    return Padding(
-                      padding: index == 0
-                          ? EdgeInsets.only(left: 8)
-                          : EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => YoutubePage(
-                                      ytKey: videoResult.key,
-                                      title: videoResult.name,
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: CircleAvatar(
-                                maxRadius: 30,
-                                backgroundColor: Colors.pinkAccent[100],
-                                child: Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Text(
-                            'Trailer #${index + 1}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
-            return Center(
-                child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              child: CircularProgressIndicator(),
-            ));
-          }),
+          MovieInfoWidget(),
           SizedBox(
             height: 5,
           ),
@@ -251,111 +188,7 @@ class _MoviePageState extends State<MoviePage> {
           SizedBox(
             height: 5,
           ),
-          BlocBuilder<MovieCastBloc, MovieCastState>(
-            builder: (context, state) {
-              if (state is MovieCastEmpty) {
-                BlocProvider.of<MovieCastBloc>(context)
-                    .add(FetchMovieCast(id: widget.model.id));
-              }
-              if (state is MovieCastError) {
-                return Text('There was a problem');
-              }
-              if (state is MovieCastLoaded) {
-                int castsSize = state.movieCast.length;
-                return Container(
-                  height: 150,
-                  width: double.infinity,
-                  child: castsSize == 0
-                      ? Container(
-                          width: double.infinity,
-                          height: double.infinity,
-                          color: Color(0xff252525),
-                          child: Center(
-                            child: Text(
-                              'Casts Not Updated',
-                              style: Styles.mBold,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          itemCount: state.movieCast.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, i) {
-                            if (state.movieCast.length == 0) {}
-                            CastModel model = state.movieCast[i];
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              child: GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ActorInfoPage(
-                                            id: model.id,
-                                          )),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        height: double.infinity,
-                                        width: 100,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xff252525),
-                                          image: DecorationImage(
-                                            image: model.profilePath == null
-                                                ? AssetImage(
-                                                    'assets/images/placeholder_actor.png')
-                                                : NetworkImage(
-                                                    'https://image.tmdb.org/t/p/w500${model.profilePath}'),
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      model.name,
-                                      style: Styles.mReg.copyWith(
-                                        fontSize: 10,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                );
-              }
-              return Container(
-                height: 150,
-                width: double.infinity,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (context, i) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Shimmer.fromColors(
-                        child: Container(
-                          height: double.infinity,
-                          width: 100,
-                        ),
-                        baseColor: Color(0xff313131),
-                        highlightColor: Color(0xff4A4A4A),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
+          MovieCastWidget(),
           SizedBox(
             height: 10,
           ),
@@ -372,108 +205,7 @@ class _MoviePageState extends State<MoviePage> {
           SizedBox(
             height: 5,
           ),
-          BlocBuilder<SimilarMoviesBloc, SimilarMoviesState>(
-            builder: (context, state) {
-              if (state is SimilarMoviesEmpty) {
-                BlocProvider.of<SimilarMoviesBloc>(context)
-                    .add(FetchSimilarMoviesMovies(id: widget.model.id));
-              }
-
-              if (state is SimilarMoviesError) {
-                return Center(
-                  child: Text('There was a problem'),
-                );
-              }
-
-              if (state is SimilarMoviesLoaded) {
-                if (state.similarMoviesMovies.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 20,
-                      ),
-                      child: Text(
-                        'None',
-                        style: Styles.mBold.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                return Container(
-                  height: 250,
-                  width: double.infinity,
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.similarMoviesMovies.length,
-                    itemBuilder: (context, i) {
-                      return GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MoviePage(
-                              model: state.similarMoviesMovies[i],
-                              tag:
-                                  'similar${state.similarMoviesMovies[i].posterPath}',
-                            ),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: Container(
-                                width: 150,
-                                margin: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: state.similarMoviesMovies[i]
-                                                .posterPath ==
-                                            null
-                                        ? AssetImage(
-                                            'assets/images/placeholder.png')
-                                        : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${state.similarMoviesMovies[i].posterPath}'),
-                                    fit: BoxFit.cover,
-                                    colorFilter: ColorFilter.mode(
-                                      Colors.black26,
-                                      BlendMode.darken,
-                                    ),
-                                  ),
-                                ),
-                                alignment: Alignment.bottomLeft,
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.amberAccent,
-                                      size: 15,
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Text(
-                                      state.similarMoviesMovies[i].voteAverage
-                                          .toString(),
-                                      style: Styles.mMed.copyWith(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
-              }
-              return CircularProgressIndicator();
-            },
-          ),
+          SimilarMoviesWidget(),
           SizedBox(height: 100),
         ],
       ),
@@ -491,7 +223,7 @@ class _MoviePageState extends State<MoviePage> {
           height: double.infinity,
           width: double.infinity,
           child: Hero(
-            tag: widget.tag,
+            tag: widget.tag!,
             child: ShaderMask(
               shaderCallback: (rect) {
                 return LinearGradient(
@@ -512,7 +244,7 @@ class _MoviePageState extends State<MoviePage> {
               },
               blendMode: BlendMode.dstIn,
               child: Image.network(
-                'https://image.tmdb.org/t/p/w500${widget.model.posterPath}',
+                'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,

@@ -1,9 +1,9 @@
-import 'package:equatable/equatable.dart';
+import 'package:tmdbflutter/models/generic_movies_model.dart';
 
-class ActorsModel extends Equatable {
-  final int id;
-  final double popularity;
-  final String department, profilePath, name;
+class ActorsModel extends SerializableClass {
+  final int? id;
+  final double? popularity;
+  final String? department, profilePath, name;
 
   ActorsModel(
       {this.id, this.popularity, this.department, this.profilePath, this.name});
@@ -13,18 +13,17 @@ class ActorsModel extends Equatable {
       id: json['id'],
       popularity: json['popularity'],
       department: json['department'],
-      profilePath: json['profile_path'] != null
-          ? 'https://image.tmdb.org/t/p/w500${json['profile_path']}'
-          : 'https://via.placeholder.com/400',
+      profilePath: json['profile_path'],
       name: json['name'],
     );
   }
 
   @override
-  List<Object> get props => [
-        popularity,
-        department,
-        profilePath,
-        name,
-      ];
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'popularity': popularity,
+        'department': department,
+        'profile_path': profilePath,
+        'name': name,
+      };
 }

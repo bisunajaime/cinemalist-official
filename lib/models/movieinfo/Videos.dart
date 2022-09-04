@@ -1,7 +1,7 @@
 import 'package:tmdbflutter/models/movieinfo/Result.dart';
 
 class Videos {
-  List<Result> results;
+  List<Result>? results;
 
   Videos({this.results});
 
@@ -16,7 +16,7 @@ class Videos {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.results != null) {
-      data['results'] = this.results.map((v) => v.toJson()).toList();
+      data['results'] = this.results!.map((v) => v.toJson()).toList();
     }
     return data;
   }

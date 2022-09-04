@@ -1,74 +1,23 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:tmdbflutter/library/cubit.dart';
 
 import '../../../barrels/models.dart';
-import '../../../repository/tmdb_repository.dart';
+import '../../../repository/tmdb_repository/tmdb_repository.dart';
 
-/*
-
-EVENT
-
-*/
-
-abstract class SimilarMoviesEvent extends Equatable {
-  const SimilarMoviesEvent();
-}
-
-class FetchSimilarMoviesMovies extends SimilarMoviesEvent {
-  final int id;
-  const FetchSimilarMoviesMovies({this.id});
-  @override
-  List<Object> get props => [id];
-}
-
-//STATES
-
-abstract class SimilarMoviesState extends Equatable {
-  const SimilarMoviesState();
+class SimilarMoviesCubit extends PagedTMDBCubit<GenericMoviesModel> {
+  final int? movieId;
+  SimilarMoviesCubit(TMDBRepository tmdbRepository, this.movieId)
+      : super(tmdbRepository);
 
   @override
-  List<Object> get props => [];
-}
-
-class SimilarMoviesEmpty extends SimilarMoviesState {}
-
-class SimilarMoviesLoading extends SimilarMoviesState {}
-
-class SimilarMoviesError extends SimilarMoviesState {}
-
-class SimilarMoviesLoaded extends SimilarMoviesState {
-  final List<GenericMoviesModel> similarMoviesMovies;
-
-  const SimilarMoviesLoaded({
-    this.similarMoviesMovies,
-  });
-  @override
-  List<Object> get props => [similarMoviesMovies];
-  @override
-  String toString() =>
-      'SimilarMoviesSuccess { SimilarMoviesMovies: ${similarMoviesMovies.length} }';
-}
-
-// BLOC
-
-class SimilarMoviesBloc extends Bloc<SimilarMoviesEvent, SimilarMoviesState> {
-  final TMDBRepository tmdbRepository;
-  SimilarMoviesBloc({this.tmdbRepository});
+  String get name => 'SimilarMoviesCubit';
 
   @override
-  SimilarMoviesState get initialState => SimilarMoviesEmpty();
+  Future<List<GenericMoviesModel>?> loadFromServer() async {
+    return await tmdbRepository.fetchSimilarMovies(id: movieId, page: 1);
+  }
 
   @override
-  Stream<SimilarMoviesState> mapEventToState(SimilarMoviesEvent event) async* {
-    if (event is FetchSimilarMoviesMovies) {
-      yield SimilarMoviesLoading();
-      try {
-        final List<GenericMoviesModel> similar =
-            await tmdbRepository.fetchSimilarMovies(id: event.id);
-        yield SimilarMoviesLoaded(similarMoviesMovies: similar);
-      } catch (e) {
-        yield SimilarMoviesError();
-      }
-    }
+  Future<List<GenericMoviesModel>?> loadFromServerWithPage(int page) async {
+    return await tmdbRepository.fetchSimilarMovies(id: movieId, page: page);
   }
 }

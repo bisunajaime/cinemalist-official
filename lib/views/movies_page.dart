@@ -1,79 +1,76 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:tmdbflutter/widgets/movies/now_showing_movies_list_widget.dart';
 
 class MoviesPage extends StatefulWidget {
   @override
-  _MoviesPageState createState() => _MoviesPageState();
+  State<MoviesPage> createState() => _MoviesPageState();
 }
 
 class _MoviesPageState extends State<MoviesPage>
-    with AutomaticKeepAliveClientMixin {
-  ScrollController controller = new ScrollController();
-  final scrollThreshold = 200;
-  NowShowingBloc _nowShowingBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(_onScroll);
-    _nowShowingBloc = BlocProvider.of<NowShowingBloc>(context);
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    final maxScroll = controller.position.maxScrollExtent;
-    final currentScroll = controller.position.pixels;
-    if (maxScroll - currentScroll <= scrollThreshold) {
-      _nowShowingBloc.add(FetchNowShowingMovies());
-    }
-  }
-
+    with AutomaticKeepAliveClientMixin<MoviesPage> {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          height: 30,
-        ),
-        buildTitle(),
-        SizedBox(
-          height: 10,
-        ),
-        buildNowShowing(),
-      ],
+    return NestedScrollView(
+      physics: BouncingScrollPhysics(),
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [
+          SliverAppBar(
+            backgroundColor: Color(0xff0E0E0E),
+            automaticallyImplyLeading: false,
+            pinned: true,
+            centerTitle: false,
+            expandedHeight: MediaQuery.of(context).size.height * .2,
+            flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.zero,
+              stretchModes: [StretchMode.blurBackground],
+              collapseMode: CollapseMode.parallax,
+              centerTitle: false,
+              title: Align(
+                alignment: Alignment.bottomLeft,
+                child: buildTitle(),
+              ),
+              // background: Sizedbox(
+              //   color: Color(0xff0E0E0E),
+              //   // child: MoviesSliverCarousel(),
+              // ),
+            ),
+          ),
+        ];
+      },
+      body: NowShowingMoviesListWidget(),
     );
   }
 
   Padding buildTitle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
+      padding: const EdgeInsets.only(
+        left: 10,
+        bottom: 10,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          Text(
-            'Now Playing',
-            style: Styles.mBold.copyWith(
-              fontSize: 30,
-            ),
-          ),
           Text(
             'MOVIES',
             style: Styles.mBold.copyWith(
               color: Colors.pinkAccent,
+              fontSize: 10,
+            ),
+          ),
+          Text(
+            'Now Playing',
+            style: Styles.mBold.copyWith(
+              fontSize: 20,
             ),
           ),
         ],
@@ -81,108 +78,106 @@ class _MoviesPageState extends State<MoviesPage>
     );
   }
 
-  Expanded buildNowShowing() {
-    return Expanded(
-      child: BlocBuilder<NowShowingBloc, NowShowingState>(
-        builder: (context, state) {
-          if (state is NowShowingInitial) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is NowShowingFailed) {
-            return Center(
-              child: Text('Failed to fetch posts'),
-            );
-          }
-          if (state is NowShowingSuccess) {
-            if (state.nowShowingMovies.isEmpty) {
-              return Center(
-                child: Text('No Posts'),
-              );
-            }
-            return Scrollbar(
-              child: GridView.builder(
-                physics: BouncingScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 5.0,
-                  mainAxisSpacing: 5.0,
-                  childAspectRatio: 0.7,
-                ),
-                itemCount: state.hasReachedMax
-                    ? state.nowShowingMovies.length
-                    : state.nowShowingMovies.length + 1,
-                controller: controller,
-                itemBuilder: (context, i) {
-                  state.nowShowingMovies
-                      .removeWhere((element) => element.posterPath == null);
-                  return i >= state.nowShowingMovies.length
-                      ? Shimmer.fromColors(
-                          child: Container(
-                            color: Color(0xff232323),
-                          ),
-                          baseColor: Color(0xff313131),
-                          highlightColor: Color(0xff4A4A4A),
-                        )
-                      : buildNowShowingMovies(
-                          context, state.nowShowingMovies[i]);
-                },
-              ),
-            );
-          }
-          return GridView.builder(
-            itemCount: 7,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 5.0,
-              mainAxisSpacing: 5.0,
-              childAspectRatio: 0.7,
-            ),
-            itemBuilder: (context, i) {
-              return Shimmer.fromColors(
-                child: Container(color: Colors.black),
-                baseColor: Color(0xff232323),
-                highlightColor: Color(0xff222222),
-              );
-            },
-          );
-        },
-      ),
-    );
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class MoviesSliverCarousel extends StatefulWidget {
+  const MoviesSliverCarousel({Key? key}) : super(key: key);
+
+  @override
+  State<MoviesSliverCarousel> createState() => _MoviesSliverCarouselState();
+}
+
+class _MoviesSliverCarouselState extends State<MoviesSliverCarousel> {
+  final pageController = PageController(initialPage: 0);
+  int index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
   }
 
-  GestureDetector buildNowShowingMovies(
-      BuildContext context, GenericMoviesModel movies) {
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MoviePage(
-            tag: 'nowplaying${movies.posterPath}',
-            model: movies,
-          ),
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Color(0xff232323),
-        ),
-        child: FadeInImage.assetNetwork(
-          placeholder: 'assets/images/placeholder_box.png',
-          image: 'https://image.tmdb.org/t/p/w500${movies.posterPath}',
-          fit: BoxFit.cover,
-          fadeInCurve: Curves.ease,
-          fadeInDuration: Duration(milliseconds: 250),
-          fadeOutDuration: Duration(milliseconds: 250),
-          fadeOutCurve: Curves.ease,
-        ),
-      ),
-    );
+  void startTimer() {
+    Timer.periodic(Duration(seconds: 4), (timer) {
+      if (!mounted) return;
+      final cubit = context.read<NowShowingCubit>();
+      if (cubit.state == null || cubit.state?.isEmpty == true) return;
+      if (index == cubit.state!.length - 1) {
+        pageController.jumpTo(0);
+        return;
+      }
+      pageController.nextPage(
+          duration: Duration(milliseconds: 1500), curve: Curves.fastOutSlowIn);
+    });
   }
 
   @override
-  bool get wantKeepAlive => true;
+  Widget build(BuildContext context) {
+    final pagedCubit = context.watch<NowShowingCubit>();
+    final state = pagedCubit.state;
+    if (pagedCubit.initialLoading) {
+      return Container(
+        height: double.infinity,
+        color: Color(0xff0E0E0E),
+      );
+    }
+    state!;
+    state.removeWhere((element) => element?.posterPath == null);
+    return PageView.builder(
+      itemCount: state.length,
+      physics: NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.horizontal,
+      controller: pageController,
+      onPageChanged: (page) {
+        setState(() => index = page);
+      },
+      itemBuilder: (BuildContext context, int index) {
+        final movie = state[index];
+        return ShaderMask(
+          shaderCallback: (rect) {
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xff0E0E0E),
+                Colors.transparent,
+              ],
+            ).createShader(
+              Rect.fromLTRB(
+                0,
+                0,
+                rect.width,
+                rect.height,
+              ),
+            );
+          },
+          blendMode: BlendMode.dstIn,
+          child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Color(0xff0E0E0E),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: "https://image.tmdb.org/t/p/w500${movie!.posterPath}",
+              fit: BoxFit.cover,
+              cacheManager: DefaultCacheManager(),
+              placeholder: (context, _) {
+                return Shimmer.fromColors(
+                  child: Container(
+                    height: double.infinity,
+                  ),
+                  baseColor: Color(0xff313131),
+                  highlightColor: Color(0xff4A4A4A),
+                );
+                // return Image.asset('assets/images/placeholder_box.png');
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

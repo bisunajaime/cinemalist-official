@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 class GenresModel extends Equatable {
-  final int id;
-  final String name;
+  final int? id;
+  final String? name;
+  String? genreImage;
   GenresModel({this.id, this.name});
 
   factory GenresModel.fromJson(Map<String, dynamic> json) {
@@ -10,7 +11,7 @@ class GenresModel extends Equatable {
   }
 
   @override
-  List<Object> get props => [id, name];
+  List<Object> get props => [id!, name!];
   @override
   String toString() => 'Genre { id: $id }';
 }
