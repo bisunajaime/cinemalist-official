@@ -14,7 +14,8 @@ class SearchHistoryCubit extends Cubit<List<SearchHistoryModel>> {
   static const _SEARCH_RESULT_LIMIT = 9;
 
   String get fileName => 'search_history.json';
-  List<String> get searchedTexts => state.map((e) => e.text).toList();
+  List<String> get searchedTexts =>
+      state.map((e) => e.text.toLowerCase()).toList();
 
   void initialLoad() {
     _retrieve().then((value) {
@@ -22,9 +23,15 @@ class SearchHistoryCubit extends Cubit<List<SearchHistoryModel>> {
     });
   }
 
+  Future<void> clear() async {
+    emit([]);
+    await localStorageRepository.remove();
+  }
+
   bool modelValid(SearchHistoryModel model) {
     if (model.text.isEmpty) return false;
-    if (searchedTexts.contains(model.text)) return false;
+    if (model.text.trim().isEmpty) return false;
+    if (searchedTexts.contains(model.text.toLowerCase())) return false;
     return true;
   }
 

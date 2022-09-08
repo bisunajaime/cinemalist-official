@@ -17,13 +17,42 @@ class SearchHistoryWidget extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 10),
       width: double.infinity,
       color: Color(0xff0E0E0E),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final model = searchHistCubit.state[index];
-          return SearchHistoryItemWidget(model: model, index: index);
-        },
-        itemCount: searchHistCubit.state.length,
+      child: Row(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: searchHistCubit.state.length,
+              itemBuilder: (context, index) {
+                final model = searchHistCubit.state[index];
+                return SearchHistoryItemWidget(model: model, index: index);
+              },
+            ),
+          ),
+          SizedBox(width: 10),
+          TextButton(
+            onPressed: () {
+              context.read<SearchCubit>().clearResults();
+              searchHistCubit.clear();
+            },
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              backgroundColor: Color(0xffEC4A6C),
+              // shape: RoundedRectangleBorder(
+              //   borderRadius: BorderRadius.circular(4),
+              // ),
+            ),
+            child: Text(
+              'Clear\nResults',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+        ],
       ),
     );
   }
@@ -40,10 +69,12 @@ class SearchHistoryItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final searchCubit = context.watch<SearchCubit>();
     final _runner = DelayedRunner(milliseconds: 700);
-    final selected = searchCubit.query.toLowerCase() == model.text;
+    final selected =
+        searchCubit.query.toLowerCase() == model.text.toLowerCase();
     return GestureDetector(
       onTap: () {
         searchCubit.search(model.text);
+        searchCubit.updateSearchController(model.text);
       },
       child: Container(
         margin: EdgeInsets.only(left: 10),

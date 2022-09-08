@@ -34,7 +34,6 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
     if (query.toLowerCase() == searchString.toLowerCase()) {
       return;
     }
-    searchController.text = searchString;
     query = searchString;
     didSearch = true;
     logger.waiting('searching movies, actors, and tv for: $searchString');
@@ -60,6 +59,12 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
     isLoading = false;
   }
 
+  void updateSearchController(String text) {
+    searchController.text = text;
+    searchController.selection = TextSelection.fromPosition(
+        TextPosition(offset: searchController.text.length));
+  }
+
   @override
   String get name => 'SearchCubit';
 
@@ -73,6 +78,7 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
   void clearResults() {
     didSearch = false;
     query = '';
+    searchController.clear();
     emit(SearchModel.initial());
   }
 }
