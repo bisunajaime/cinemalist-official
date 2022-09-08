@@ -138,7 +138,6 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   final _runner = DelayedRunner(milliseconds: 700);
-  final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SearchCubit>();
@@ -151,12 +150,12 @@ class _SearchFieldState extends State<SearchField> {
         bottom: 10,
       ),
       child: TextField(
-        controller: controller,
+        controller: cubit.searchController,
         onChanged: (value) async {
           _runner.run(() async {
-            await cubit.search(controller.text);
+            await cubit.search(cubit.searchController.text);
             await searchHistCubit.save(SearchHistoryModel(
-              controller.text,
+              cubit.searchController.text,
               DateTime.now(),
             ));
           });
@@ -168,7 +167,7 @@ class _SearchFieldState extends State<SearchField> {
         decoration: InputDecoration(
           suffixIcon: GestureDetector(
             onTap: () {
-              controller.clear();
+              cubit.searchController.clear();
               _runner.run(() async {
                 await cubit.search('');
               });

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:tmdbflutter/barrels/models.dart';
 import 'package:tmdbflutter/library/cubit.dart';
 import 'package:tmdbflutter/models/search_model.dart';
@@ -5,6 +6,8 @@ import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 
 class SearchCubit extends SearchTMDBCubit<SearchModel?> {
+  final searchController = TextEditingController();
+
   static final types = <String>[
     'movie',
     'person',
@@ -31,6 +34,7 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
     if (query.toLowerCase() == searchString.toLowerCase()) {
       return;
     }
+    searchController.text = searchString;
     query = searchString;
     didSearch = true;
     logger.waiting('searching movies, actors, and tv for: $searchString');
