@@ -68,6 +68,7 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
   @override
   void clearResults() {
     didSearch = false;
+    query = '';
     emit(SearchModel.initial());
   }
 }

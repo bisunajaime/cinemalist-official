@@ -42,6 +42,7 @@ class ActorSearchResultsWidget extends StatelessWidget {
       return Container();
     }
     actors!;
+    actors.removeWhere((element) => element.profilePath == null);
     return Container(
       height: 100,
       width: double.infinity,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
+import 'package:tmdbflutter/bloc/search/search_history_cubit.dart';
+import 'package:tmdbflutter/models/search_history_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/widgets/search/actor_search_results_widget.dart';
@@ -140,6 +142,7 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SearchCubit>();
+    final searchHistCubit = context.read<SearchHistoryCubit>();
     return Container(
       color: Color(0xff0E0E0E),
       padding: EdgeInsets.only(
@@ -152,6 +155,10 @@ class _SearchFieldState extends State<SearchField> {
         onChanged: (value) async {
           _runner.run(() async {
             await cubit.search(controller.text);
+            await searchHistCubit.save(SearchHistoryModel(
+              controller.text,
+              DateTime.now(),
+            ));
           });
         },
         style: Styles.mReg.copyWith(

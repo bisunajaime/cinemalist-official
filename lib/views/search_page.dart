@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/widgets/search/search_history_widget.dart';
 import 'package:tmdbflutter/widgets/search/search_widget.dart';
 
 class SearchPage extends StatefulWidget {
@@ -40,7 +41,11 @@ class _SearchPageState extends State<SearchPage>
           SliverPersistentHeader(
             delegate: SearchHeaderDelegate(58),
             pinned: true,
-          )
+          ),
+          SliverPersistentHeader(
+            delegate: RecentSearchesDelegate(50),
+            pinned: true,
+          ),
         ];
       },
       body: SearchWidget(),
@@ -77,6 +82,27 @@ class _SearchPageState extends State<SearchPage>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class RecentSearchesDelegate extends SliverPersistentHeaderDelegate {
+  final double height;
+
+  RecentSearchesDelegate(this.height);
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SearchHistoryWidget();
+  }
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
 
 class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
