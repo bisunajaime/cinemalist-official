@@ -7,6 +7,7 @@ import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
+import 'package:tmdbflutter/bloc/search/search_history_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
@@ -86,6 +87,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SavedActorsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => SearchHistoryCubit(),
         ),
       ],
       child: MaterialApp(
