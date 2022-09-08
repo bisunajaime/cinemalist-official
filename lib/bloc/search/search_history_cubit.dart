@@ -11,6 +11,8 @@ class SearchHistoryCubit extends Cubit<List<SearchHistoryModel>> {
     initialLoad();
   }
 
+  static const _SEARCH_RESULT_LIMIT = 9;
+
   String get fileName => 'search_history.json';
   List<String> get searchedTexts => state.map((e) => e.text).toList();
 
@@ -28,12 +30,17 @@ class SearchHistoryCubit extends Cubit<List<SearchHistoryModel>> {
 
   Future<void> save(SearchHistoryModel model) async {
     if (modelValid(model) == false) return;
-    final didSave =
-        await localStorageRepository.save(jsonEncode(model.toJson()));
-    if (!didSave) print('There was a problem');
-    final copy = [...state];
+    var copy = [...state];
     copy.insert(0, model);
+    copy = copy.take(_SEARCH_RESULT_LIMIT).toList();
+    final didSave =
+        await localStorageRepository.save(_convertListToString(copy));
+    if (!didSave) print('There was a problem');
     emit(copy);
+  }
+
+  String _convertListToString(List<SearchHistoryModel> results) {
+    return jsonEncode(results.map((e) => e.toJson()).toList());
   }
 
   Future<List<SearchHistoryModel>> _retrieve() async {
