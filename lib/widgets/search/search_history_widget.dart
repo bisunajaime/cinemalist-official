@@ -73,8 +73,14 @@ class SearchHistoryItemWidget extends StatelessWidget {
         searchCubit.query.toLowerCase() == model.text.toLowerCase();
     return GestureDetector(
       onTap: () {
-        searchCubit.search(model.text);
-        searchCubit.updateSearchController(model.text);
+        _runner.run(() {
+          if (selected) {
+            searchCubit.clearResults();
+            return;
+          }
+          searchCubit.search(model.text);
+          searchCubit.updateSearchController(model.text);
+        });
       },
       child: Container(
         margin: EdgeInsets.only(left: 10),
