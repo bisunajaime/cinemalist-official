@@ -6,6 +6,7 @@ import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
+import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
@@ -13,6 +14,7 @@ import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart'
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/views/home_page.dart';
+import 'package:tmdbflutter/views/more_page.dart';
 import 'package:tmdbflutter/views/movies_page.dart';
 import 'package:tmdbflutter/views/saved_records_view.dart';
 import 'package:tmdbflutter/views/search_page.dart';
@@ -86,6 +88,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SavedActorsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => MovieRankingCubit(),
         ),
       ],
       child: MaterialApp(
@@ -180,6 +185,12 @@ class _MainPageState extends State<MainPage>
               ),
               label: 'Search',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.more_horiz,
+              ),
+              label: 'More',
+            ),
           ],
         ),
         body: PageView(
@@ -191,6 +202,7 @@ class _MainPageState extends State<MainPage>
             TvShowsPage(),
             SavedRecordsPage(),
             SearchPage(),
+            MorePage(),
           ],
         ),
       ),
