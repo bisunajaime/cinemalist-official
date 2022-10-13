@@ -74,68 +74,78 @@ class MoreBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        MoreBodyItem(),
+        MoreFeaturesButton(
+          text: 'Rank your saved\nmovies, tv shows, and actors',
+          icon: Icons.bar_chart,
+          color: Color(0xffa2009a),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) {
+              return RankingPage();
+            }));
+          },
+        ),
+        SizedBox(height: 16),
+        MoreFeaturesButton(
+          text: 'The Movie Database Attribution',
+          icon: Icons.attribution_outlined,
+          color: Color(0xff01b4e4),
+          onTap: () {
+            // show dialog of tmdb attributioon
+          },
+        ),
       ],
     );
   }
 }
 
-class MoreBodyItem extends StatelessWidget {
-  const MoreBodyItem({Key? key}) : super(key: key);
+class MoreFeaturesButton extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  const MoreFeaturesButton({
+    Key? key,
+    required this.text,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return RankingPage();
-            },
-          ),
-        );
-      },
-      child: RankYourSavedMovies(),
-    );
-  }
-}
-
-class RankYourSavedMovies extends StatelessWidget {
-  const RankYourSavedMovies({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.all(18),
-      padding: EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Color(0xffa2009a),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.bar_chart,
-            color: Colors.white,
-            size: 30,
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          Text(
-            'Rank your saved\nmovies, tv shows, and actors',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 16,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 18),
+        padding: EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
               color: Colors.white,
-              fontWeight: FontWeight.bold,
+              size: 30,
             ),
-          ),
-        ],
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              text,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
