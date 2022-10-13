@@ -16,15 +16,18 @@ class VerticalRankingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        HorizontalRankingWidgetItem(letter: 's', color: sTierColor),
-        HorizontalRankingWidgetItem(letter: 'a', color: aTierColor),
-        HorizontalRankingWidgetItem(letter: 'b', color: bTierColor),
-        HorizontalRankingWidgetItem(letter: 'c', color: cTierColor),
-        HorizontalRankingWidgetItem(letter: 'd', color: dTierColor),
-        HorizontalRankingWidgetItem(letter: 'f', color: fTierColor),
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        children: [
+          HorizontalRankingWidgetItem(letter: 's', color: sTierColor),
+          HorizontalRankingWidgetItem(letter: 'a', color: aTierColor),
+          HorizontalRankingWidgetItem(letter: 'b', color: bTierColor),
+          HorizontalRankingWidgetItem(letter: 'c', color: cTierColor),
+          HorizontalRankingWidgetItem(letter: 'd', color: dTierColor),
+          HorizontalRankingWidgetItem(letter: 'f', color: fTierColor),
+        ],
+      ),
     );
   }
 }
@@ -85,84 +88,90 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
                 print('onLeave | ${data?.title}');
               },
               builder: (context, _, __) {
-                return Container(
-                  height: 85,
-                  color: Color(0xff0E0E0E),
-                  child: ReorderableListView.builder(
-                    padding: EdgeInsets.zero,
-                    onReorder: (oldIndex, newIndex) async {
-                      final movieRankingCubit =
-                          context.read<MovieRankingCubit>();
-                      await movieRankingCubit.updateMovieIndex(
-                        letter,
-                        oldIndex,
-                        newIndex,
-                      );
-                      print('$oldIndex | $newIndex');
-                    },
-                    itemCount: movieRankingCubit.state[letter]?.length ?? 0,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final movie = movieRankingCubit.state[letter]![index];
-                      return GestureDetector(
-                        key: Key('$letter|$index'),
-                        onDoubleTap: () async {
-                          final shouldRemove = await showDialog<bool?>(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text('Delete from list?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, false);
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: Text('Confirm'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    height: 85,
+                    decoration: BoxDecoration(
+                      color: Color(0xff202020),
+                    ),
+                    child: ReorderableListView.builder(
+                      padding: EdgeInsets.zero,
+                      onReorder: (oldIndex, newIndex) async {
+                        final movieRankingCubit =
+                            context.read<MovieRankingCubit>();
+                        await movieRankingCubit.updateMovieIndex(
+                          letter,
+                          oldIndex,
+                          newIndex,
+                        );
+                        print('$oldIndex | $newIndex');
+                      },
+                      itemCount: movieRankingCubit.state[letter]?.length ?? 0,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final movie = movieRankingCubit.state[letter]![index];
+                        return GestureDetector(
+                          key: Key('$letter|$index'),
+                          onDoubleTap: () async {
+                            final shouldRemove = await showDialog<bool?>(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Delete from list?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, true);
+                                      },
+                                      child: Text('Confirm'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
 
-                          if (shouldRemove == true) {
-                            final movieRankingCubit =
-                                context.read<MovieRankingCubit>();
-                            await movieRankingCubit.removeMovie(letter, movie);
-                          }
-                        },
-                        child: Stack(
-                          children: [
-                            RankingImageWidget(model: movie),
-                            Positioned(
-                              bottom: 4,
-                              left: 4,
-                              child: Draggable<RankingModel>(
-                                data: movie,
-                                feedback: RankingImageWidget(model: movie),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black,
-                                  ),
-                                  padding: EdgeInsets.all(4),
-                                  child: Icon(
-                                    Icons.menu,
-                                    color: Colors.pinkAccent,
-                                    size: 16,
+                            if (shouldRemove == true) {
+                              final movieRankingCubit =
+                                  context.read<MovieRankingCubit>();
+                              await movieRankingCubit.removeMovie(
+                                  letter, movie);
+                            }
+                          },
+                          child: Stack(
+                            children: [
+                              RankingImageWidget(model: movie),
+                              Positioned(
+                                bottom: 4,
+                                left: 4,
+                                child: Draggable<RankingModel>(
+                                  data: movie,
+                                  feedback: RankingImageWidget(model: movie),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black,
+                                    ),
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.menu,
+                                      color: Colors.pinkAccent,
+                                      size: 16,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 );
               },

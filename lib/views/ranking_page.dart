@@ -12,30 +12,18 @@ class RankingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final movieRankingCubit = context.read<MovieRankingCubit>();
-    return NestedScrollView(
-      physics: BouncingScrollPhysics(),
-      headerSliverBuilder: (context, innerBoxIsScrolled) {
-        return [
-          SliverAppBar(
-            backgroundColor: Color(0xff0E0E0E),
-            automaticallyImplyLeading: false,
-            pinned: true,
-            centerTitle: false,
-            stretch: true,
-            expandedHeight: MediaQuery.of(context).size.height * .2,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              stretchModes: [StretchMode.blurBackground],
-              collapseMode: CollapseMode.parallax,
-              centerTitle: false,
-              title: Align(
-                alignment: Alignment.bottomLeft,
-                child: buildTitle(),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xff0E0E0E),
+        centerTitle: false,
+        titleSpacing: 0.0,
+        title: Text(
+          'Rankings',
+          style: TextStyle(
+            color: Colors.white,
           ),
-        ];
-      },
+        ),
+      ),
       body: RankingBody(),
     );
   }

@@ -21,7 +21,6 @@ import 'package:tmdbflutter/views/search_page.dart';
 import 'package:tmdbflutter/views/tvshows_page.dart';
 
 import 'barrels/actors_barrel.dart';
-import 'barrels/genres_barrel.dart';
 import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
