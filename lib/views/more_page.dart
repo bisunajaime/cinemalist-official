@@ -87,8 +87,6 @@ class MoreBodyItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // do something
-        print('go to ranking screen');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -98,11 +96,46 @@ class MoreBodyItem extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        color: Colors.blue,
-        child: Center(
-          child: Text('Rank your saved movies'),
-        ),
+      child: RankYourSavedMovies(),
+    );
+  }
+}
+
+class RankYourSavedMovies extends StatelessWidget {
+  const RankYourSavedMovies({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.all(18),
+      padding: EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Color(0xffa2009a),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.bar_chart,
+            color: Colors.white,
+            size: 30,
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Text(
+            'Rank your saved\nmovies, tv shows, and actors',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
