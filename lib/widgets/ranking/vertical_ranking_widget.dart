@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tmdbflutter/bloc/ranking/actor_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:provider/provider.dart';
+import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/ranking_filter_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:tmdbflutter/models/ranking_model.dart';
+import 'package:tmdbflutter/widgets/ranking/ranking_filter_bar.dart';
 import 'package:tmdbflutter/widgets/ranking/ranking_image_widget.dart';
 
 final sTierColor = Color(0xffF08683);
@@ -41,9 +46,25 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
     required this.color,
   }) : super(key: key);
 
+  RankingCubit loadRankingCubit(
+      BuildContext context, RankingFilterCubit filterCubit) {
+    switch (filterCubit.state) {
+      case RankingFilter.movies:
+        return context.watch<MovieRankingCubit>();
+      case RankingFilter.actors:
+        return context.watch<ActorRankingCubit>();
+      case RankingFilter.tvShows:
+        return context.watch<TvShowRankingCubit>();
+      default:
+        return context.watch<MovieRankingCubit>();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final movieRankingCubit = context.watch<MovieRankingCubit>();
+    final rankingFilterCubit = context.watch<RankingFilterCubit>();
+    RankingCubit rankingCubit = loadRankingCubit(context, rankingFilterCubit);
+
     return Padding(
       padding: EdgeInsets.only(bottom: 6),
       child: Row(
@@ -70,14 +91,12 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
             child: DragTarget<RankingModel>(
               onWillAccept: (data) {
                 if (data == null) return false;
-                final movieRankingCubit = context.read<MovieRankingCubit>();
-                final exists = movieRankingCubit.state[letter]?.contains(data);
+                final exists = rankingCubit.state[letter]?.contains(data);
                 print(exists);
                 return exists != true;
               },
               onAccept: (data) async {
-                final movieRankingCubit = context.read<MovieRankingCubit>();
-                final didSave = await movieRankingCubit.saveMovie(
+                final didSave = await rankingCubit.saveRanking(
                   letter,
                   data,
                 );
@@ -98,25 +117,21 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
                     child: ReorderableListView.builder(
                       padding: EdgeInsets.zero,
                       onReorder: (oldIndex, newIndex) async {
-                        final movieRankingCubit =
-                            context.read<MovieRankingCubit>();
-                        await movieRankingCubit.updateMovieIndex(
+                        await rankingCubit.updateRankingIndex(
                           letter,
                           oldIndex,
                           newIndex,
                         );
                         print('$oldIndex | $newIndex');
                       },
-                      itemCount: movieRankingCubit.state[letter]?.length ?? 0,
+                      itemCount: rankingCubit.state[letter]?.length ?? 0,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        final movie = movieRankingCubit.state[letter]![index];
+                        final movie = rankingCubit.state[letter]![index];
                         return GestureDetector(
-                          key: Key('$letter|$index'),
+                          key: Key('$letter|$index|${movie.id}'),
                           onDoubleTap: () async {
-                            final movieRankingCubit =
-                                context.read<MovieRankingCubit>();
-                            await movieRankingCubit.removeMovie(letter, movie);
+                            await rankingCubit.removeRanking(letter, movie);
                           },
                           child: Stack(
                             children: [

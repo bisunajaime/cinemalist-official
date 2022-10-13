@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/ranking_filter_cubit.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/widgets/ranking/ranking_actors_selection_widget.dart';
 import 'package:tmdbflutter/widgets/ranking/ranking_filter_bar.dart';
 import 'package:tmdbflutter/widgets/ranking/ranking_movie_selection_widget.dart';
+import 'package:tmdbflutter/widgets/ranking/ranking_tvshow_selection_widget.dart';
 import 'package:tmdbflutter/widgets/ranking/vertical_ranking_widget.dart';
 
 class RankingPage extends StatelessWidget {
@@ -76,7 +79,8 @@ class RankingBody extends StatelessWidget {
             color: Colors.black,
             child: Column(
               children: [
-                RankingMovieSelectionWidget(),
+                SizedBox(height: 16),
+                RankingSelectionWidget(),
                 RankingFilterBar(),
                 SizedBox(height: 20),
               ],
@@ -85,5 +89,24 @@ class RankingBody extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class RankingSelectionWidget extends StatelessWidget {
+  const RankingSelectionWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final rankingFilterCubit = context.watch<RankingFilterCubit>();
+    switch (rankingFilterCubit.state) {
+      case RankingFilter.movies:
+        return RankingMovieSelectionWidget();
+      case RankingFilter.tvShows:
+        return RankingTvShowsSelectionWidget();
+      case RankingFilter.actors:
+        return RankingActorsSelectionWidget();
+      default:
+        return Container();
+    }
   }
 }

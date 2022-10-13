@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
+import 'package:tmdbflutter/models/tvshow_model.dart';
 
 enum RankingType {
   movies,
@@ -57,6 +59,24 @@ class RankingModel extends Equatable {
     );
   }
 
+  factory RankingModel.fromGenericActorModel(GenericActorModel model) {
+    return RankingModel(
+      model.id!,
+      model.profilePath ?? '',
+      model.name ?? 'No title',
+      // RankingType.movies,
+    );
+  }
+
+  factory RankingModel.fromTvShowModel(TVShowModel model) {
+    return RankingModel(
+      model.id!,
+      model.posterPath ?? '',
+      model.name ?? 'No title',
+      // RankingType.movies,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'photoUrl': photoUrl,
@@ -65,7 +85,7 @@ class RankingModel extends Equatable {
       };
 }
 
-class MovieRankingHelper {
+class RankingHelper {
   static Map<String, List<RankingModel>> decodeRawData(String json) {
     final decodedJson = jsonDecode(json) as Map;
     return decodedJson.map(

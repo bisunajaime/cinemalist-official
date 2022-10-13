@@ -1,28 +1,25 @@
-import 'package:flutter/material.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:tmdbflutter/views/tvshow_page.dart';
 import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
 
 final _runner = DelayedRunner(milliseconds: 250);
 
-class RankingMovieSelectionWidget extends StatelessWidget {
-  const RankingMovieSelectionWidget({Key? key}) : super(key: key);
+class RankingTvShowsSelectionWidget extends StatelessWidget {
+  const RankingTvShowsSelectionWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<MoviesWatchLaterCubit>();
-    final rankingCubit = context.watch<MovieRankingCubit>();
-    final savedMovies = cubit.state;
+    final cubit = context.watch<TvWatchLaterCubit>();
+    final savedTvShows = cubit.state;
+    final rankingCubit = context.watch<TvShowRankingCubit>();
     if (cubit.state.length == rankingCubit.rankedRecordsCount) {
       return DragTarget<RankingModel>(
         onAccept: (data) async {
@@ -69,12 +66,12 @@ class RankingMovieSelectionWidget extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: savedMovies.length,
+            itemCount: savedTvShows.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, i) {
-              final movie = savedMovies[i];
+              final savedTvShow = savedTvShows[i];
               final alreadyRanked = RankingHelper.alreadyRanked(
-                movie.id!,
+                savedTvShow.id!,
                 rankingCubit.state,
               );
               if (alreadyRanked) return Container();
@@ -111,7 +108,7 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                         blendMode: BlendMode.dstIn,
                         child: CachedNetworkImage(
                           imageUrl:
-                              'https://image.tmdb.org/t/p/w500${savedMovies[i].posterPath}',
+                              'https://image.tmdb.org/t/p/w500${savedTvShow.posterPath}',
                           cacheManager: DefaultCacheManager(),
                           fit: BoxFit.cover,
                           fadeInCurve: Curves.ease,
@@ -130,7 +127,7 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                           child: Container(
                             width: 200,
                             child: Text(
-                              movie.title!,
+                              savedTvShow.name!,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -144,7 +141,7 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                         top: 5,
                         right: 5,
                         child: Draggable<RankingModel>(
-                          data: RankingModel.fromGenericMovieModel(movie),
+                          data: RankingModel.fromTvShowModel(savedTvShow),
                           feedback: Container(
                             width: 100,
                             height: 100,
@@ -157,7 +154,7 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    'https://image.tmdb.org/t/p/w500${savedMovies[i].posterPath}',
+                                    'https://image.tmdb.org/t/p/w500${savedTvShow.posterPath}',
                                 cacheManager: DefaultCacheManager(),
                                 fit: BoxFit.cover,
                                 fadeInCurve: Curves.ease,
