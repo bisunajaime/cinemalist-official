@@ -6,7 +6,7 @@ import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
 import 'package:tmdbflutter/barrels/upcoming_movies_barrel.dart';
 import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/search/search_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
