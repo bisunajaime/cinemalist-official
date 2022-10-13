@@ -21,7 +21,7 @@ class MovieRankingCubit extends Cubit<Map<String, List<RankingModel>>> {
     initialLoad();
   }
 
-  int get rankedMoviesCount {
+  int get rankedRecordsCount {
     var count = 0;
     state.entries.forEach((element) {
       count += element.value.length;

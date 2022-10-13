@@ -23,7 +23,7 @@ class RankingMovieSelectionWidget extends StatelessWidget {
     final cubit = context.watch<MoviesWatchLaterCubit>();
     final rankingCubit = context.watch<MovieRankingCubit>();
     final savedMovies = cubit.state;
-    if (cubit.state.length == rankingCubit.rankedMoviesCount) {
+    if (cubit.state.length == rankingCubit.rankedRecordsCount) {
       return DragTarget<RankingModel>(
         onAccept: (data) async {
           final letter =

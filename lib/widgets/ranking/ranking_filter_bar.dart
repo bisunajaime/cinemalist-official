@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 enum RankingFilter {
+  all, // todo: show ranking of all records
   movies,
   tvShows,
   actors,

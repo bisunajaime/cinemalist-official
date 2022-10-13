@@ -114,35 +114,9 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
                         return GestureDetector(
                           key: Key('$letter|$index'),
                           onDoubleTap: () async {
-                            final shouldRemove = await showDialog<bool?>(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('Delete from list?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context, false);
-                                      },
-                                      child: Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text('Confirm'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-
-                            if (shouldRemove == true) {
-                              final movieRankingCubit =
-                                  context.read<MovieRankingCubit>();
-                              await movieRankingCubit.removeMovie(
-                                  letter, movie);
-                            }
+                            final movieRankingCubit =
+                                context.read<MovieRankingCubit>();
+                            await movieRankingCubit.removeMovie(letter, movie);
                           },
                           child: Stack(
                             children: [
