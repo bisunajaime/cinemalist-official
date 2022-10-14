@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tmdbflutter/styles/styles.dart';
+import 'package:tmdbflutter/views/about_page.dart';
 import 'package:tmdbflutter/views/ranking_page.dart';
 
 class MorePage extends StatelessWidget {
@@ -49,14 +50,14 @@ class MorePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Text(
-            'Check out some',
+            'Get to know',
             style: Styles.mBold.copyWith(
               color: Colors.pinkAccent,
               fontSize: 10,
             ),
           ),
           Text(
-            'More Features',
+            'More about the app',
             style: Styles.mBold.copyWith(
               fontSize: 20,
             ),
@@ -86,11 +87,15 @@ class MoreBody extends StatelessWidget {
         ),
         SizedBox(height: 16),
         MoreFeaturesButton(
-          text: 'The Movie Database Attribution',
-          icon: Icons.attribution_outlined,
+          text: 'About the app',
+          icon: Icons.info,
           color: Color(0xff01b4e4),
           onTap: () {
-            // show dialog of tmdb attributioon
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return AboutPage();
+              },
+            ));
           },
         ),
       ],
