@@ -57,9 +57,9 @@
 <p><strong>Children’s Privacy</strong></p>
 <p>This Services do not address anyone under the age of 13. I do not knowingly collect personal
     identifiable information from children under 13. In the case I discover that a child under 13
-    has provided [me|us] with personal information, I immediately delete this from our servers. If you
+    has provided me with personal information, I immediately delete this from our servers. If you
     are a parent or guardian and you are aware that your child has provided us with personal
-    information, please contact [me|us] so that I will be able to do necessary actions.</p>
+    information, please contact me so that I will be able to do necessary actions.</p>
 
 <p><strong>Changes to This Privacy Policy</strong></p>
 <p>I may update our Privacy Policy from time to time. Thus, you are advised to review this page
