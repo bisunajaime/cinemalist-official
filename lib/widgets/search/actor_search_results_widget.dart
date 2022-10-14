@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/search/search_cubit.dart';
-import 'package:tmdbflutter/models/generic_actor_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/actor_info_page.dart';
+import 'package:cinemalist/bloc/search/search_cubit.dart';
+import 'package:cinemalist/models/generic_actor_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/actor_info_page.dart';
 
 class ActorSearchResultsWidget extends StatelessWidget {
   const ActorSearchResultsWidget({Key? key}) : super(key: key);

@@ -1,4 +1,4 @@
-import 'package:tmdbflutter/models/generic_movies_model.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
 
 class TVShowModel extends SerializableClass {
   final String? originalName, name, firstAirDate, posterPath, overview;

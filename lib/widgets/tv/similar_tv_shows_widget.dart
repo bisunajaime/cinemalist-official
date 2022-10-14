@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/tvshows/similar/similar_tv_bloc.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/tvshow_page.dart';
+import 'package:cinemalist/bloc/tvshows/similar/similar_tv_bloc.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/tvshow_page.dart';
 
 class SimilarTvShowsWidget extends StatefulWidget {
   const SimilarTvShowsWidget({Key? key}) : super(key: key);

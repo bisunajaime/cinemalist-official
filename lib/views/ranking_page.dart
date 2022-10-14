@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/ranking/actor_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_filter_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_actors_selection_widget.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_filter_bar.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_movie_selection_widget.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_tvshow_selection_widget.dart';
-import 'package:tmdbflutter/widgets/ranking/vertical_ranking_widget.dart';
+import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
+import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/ranking/ranking_actors_selection_widget.dart';
+import 'package:cinemalist/widgets/ranking/ranking_filter_bar.dart';
+import 'package:cinemalist/widgets/ranking/ranking_movie_selection_widget.dart';
+import 'package:cinemalist/widgets/ranking/ranking_tvshow_selection_widget.dart';
+import 'package:cinemalist/widgets/ranking/vertical_ranking_widget.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({Key? key}) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_filter_cubit.dart';
+import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
 
 enum RankingFilter {
   all, // todo: show ranking of all records

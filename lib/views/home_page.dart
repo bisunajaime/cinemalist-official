@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/movies/popular/popular_movies_cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/home/actors_list_widget.dart';
-import 'package:tmdbflutter/widgets/home/genres_list_widget.dart';
-import 'package:tmdbflutter/widgets/home/popular_movies_widget.dart';
-import 'package:tmdbflutter/widgets/home/trending_movies_list_widget.dart';
-import 'package:tmdbflutter/widgets/home/upcoming_movies_list_widget.dart';
+import 'package:cinemalist/bloc/movies/popular/popular_movies_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/home/actors_list_widget.dart';
+import 'package:cinemalist/widgets/home/genres_list_widget.dart';
+import 'package:cinemalist/widgets/home/popular_movies_widget.dart';
+import 'package:cinemalist/widgets/home/trending_movies_list_widget.dart';
+import 'package:cinemalist/widgets/home/upcoming_movies_list_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tmdbflutter/utils/url_opener.dart';
+import 'package:cinemalist/utils/url_opener.dart';
 
 final tmdbSvg = SvgPicture.asset('assets/tmdb/tmdb_attribution_img.svg');
 final tmdbNoticeMessage =

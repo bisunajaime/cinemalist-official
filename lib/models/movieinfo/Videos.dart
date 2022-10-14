@@ -1,4 +1,4 @@
-import 'package:tmdbflutter/models/movieinfo/Result.dart';
+import 'package:cinemalist/models/movieinfo/Result.dart';
 
 class Videos {
   List<Result>? results;

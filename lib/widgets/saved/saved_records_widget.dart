@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/saved/saved_actors_page.dart';
-import 'package:tmdbflutter/widgets/saved/saved_movies_widget.dart';
-import 'package:tmdbflutter/widgets/saved/saved_tv_shows_widget.dart';
-import 'package:tmdbflutter/widgets/saved/title.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/saved/saved_actors_page.dart';
+import 'package:cinemalist/widgets/saved/saved_movies_widget.dart';
+import 'package:cinemalist/widgets/saved/saved_tv_shows_widget.dart';
+import 'package:cinemalist/widgets/saved/title.dart';
 
 class SavedRecordsWidget extends StatelessWidget {
   const SavedRecordsWidget({Key? key}) : super(key: key);

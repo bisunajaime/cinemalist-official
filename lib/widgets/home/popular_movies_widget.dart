@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/barrels/popular_movies_barrel.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:cinemalist/barrels/popular_movies_barrel.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/movie_page.dart';
 
 class PopularMoviesWidget extends StatefulWidget {
   const PopularMoviesWidget({Key? key}) : super(key: key);

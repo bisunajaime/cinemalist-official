@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/barrels/trending_movies_barrel.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:cinemalist/barrels/trending_movies_barrel.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/movie_page.dart';
 
 class TrendingMoviesListWidget extends StatelessWidget {
   const TrendingMoviesListWidget({Key? key}) : super(key: key);

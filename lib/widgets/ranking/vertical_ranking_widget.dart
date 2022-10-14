@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/bloc/ranking/actor_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:provider/provider.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_filter_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_filter_bar.dart';
-import 'package:tmdbflutter/widgets/ranking/ranking_image_widget.dart';
+import 'package:cinemalist/bloc/ranking/ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
+import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/widgets/ranking/ranking_filter_bar.dart';
+import 'package:cinemalist/widgets/ranking/ranking_image_widget.dart';
 
 final sTierColor = Color(0xffF08683);
 final aTierColor = Color(0xffF5C188);

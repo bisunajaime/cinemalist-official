@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
-import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
-import 'package:tmdbflutter/models/movieinfo/Result.dart';
-import 'package:tmdbflutter/utils/link_sharing.dart';
-import 'package:tmdbflutter/utils/url_opener.dart';
-import 'package:tmdbflutter/views/youtube_page.dart';
-import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
+import 'package:cinemalist/bloc/movies/info/movie_info_cubit.dart';
+import 'package:cinemalist/models/movieinfo/MovieInfo.dart';
+import 'package:cinemalist/models/movieinfo/Result.dart';
+import 'package:cinemalist/utils/link_sharing.dart';
+import 'package:cinemalist/utils/url_opener.dart';
+import 'package:cinemalist/views/youtube_page.dart';
+import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 class MovieInfoWidget extends StatelessWidget {
   const MovieInfoWidget({Key? key}) : super(key: key);

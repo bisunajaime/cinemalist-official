@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/about_page.dart';
-import 'package:tmdbflutter/views/ranking_page.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/about_page.dart';
+import 'package:cinemalist/views/ranking_page.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({Key? key}) : super(key: key);

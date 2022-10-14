@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/tv/tv_shows_list_widget.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/tv/tv_shows_list_widget.dart';
 
 class TvShowsPage extends StatefulWidget {
   @override

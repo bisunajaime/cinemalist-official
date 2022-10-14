@@ -2,13 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
-import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
+import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 final _runner = DelayedRunner(milliseconds: 250);
 

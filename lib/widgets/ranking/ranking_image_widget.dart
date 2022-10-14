@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
+import 'package:cinemalist/models/ranking_model.dart';
 
 class RankingImageWidget extends StatelessWidget {
   final RankingModel model;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/barrels/models.dart';
+import 'package:cinemalist/barrels/models.dart';
 
 const genreColorPair = <String, List<Color>>{
   'action': [Colors.pinkAccent, Colors.redAccent],

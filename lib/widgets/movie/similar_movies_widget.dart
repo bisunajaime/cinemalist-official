@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:cinemalist/bloc/movies/similar/similar_movies_bloc.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/movie_page.dart';
 
 class SimilarMoviesWidget extends StatelessWidget {
   const SimilarMoviesWidget({Key? key}) : super(key: key);

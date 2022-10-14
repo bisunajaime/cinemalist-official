@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
 
 class GenericMovieGridWidget extends StatefulWidget {
   final PagedTMDBCubit pagedCubit;

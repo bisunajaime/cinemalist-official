@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/tvshows/seasons/tvseasons_bloc.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/seasoninfo_page.dart';
+import 'package:cinemalist/bloc/tvshows/seasons/tvseasons_bloc.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/seasoninfo_page.dart';
 
 class TvShowSeasonsWidget extends StatelessWidget {
   final TVShowModel tvShowModel;

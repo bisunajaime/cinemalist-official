@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/search/search_widget.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/search/search_widget.dart';
 
 class SearchPage extends StatefulWidget {
   @override

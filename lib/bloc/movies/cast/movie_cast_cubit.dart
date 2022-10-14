@@ -1,6 +1,6 @@
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 
 class MovieCastCubit extends TMDBCubit<List<ActorInfoModel>?> {
   final int? movieId;

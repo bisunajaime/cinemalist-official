@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart' as c;
 import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/repository/localstorage_repository/localstorage_repository.dart';
-import 'package:tmdbflutter/repository/log.dart';
-import 'package:tmdbflutter/repository/logger_log.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/repository/localstorage_repository/localstorage_repository.dart';
+import 'package:cinemalist/repository/log.dart';
+import 'package:cinemalist/repository/logger_log.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 
 abstract class Cubit<T> extends c.Cubit<T?> {
   String get name;

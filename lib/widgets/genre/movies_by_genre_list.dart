@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/movies/byGenre/moviesbygenre_cubit.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
-import 'package:tmdbflutter/widgets/generic/generic_movie_grid_widget.dart';
+import 'package:cinemalist/bloc/movies/byGenre/moviesbygenre_cubit.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/generic/generic_movie_grid_widget.dart';
 
 class MoviesByGenreListWidget extends StatelessWidget {
   @override

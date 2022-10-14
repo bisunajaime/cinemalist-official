@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:tmdbflutter/repository/log.dart';
-import 'package:tmdbflutter/repository/logger_log.dart';
+import 'package:cinemalist/repository/log.dart';
+import 'package:cinemalist/repository/logger_log.dart';
 
 abstract class LocalStorageRepository {
   Future<bool> save(String json);

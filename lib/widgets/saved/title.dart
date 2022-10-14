@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 enum SavedRecordType {
   movie,

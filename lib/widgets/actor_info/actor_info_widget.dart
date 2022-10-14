@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
+import 'package:cinemalist/bloc/actors/actor_info_cubit.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/styles/styles.dart';
 
 class ActorInfoWidget extends StatelessWidget {
   const ActorInfoWidget({Key? key}) : super(key: key);

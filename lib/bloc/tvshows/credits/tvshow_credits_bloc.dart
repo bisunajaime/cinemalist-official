@@ -1,6 +1,6 @@
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/tvshowcredits_model.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/tvshowcredits_model.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 
 class TvShowCreditsCubit extends TMDBCubit<TvShowCreditsModel?> {
   final int? movieId;

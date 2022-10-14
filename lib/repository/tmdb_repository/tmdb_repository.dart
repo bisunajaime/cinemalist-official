@@ -1,11 +1,11 @@
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/actors_model.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/models/genres_model.dart';
-import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
-import 'package:tmdbflutter/models/season_model.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/models/tvshowcredits_model.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/models/actors_model.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/models/genres_model.dart';
+import 'package:cinemalist/models/movieinfo/MovieInfo.dart';
+import 'package:cinemalist/models/season_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/models/tvshowcredits_model.dart';
 
 abstract class TMDBRepository {
   Future<List<GenresModel>> fetchCategories();

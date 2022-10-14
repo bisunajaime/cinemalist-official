@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/models/ranking_model.dart';
-import 'package:tmdbflutter/repository/localstorage_repository/localstorage_repository.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/repository/localstorage_repository/localstorage_repository.dart';
 
 final _initialMovieRankingState = <String, List<RankingModel>>{
   's': [],

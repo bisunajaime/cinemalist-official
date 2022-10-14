@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/ranking/actor_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
-import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
-import 'package:tmdbflutter/models/generic_actor_model.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/widgets/saved/title.dart';
+import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/ranking_cubit.dart';
+import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
+import 'package:cinemalist/models/generic_actor_model.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/widgets/saved/title.dart';
 
 enum RankingType {
   movies,
