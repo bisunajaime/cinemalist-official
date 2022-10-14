@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/builder/filter_builder.dart';
-import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
-import 'package:tmdbflutter/models/season_model.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/models/tvshowcredits_model.dart';
-import 'package:tmdbflutter/repository/search_results_repository.dart';
-import 'package:tmdbflutter/repository/tmdb_client/tmdb_client.dart';
-import 'package:tmdbflutter/repository/uri_generator.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/models/builder/filter_builder.dart';
+import 'package:cinemalist/models/movieinfo/MovieInfo.dart';
+import 'package:cinemalist/models/season_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/models/tvshowcredits_model.dart';
+import 'package:cinemalist/repository/search_results_repository.dart';
+import 'package:cinemalist/repository/tmdb_client/tmdb_client.dart';
+import 'package:cinemalist/repository/uri_generator.dart';
 
 import '../../barrels/models.dart';
 

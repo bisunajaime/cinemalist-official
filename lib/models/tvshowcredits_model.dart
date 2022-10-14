@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/crew_model.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/models/crew_model.dart';
 
 class TvShowCreditsModel extends Equatable {
   final List<ActorInfoModel>? casts;

@@ -1,5 +1,5 @@
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
 
 class SearchModel {
   final List<ActorsModel> actors;

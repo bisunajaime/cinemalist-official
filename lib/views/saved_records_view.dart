@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/saved/saved_records_widget.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/saved/saved_records_widget.dart';
 
 class SavedRecordsPage extends StatefulWidget {
   const SavedRecordsPage({Key? key}) : super(key: key);

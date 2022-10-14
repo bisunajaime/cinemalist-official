@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/search/search_cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/widgets/search/actor_search_results_widget.dart';
-import 'package:tmdbflutter/widgets/search/movie_search_results_widget.dart';
-import 'package:tmdbflutter/widgets/search/tv_search_results_widget.dart';
+import 'package:cinemalist/bloc/search/search_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/search/actor_search_results_widget.dart';
+import 'package:cinemalist/widgets/search/movie_search_results_widget.dart';
+import 'package:cinemalist/widgets/search/tv_search_results_widget.dart';
 
 class SearchWidget extends StatefulWidget {
   const SearchWidget({Key? key}) : super(key: key);

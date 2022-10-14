@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/saved/saved_actors_page.dart';
-import 'package:tmdbflutter/widgets/saved/saved_movies_widget.dart';
-import 'package:tmdbflutter/widgets/saved/saved_tv_shows_widget.dart';
-import 'package:tmdbflutter/widgets/saved/title.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/saved/saved_actors_page.dart';
+import 'package:cinemalist/widgets/saved/saved_movies_widget.dart';
+import 'package:cinemalist/widgets/saved/saved_tv_shows_widget.dart';
+import 'package:cinemalist/widgets/saved/title.dart';
 
 class SavedRecordsWidget extends StatelessWidget {
   const SavedRecordsWidget({Key? key}) : super(key: key);
@@ -61,6 +61,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'Movies',
           localCubit: context.watch<MoviesWatchLaterCubit>(),
+          type: SavedRecordType.movie,
         ),
         SizedBox(height: 4),
         SavedMoviesWidget(),
@@ -68,6 +69,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'Actors',
           localCubit: context.watch<SavedActorsCubit>(),
+          type: SavedRecordType.actor,
         ),
         SizedBox(height: 4),
         SavedActorsWidget(),
@@ -75,6 +77,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'TV Shows',
           localCubit: context.watch<TvWatchLaterCubit>(),
+          type: SavedRecordType.tvShow,
         ),
         SizedBox(height: 4),
         SavedTvShowsWidget(),

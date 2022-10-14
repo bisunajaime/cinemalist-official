@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:tmdbflutter/bloc/tvshows/credits/tvshow_credits_bloc.dart';
-import 'package:tmdbflutter/bloc/tvshows/seasons/tvseasons_bloc.dart';
-import 'package:tmdbflutter/bloc/tvshows/similar/similar_tv_bloc.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
-import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
-import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
-import 'package:tmdbflutter/widgets/tv/similar_tv_shows_widget.dart';
-import 'package:tmdbflutter/widgets/tv/tv_show_credits_widget.dart';
-import 'package:tmdbflutter/widgets/tv/tv_show_seasons_widget.dart';
+import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
+import 'package:cinemalist/bloc/tvshows/credits/tvshow_credits_bloc.dart';
+import 'package:cinemalist/bloc/tvshows/seasons/tvseasons_bloc.dart';
+import 'package:cinemalist/bloc/tvshows/similar/similar_tv_bloc.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/generic/fab_go_home.dart';
+import 'package:cinemalist/widgets/generic/fab_save_record.dart';
+import 'package:cinemalist/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:cinemalist/widgets/tv/similar_tv_shows_widget.dart';
+import 'package:cinemalist/widgets/tv/tv_show_credits_widget.dart';
+import 'package:cinemalist/widgets/tv/tv_show_seasons_widget.dart';
 
 import '../styles/styles.dart';
 
@@ -75,6 +77,9 @@ class _TvShowPageState extends State<TvShowPage> {
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
+                  final rankingCubit = context.read<TvShowRankingCubit>();
+                  await rankingCubit.removeRankingWithoutLetter(
+                      RankingModel.fromTvShowModel(elem));
                   await context.read<TvWatchLaterCubit>().save(elem);
                 });
               },

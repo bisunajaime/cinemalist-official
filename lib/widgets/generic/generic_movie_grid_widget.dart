@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
 
 class GenericMovieGridWidget extends StatefulWidget {
   final PagedTMDBCubit pagedCubit;
@@ -62,6 +63,7 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
       );
     }
     list!;
+    list.removeWhere((element) => element.posterPath == null);
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         final maxScroll = notification.metrics.maxScrollExtent;
@@ -122,6 +124,19 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
                       fadeOutDuration: Duration(milliseconds: 250),
                       fadeOutCurve: Curves.ease,
                       fit: BoxFit.cover,
+                      errorWidget: (context, url, error) {
+                        return Container(
+                          child: Center(
+                            child: Text(
+                              'No Image',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       placeholder: (context, string) {
                         return Shimmer.fromColors(
                           child: Container(
@@ -137,7 +152,8 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
                       right: 4,
                       child: GestureDetector(
                         onTap: () {
-                          _runner.run(() {
+                          _runner.run(() async {
+                            await RankingHelper.removeRanking(context, element);
                             widget.localCubit.save(element);
                           });
                         },

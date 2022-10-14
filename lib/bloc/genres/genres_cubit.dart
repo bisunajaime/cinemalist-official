@@ -1,6 +1,6 @@
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 
 class GenresCubit extends TMDBCubit<List<GenresModel>?> {
   GenresCubit(TMDBRepository tmdbRepository) : super(tmdbRepository);

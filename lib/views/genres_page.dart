@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:tmdbflutter/bloc/movies/byGenre/moviesbygenre_cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
-import 'package:tmdbflutter/utils/genre_utils.dart';
-import 'package:tmdbflutter/widgets/genre/movies_by_genre_list.dart';
+import 'package:cinemalist/bloc/movies/byGenre/moviesbygenre_cubit.dart';
+import 'package:cinemalist/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/utils/genre_utils.dart';
+import 'package:cinemalist/widgets/genre/movies_by_genre_list.dart';
 
 class GenresPage extends StatefulWidget {
   final int? id;

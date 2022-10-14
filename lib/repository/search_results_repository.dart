@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/builder/filter_builder.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/repository/uri_generator.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/models/builder/filter_builder.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/repository/uri_generator.dart';
 
 abstract class SearchResultsRepository<T> {
   final UriLoader uriLoader;

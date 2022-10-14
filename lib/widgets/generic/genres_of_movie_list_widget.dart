@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/barrels/genres_barrel.dart';
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/genre_utils.dart';
+import 'package:cinemalist/barrels/genres_barrel.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/genre_utils.dart';
 
 class GenresOfMovieListWidget extends StatelessWidget {
   final List<int>? genreIds;

@@ -1,5 +1,5 @@
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/library/cubit.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/library/cubit.dart';
 
 import '../../repository/tmdb_repository/tmdb_repository.dart';
 

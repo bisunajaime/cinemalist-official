@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:tmdbflutter/barrels/models.dart';
+import 'package:cinemalist/barrels/models.dart';
 
 class ActorInfoModel extends SerializableClass {
   final String? birthday,

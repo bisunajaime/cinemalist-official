@@ -1,13 +1,13 @@
-import 'package:tmdbflutter/models/actor_info_model.dart';
-import 'package:tmdbflutter/models/actors_model.dart';
-import 'package:tmdbflutter/models/generic_movies_model.dart';
-import 'package:tmdbflutter/models/genres_model.dart';
-import 'package:tmdbflutter/models/movieinfo/MovieInfo.dart';
-import 'package:tmdbflutter/models/season_model.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
-import 'package:tmdbflutter/models/tvshowcredits_model.dart';
-import 'package:tmdbflutter/repository/localstorage_repository/localstorage_repository.dart';
-import 'package:tmdbflutter/repository/tmdb_client/tmdb_client.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
+import 'package:cinemalist/models/actors_model.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/models/genres_model.dart';
+import 'package:cinemalist/models/movieinfo/MovieInfo.dart';
+import 'package:cinemalist/models/season_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
+import 'package:cinemalist/models/tvshowcredits_model.dart';
+import 'package:cinemalist/repository/localstorage_repository/localstorage_repository.dart';
+import 'package:cinemalist/repository/tmdb_client/tmdb_client.dart';
 
 class TMDBLocalClient implements TMDBClient {
   final LocalStorageRepository localRepository;

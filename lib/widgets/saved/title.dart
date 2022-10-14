@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/dialogs/dialogs.dart';
+
+enum SavedRecordType {
+  movie,
+  actor,
+  tvShow,
+}
 
 class SavedRecordsTitle extends StatelessWidget {
   final String title;
   final LocalStorageCubit localCubit;
+  final SavedRecordType type;
   const SavedRecordsTitle({
     Key? key,
     required this.title,
     required this.localCubit,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -37,6 +46,7 @@ class SavedRecordsTitle extends StatelessWidget {
                 ),
               );
               if (result != true) return;
+              await RankingHelper.removeRankingWithType(context, type);
               localCubit.remove();
             },
             child: Container(

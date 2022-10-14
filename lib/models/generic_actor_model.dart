@@ -1,5 +1,5 @@
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/models/actor_info_model.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/models/actor_info_model.dart';
 
 class GenericActorModel extends SerializableClass {
   final int? id;

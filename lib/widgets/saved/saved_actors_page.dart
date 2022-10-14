@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/views/actor_info_page.dart';
-import 'package:tmdbflutter/widgets/dialogs/dialogs.dart';
+import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 final _runner = DelayedRunner(milliseconds: 250);
 
@@ -77,8 +79,12 @@ class SavedActorsWidget extends StatelessWidget {
                           ),
                         );
                         if (result != true) return;
-                        _runner.run(() {
-                          cubit.save(actors[i]);
+                        _runner.run(() async {
+                          final rankingCubit =
+                              context.read<ActorRankingCubit>();
+                          await rankingCubit.removeRankingWithoutLetter(
+                              RankingModel.fromGenericActorModel(actors[i]));
+                          await cubit.save(actors[i]);
                         });
                       },
                       child: Container(

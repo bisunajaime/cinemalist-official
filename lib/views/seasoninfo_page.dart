@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tmdbflutter/models/season_model.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
+import 'package:cinemalist/models/season_model.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/generic/fab_go_home.dart';
 
 class SeasonInfoPage extends StatefulWidget {
   final List<SeasonModel>? tvSeasons;

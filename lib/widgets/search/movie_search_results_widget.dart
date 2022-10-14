@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/search/search_cubit.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/views/movie_page.dart';
+import 'package:cinemalist/bloc/search/search_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/views/movie_page.dart';
 
 class MovieSearchResultsWidget extends StatelessWidget {
   const MovieSearchResultsWidget({Key? key}) : super(key: key);

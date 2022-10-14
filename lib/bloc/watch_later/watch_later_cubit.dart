@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:tmdbflutter/barrels/models.dart';
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/generic_actor_model.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:cinemalist/barrels/models.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/generic_actor_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
 
 class MoviesWatchLaterCubit extends LocalStorageCubit<GenericMoviesModel> {
   MoviesWatchLaterCubit() : super([]);

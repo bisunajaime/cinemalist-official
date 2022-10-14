@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:tmdbflutter/bloc/actors/actor_info_cubit.dart';
-import 'package:tmdbflutter/bloc/actors/actor_movies_cubit.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/models/generic_actor_model.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/widgets/actor_info/actor_info_widget.dart';
-import 'package:tmdbflutter/widgets/actor_info/actor_movies_widget.dart';
-import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
-import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
+import 'package:cinemalist/bloc/actors/actor_info_cubit.dart';
+import 'package:cinemalist/bloc/actors/actor_movies_cubit.dart';
+import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/models/generic_actor_model.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/actor_info/actor_info_widget.dart';
+import 'package:cinemalist/widgets/actor_info/actor_movies_widget.dart';
+import 'package:cinemalist/widgets/generic/fab_go_home.dart';
+import 'package:cinemalist/widgets/generic/fab_save_record.dart';
+import 'package:cinemalist/widgets/ranking/ranking_actors_selection_widget.dart';
 
 import '../repository/tmdb_client/tmdb_api_client.dart';
 import '../repository/tmdb_repository/tmdb_repository.dart';
@@ -60,6 +63,9 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
               record: widget.model,
               onTap: (elem) async {
                 _runner.run(() async {
+                  final rankingCubit = context.read<ActorRankingCubit>();
+                  await rankingCubit.removeRankingWithoutLetter(
+                      RankingModel.fromGenericActorModel(elem));
                   await context.read<SavedActorsCubit>().save(elem);
                 });
               },

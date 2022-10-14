@@ -1,5 +1,5 @@
-import 'package:tmdbflutter/library/cubit.dart';
-import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:cinemalist/library/cubit.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
 
 import '../../../repository/tmdb_repository/tmdb_repository.dart';
 

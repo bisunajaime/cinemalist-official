@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
-import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
-import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
-import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
-import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/utils/delayed_runner.dart';
-import 'package:tmdbflutter/widgets/generic/fab_go_home.dart';
-import 'package:tmdbflutter/widgets/generic/fab_save_record.dart';
-import 'package:tmdbflutter/widgets/generic/genres_of_movie_list_widget.dart';
-import 'package:tmdbflutter/widgets/movie/movie_cast_widget.dart';
-import 'package:tmdbflutter/widgets/movie/movie_info_widget.dart';
-import 'package:tmdbflutter/widgets/movie/similar_movies_widget.dart';
+import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
+import 'package:cinemalist/bloc/movies/info/movie_info_cubit.dart';
+import 'package:cinemalist/bloc/movies/similar/similar_movies_bloc.dart';
+import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/repository/tmdb_client/tmdb_api_client.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
+import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/generic/fab_go_home.dart';
+import 'package:cinemalist/widgets/generic/fab_save_record.dart';
+import 'package:cinemalist/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:cinemalist/widgets/movie/movie_cast_widget.dart';
+import 'package:cinemalist/widgets/movie/movie_info_widget.dart';
+import 'package:cinemalist/widgets/movie/similar_movies_widget.dart';
 
 import '../barrels/models.dart';
 
@@ -78,6 +80,9 @@ class _MoviePageState extends State<MoviePage> {
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
+                  final rankingCubit = context.read<MovieRankingCubit>();
+                  await rankingCubit.removeRankingWithoutLetter(
+                      RankingModel.fromGenericMovieModel(elem));
                   await context.read<MoviesWatchLaterCubit>().save(elem);
                 });
               },

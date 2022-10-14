@@ -1,9 +1,9 @@
-import 'package:tmdbflutter/models/movieinfo/BelongsToCollection.dart';
-import 'package:tmdbflutter/models/movieinfo/Genre.dart';
-import 'package:tmdbflutter/models/movieinfo/ProductionCompany.dart';
-import 'package:tmdbflutter/models/movieinfo/ProductionCountry.dart';
-import 'package:tmdbflutter/models/movieinfo/SpokenLanguage.dart';
-import 'package:tmdbflutter/models/movieinfo/Videos.dart';
+import 'package:cinemalist/models/movieinfo/BelongsToCollection.dart';
+import 'package:cinemalist/models/movieinfo/Genre.dart';
+import 'package:cinemalist/models/movieinfo/ProductionCompany.dart';
+import 'package:cinemalist/models/movieinfo/ProductionCountry.dart';
+import 'package:cinemalist/models/movieinfo/SpokenLanguage.dart';
+import 'package:cinemalist/models/movieinfo/Videos.dart';
 
 class MovieInfo {
   bool? adult;

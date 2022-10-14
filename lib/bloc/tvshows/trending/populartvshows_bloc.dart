@@ -1,4 +1,4 @@
-import 'package:tmdbflutter/library/cubit.dart';
+import 'package:cinemalist/library/cubit.dart';
 
 import '../../../models/tvshow_model.dart';
 import '../../../repository/tmdb_repository/tmdb_repository.dart';

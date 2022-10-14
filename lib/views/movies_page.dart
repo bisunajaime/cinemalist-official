@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:tmdbflutter/bloc/movies/nowshowing/nowshowing_bloc.dart';
-import 'package:tmdbflutter/styles/styles.dart';
-import 'package:tmdbflutter/widgets/movies/now_showing_movies_list_widget.dart';
+import 'package:cinemalist/bloc/movies/nowshowing/nowshowing_bloc.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/movies/now_showing_movies_list_widget.dart';
 
 class MoviesPage extends StatefulWidget {
   @override
