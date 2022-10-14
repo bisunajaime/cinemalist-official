@@ -19,6 +19,13 @@ class RankingFilterBar extends StatefulWidget {
 class _RankingFilterBarState extends State<RankingFilterBar> {
   int selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    final rankingFilterCubit = context.read<RankingFilterCubit>();
+    selectedIndex = _rankingFilterToIndex[rankingFilterCubit.state]!;
+  }
+
   void setIndex(int index) {
     selectedIndex = index;
     setState(() {});
@@ -28,6 +35,12 @@ class _RankingFilterBarState extends State<RankingFilterBar> {
     0: RankingFilter.movies,
     1: RankingFilter.tvShows,
     2: RankingFilter.actors,
+  };
+
+  static final _rankingFilterToIndex = <RankingFilter, int>{
+    RankingFilter.movies: 0,
+    RankingFilter.tvShows: 1,
+    RankingFilter.actors: 2,
   };
 
   @override
