@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/views/tvshow_page.dart';
@@ -96,8 +98,11 @@ class SavedTvShowsWidget extends StatelessWidget {
                         ),
                       );
                       if (result != true) return;
-                      _runner.run(() {
-                        cubit.save(savedTVShows[i]);
+                      _runner.run(() async {
+                        final rankingCubit = context.read<TvShowRankingCubit>();
+                        await rankingCubit.removeRankingWithoutLetter(
+                            RankingModel.fromTvShowModel(savedTVShows[i]));
+                        await cubit.save(savedTVShows[i]);
                       });
                     },
                     child: Container(

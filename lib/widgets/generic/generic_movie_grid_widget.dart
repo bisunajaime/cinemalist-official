@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tmdbflutter/library/cubit.dart';
+import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 
 class GenericMovieGridWidget extends StatefulWidget {
@@ -137,7 +138,8 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
                       right: 4,
                       child: GestureDetector(
                         onTap: () {
-                          _runner.run(() {
+                          _runner.run(() async {
+                            await RankingHelper.removeRanking(context, element);
                             widget.localCubit.save(element);
                           });
                         },

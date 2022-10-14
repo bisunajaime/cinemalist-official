@@ -1,9 +1,16 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tmdbflutter/bloc/ranking/actor_ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/ranking_cubit.dart';
+import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:tmdbflutter/models/generic_actor_model.dart';
 import 'package:tmdbflutter/models/generic_movies_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
+import 'package:tmdbflutter/widgets/saved/title.dart';
 
 enum RankingType {
   movies,
@@ -137,5 +144,47 @@ class RankingHelper {
       }
     }
     return null;
+  }
+
+  static Future<void> removeRankingWithType(
+    BuildContext context,
+    SavedRecordType type,
+  ) async {
+    late final RankingCubit rankingCubit;
+    switch (type) {
+      case SavedRecordType.movie:
+        rankingCubit = context.read<MovieRankingCubit>();
+        break;
+      case SavedRecordType.actor:
+        rankingCubit = context.read<ActorRankingCubit>();
+        break;
+      case SavedRecordType.tvShow:
+        rankingCubit = context.read<TvShowRankingCubit>();
+        break;
+    }
+    await rankingCubit.resetRankings();
+  }
+
+  static Future<void> removeRanking(
+    BuildContext context,
+    dynamic record,
+  ) async {
+    late final RankingCubit rankingCubit;
+    late final RankingModel model;
+    switch (record.runtimeType) {
+      case GenericMoviesModel:
+        rankingCubit = context.read<MovieRankingCubit>();
+        model = RankingModel.fromGenericMovieModel(record);
+        break;
+      case GenericActorModel:
+        rankingCubit = context.read<ActorRankingCubit>();
+        model = RankingModel.fromGenericActorModel(record);
+        break;
+      case TVShowModel:
+        rankingCubit = context.read<TvShowRankingCubit>();
+        model = RankingModel.fromTvShowModel(record);
+        break;
+    }
+    await rankingCubit.removeRankingWithoutLetter(model);
   }
 }

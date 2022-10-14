@@ -61,6 +61,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'Movies',
           localCubit: context.watch<MoviesWatchLaterCubit>(),
+          type: SavedRecordType.movie,
         ),
         SizedBox(height: 4),
         SavedMoviesWidget(),
@@ -68,6 +69,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'Actors',
           localCubit: context.watch<SavedActorsCubit>(),
+          type: SavedRecordType.actor,
         ),
         SizedBox(height: 4),
         SavedActorsWidget(),
@@ -75,6 +77,7 @@ class SavedRecordsWidget extends StatelessWidget {
         SavedRecordsTitle(
           title: 'TV Shows',
           localCubit: context.watch<TvWatchLaterCubit>(),
+          type: SavedRecordType.tvShow,
         ),
         SizedBox(height: 4),
         SavedTvShowsWidget(),

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:tmdbflutter/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/tvshows/credits/tvshow_credits_bloc.dart';
 import 'package:tmdbflutter/bloc/tvshows/seasons/tvseasons_bloc.dart';
 import 'package:tmdbflutter/bloc/tvshows/similar/similar_tv_bloc.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/models/tvshow_model.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
@@ -75,6 +77,9 @@ class _TvShowPageState extends State<TvShowPage> {
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
+                  final rankingCubit = context.read<TvShowRankingCubit>();
+                  await rankingCubit.removeRankingWithoutLetter(
+                      RankingModel.fromTvShowModel(elem));
                   await context.read<TvWatchLaterCubit>().save(elem);
                 });
               },

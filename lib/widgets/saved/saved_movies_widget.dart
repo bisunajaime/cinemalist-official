@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/styles/styles.dart';
 import 'package:tmdbflutter/utils/delayed_runner.dart';
 import 'package:tmdbflutter/views/movie_page.dart';
@@ -98,8 +100,11 @@ class SavedMoviesWidget extends StatelessWidget {
                       ),
                     );
                     if (result != true) return;
-                    _runner.run(() {
-                      cubit.save(savedMovies[i]);
+                    _runner.run(() async {
+                      final rankingCubit = context.read<MovieRankingCubit>();
+                      await rankingCubit.removeRankingWithoutLetter(
+                          RankingModel.fromGenericMovieModel(savedMovies[i]));
+                      await cubit.save(savedMovies[i]);
                     });
                   },
                   child: Container(

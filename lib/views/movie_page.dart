@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:tmdbflutter/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/info/movie_info_cubit.dart';
 import 'package:tmdbflutter/bloc/movies/similar/similar_movies_bloc.dart';
+import 'package:tmdbflutter/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:tmdbflutter/bloc/watch_later/watch_later_cubit.dart';
+import 'package:tmdbflutter/models/ranking_model.dart';
 import 'package:tmdbflutter/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:tmdbflutter/repository/tmdb_repository/tmdb_repository.dart';
@@ -78,6 +80,9 @@ class _MoviePageState extends State<MoviePage> {
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
+                  final rankingCubit = context.read<MovieRankingCubit>();
+                  await rankingCubit.removeRankingWithoutLetter(
+                      RankingModel.fromGenericMovieModel(elem));
                   await context.read<MoviesWatchLaterCubit>().save(elem);
                 });
               },

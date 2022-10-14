@@ -62,6 +62,18 @@ abstract class RankingCubit extends Cubit<Map<String, List<RankingModel>>> {
     return didSave;
   }
 
+  Future<void> removeRankingWithoutLetter(RankingModel record) async {
+    final letter = RankingHelper.findLetterOfModel(state, record);
+    if (letter == null) return;
+    await removeRanking(letter, record);
+  }
+
+  Future<void> resetRankings() async {
+    emit(_initialMovieRankingState);
+    await localStorageRepository
+        .save(RankingHelper.encodeData(_initialMovieRankingState));
+  }
+
   Future<bool> removeRanking(String letter, RankingModel record) async {
     final stateCopy = {...state};
     stateCopy[letter]?.remove(record);
