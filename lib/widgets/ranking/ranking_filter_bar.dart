@@ -9,48 +9,53 @@ enum RankingFilter {
   actors,
 }
 
-class RankingFilterBar extends StatelessWidget {
+class RankingFilterBar extends StatefulWidget {
   const RankingFilterBar({Key? key}) : super(key: key);
+
+  @override
+  State<RankingFilterBar> createState() => _RankingFilterBarState();
+}
+
+class _RankingFilterBarState extends State<RankingFilterBar> {
+  int selectedIndex = 0;
+
+  void setIndex(int index) {
+    selectedIndex = index;
+    setState(() {});
+  }
+
+  static final _indexToRankingFilter = <int, RankingFilter>{
+    0: RankingFilter.movies,
+    1: RankingFilter.tvShows,
+    2: RankingFilter.actors,
+  };
 
   @override
   Widget build(BuildContext context) {
     final rankingFilterCubit = context.watch<RankingFilterCubit>();
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          style: TextButton.styleFrom(
-            backgroundColor: rankingFilterCubit.isSelected(RankingFilter.movies)
-                ? Colors.blue
-                : Colors.blue.withOpacity(.25),
-          ),
-          onPressed: () {
-            rankingFilterCubit.updateFilter(RankingFilter.movies);
-          },
-          child: Text('Movies'),
+    return BottomNavigationBar(
+      backgroundColor: Colors.transparent,
+      unselectedItemColor: Color(0xf95d5d5d),
+      selectedItemColor: Color(0xffff628b),
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      onTap: (value) {
+        setIndex(value);
+        rankingFilterCubit.updateFilter(_indexToRankingFilter[value]!);
+      },
+      currentIndex: selectedIndex,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.movie),
+          label: 'Movies',
         ),
-        ElevatedButton(
-          style: TextButton.styleFrom(
-            backgroundColor:
-                rankingFilterCubit.isSelected(RankingFilter.tvShows)
-                    ? Colors.blue
-                    : Colors.blue.withOpacity(.25),
-          ),
-          onPressed: () {
-            rankingFilterCubit.updateFilter(RankingFilter.tvShows);
-          },
-          child: Text('Tv Shows'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.tv),
+          label: 'TV Shows',
         ),
-        ElevatedButton(
-          style: TextButton.styleFrom(
-            backgroundColor: rankingFilterCubit.isSelected(RankingFilter.actors)
-                ? Colors.blue
-                : Colors.blue.withOpacity(.25),
-          ),
-          onPressed: () {
-            rankingFilterCubit.updateFilter(RankingFilter.actors);
-          },
-          child: Text('Actors'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Actors',
         ),
       ],
     );
