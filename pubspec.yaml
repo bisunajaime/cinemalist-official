@@ -1,5 +1,5 @@
-name: tmdbflutter
-description: TheMobieDB API Build with Flutter
+name: cinemalist
+description: TheMovieDB API Build with Flutter
 
 publish_to: 'none' 
 
