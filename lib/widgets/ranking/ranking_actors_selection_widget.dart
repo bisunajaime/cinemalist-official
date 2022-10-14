@@ -18,6 +18,9 @@ class RankingActorsSelectionWidget extends StatelessWidget {
     final cubit = context.watch<SavedActorsCubit>();
     final rankingCubit = context.watch<ActorRankingCubit>();
     final actors = cubit.state;
+    if (cubit.state.isEmpty) {
+      return Container();
+    }
     if (cubit.state.length == rankingCubit.rankedRecordsCount) {
       return DragTarget<RankingModel>(
         onAccept: (data) async {

@@ -20,6 +20,9 @@ class RankingTvShowsSelectionWidget extends StatelessWidget {
     final cubit = context.watch<TvWatchLaterCubit>();
     final savedTvShows = cubit.state;
     final rankingCubit = context.watch<TvShowRankingCubit>();
+    if (cubit.state.isEmpty) {
+      return Container();
+    }
     if (cubit.state.length == rankingCubit.rankedRecordsCount) {
       return DragTarget<RankingModel>(
         onAccept: (data) async {

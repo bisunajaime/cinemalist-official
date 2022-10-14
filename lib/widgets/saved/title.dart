@@ -46,6 +46,7 @@ class SavedRecordsTitle extends StatelessWidget {
                 ),
               );
               if (result != true) return;
+              await RankingHelper.removeRankingWithType(context, type);
               localCubit.remove();
             },
             child: Container(

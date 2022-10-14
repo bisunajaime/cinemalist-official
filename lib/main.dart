@@ -92,13 +92,13 @@ class MyApp extends StatelessWidget {
           create: (context) => SavedActorsCubit(),
         ),
         BlocProvider(
-          create: (context) => MovieRankingCubit()..initialLoad(),
+          create: (context) => MovieRankingCubit(),
         ),
         BlocProvider(
-          create: (context) => ActorRankingCubit()..initialLoad(),
+          create: (context) => ActorRankingCubit(),
         ),
         BlocProvider(
-          create: (context) => TvShowRankingCubit()..initialLoad(),
+          create: (context) => TvShowRankingCubit(),
         ),
         BlocProvider(
           create: (context) => RankingFilterCubit(),
