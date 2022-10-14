@@ -63,6 +63,7 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
       );
     }
     list!;
+    list.removeWhere((element) => element.posterPath == null);
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         final maxScroll = notification.metrics.maxScrollExtent;
@@ -123,6 +124,19 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
                       fadeOutDuration: Duration(milliseconds: 250),
                       fadeOutCurve: Curves.ease,
                       fit: BoxFit.cover,
+                      errorWidget: (context, url, error) {
+                        return Container(
+                          child: Center(
+                            child: Text(
+                              'No Image',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                       placeholder: (context, string) {
                         return Shimmer.fromColors(
                           child: Container(
