@@ -1,4 +1,4 @@
-export APP_VERSION=1.4.2
+export APP_VERSION=1.4.1
 export BUILD_NUMBER=106
 sed -i '' "s/version: .*/version: $APP_VERSION+$BUILD_NUMBER/" pubspec.yaml && \
 sed -i '' "s/versionCode .*/versionCode $BUILD_NUMBER/" android/app/build.gradle && \
