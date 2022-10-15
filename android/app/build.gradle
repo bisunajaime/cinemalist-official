@@ -49,8 +49,8 @@ android {
         applicationId "com.bisunajaime.cinemalist"
         minSdkVersion 17
         targetSdkVersion 31
-        versionCode 103
-        versionName '1.4.0'
+        versionCode 105
+        versionName '1.4.1'
     }
 
     signingConfigs {
