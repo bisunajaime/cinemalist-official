@@ -3,7 +3,7 @@ description: TheMovieDB API Build with Flutter
 
 publish_to: 'none' 
 
-version: 1.4.1+105
+version: 1.4.2+106
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
