@@ -1,3 +1,4 @@
+import 'package:cinemalist/widgets/saved/category/saved_categories_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
@@ -57,6 +58,8 @@ class SavedRecordsWidget extends StatelessWidget {
         horizontal: 5,
       ),
       children: [
+        SizedBox(height: 4),
+        SavedCategoriesListWidget(),
         SizedBox(height: 4),
         SavedRecordsTitle(
           title: 'Movies',
