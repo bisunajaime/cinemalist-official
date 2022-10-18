@@ -1,3 +1,4 @@
+import 'package:cinemalist/widgets/dialogs/create_saved_category_dialog.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -11,7 +12,7 @@ class SavedCategoryModel extends Equatable {
     this.colorHex,
   });
 
-  Color get color => Color(0xff); // use colorHex
+  Color get color => HexColor.fromHex(colorHex!); // use colorHex
 
   bool get isValid =>
       label != null && label?.isNotEmpty == true && colorHex != null;
@@ -25,6 +26,14 @@ class SavedCategoryModel extends Equatable {
       id: id ?? this.id,
       label: label ?? this.label,
       colorHex: colorHex ?? this.colorHex,
+    );
+  }
+
+  factory SavedCategoryModel.fromJson(Map<String, dynamic> json) {
+    return SavedCategoryModel(
+      id: json['id'],
+      label: json['label'],
+      colorHex: json['colorHex'],
     );
   }
 

@@ -18,19 +18,22 @@ extension HexColor on Color {
       '${blue.toRadixString(16).padLeft(2, '0')}';
 }
 
-Future<SavedCategoryModel?> showSavedCategoryDialog(
-    BuildContext context) async {
+Future<SavedCategoryModel?> showSavedCategoryDialog(BuildContext context,
+    {SavedCategoryModel? model}) async {
   return await showModalBottomSheet<SavedCategoryModel?>(
     context: context,
     isScrollControlled: true,
     builder: (context) {
-      return CreateSavedCategoryDialog();
+      return CreateSavedCategoryDialog(
+        model: model,
+      );
     },
   );
 }
 
 class CreateSavedCategoryDialog extends StatefulWidget {
-  const CreateSavedCategoryDialog({Key? key}) : super(key: key);
+  final SavedCategoryModel? model;
+  const CreateSavedCategoryDialog({Key? key, this.model}) : super(key: key);
 
   @override
   State<CreateSavedCategoryDialog> createState() =>
@@ -38,14 +41,25 @@ class CreateSavedCategoryDialog extends StatefulWidget {
 }
 
 class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
-  SavedCategoryModel savedCategoryModel = SavedCategoryModel.initial();
+  late SavedCategoryModel savedCategoryModel;
+  late TextEditingController labelController;
   final colorList = [
-    Color(0xffFF6480),
-    Color(0xff6473FF),
-    Color(0xffFFAE64),
-    Color(0xff46BA66),
+    Color(0xffFF3F61),
+    Color(0xff3B37FF),
+    Color(0xff05E100),
+    Color(0xffFF3838),
   ];
   Color? selectedColor;
+
+  @override
+  void initState() {
+    super.initState();
+    savedCategoryModel = widget.model ?? SavedCategoryModel.initial();
+    labelController = TextEditingController(text: widget.model?.label ?? '');
+    selectedColor = widget.model?.colorHex != null
+        ? HexColor.fromHex(widget.model!.colorHex!)
+        : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +106,10 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
                         color: color,
                         borderRadius: BorderRadius.circular(100),
                         border: Border.all(
-                          color: selectedColor == color
+                          color: savedCategoryModel.colorHex != null &&
+                                  HexColor.fromHex(
+                                          savedCategoryModel.colorHex!) ==
+                                      selectedColor
                               ? Colors.white
                               : Colors.transparent,
                           width: selectedColor == color ? 4 : 0,
@@ -109,6 +126,7 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: TextField(
               autofocus: true,
+              controller: labelController,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
