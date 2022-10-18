@@ -1,3 +1,5 @@
+import 'package:cinemalist/views/carousel_page.dart';
+import 'package:cinemalist/widgets/main/main_page_loader_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -111,7 +113,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: MainPage(),
+        home: MainPageLoader(),
       ),
     );
   }
