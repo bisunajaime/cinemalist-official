@@ -270,7 +270,7 @@ class SampleCategoryCard extends StatelessWidget {
                 child: Text(
                   categoryEmojiOption!.emoji,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 20,
                   ),
                 ),
               ),
@@ -280,6 +280,8 @@ class SampleCategoryCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
+                  fontStyle:
+                      label.isEmpty ? FontStyle.italic : FontStyle.normal,
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
                   fontSize: 14,
