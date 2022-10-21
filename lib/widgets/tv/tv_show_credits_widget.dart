@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -87,11 +88,12 @@ class TvShowCreditsWidget extends StatelessWidget {
                               color: Color(0xff252525),
                               image: DecorationImage(
                                 image: (model.profilePath == null
-                                        ? AssetImage(
-                                            'assets/images/placeholder_actor.png')
-                                        : NetworkImage(
-                                            'https://image.tmdb.org/t/p/w500${model.profilePath}'))
-                                    as ImageProvider<Object>,
+                                    ? AssetImage(
+                                        'assets/images/placeholder_actor.png')
+                                    : NetworkImage(PosterPathHelper
+                                        .generatePosterPath(model
+                                            .profilePath))) as ImageProvider<
+                                    Object>,
                                 fit: BoxFit.cover,
                               ),
                             ),

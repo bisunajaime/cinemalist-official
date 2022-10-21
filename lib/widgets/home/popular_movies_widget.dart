@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -96,8 +97,8 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                         ),
                         child: FadeInImage.assetNetwork(
                           placeholder: 'assets/images/placeholder_box.png',
-                          image:
-                              "https://image.tmdb.org/t/p/w500${movie.posterPath}",
+                          image: PosterPathHelper.generatePosterPath(
+                              movie.posterPath),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -256,8 +257,8 @@ class _PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                       ),
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/placeholder_box.png',
-                        image:
-                            'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                        image: PosterPathHelper.generatePosterPath(
+                            movie.posterPath),
                         fit: BoxFit.cover,
                       ),
                     ),

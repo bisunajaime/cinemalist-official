@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -30,12 +31,13 @@ class SavedTvShowsWidget extends StatelessWidget {
         itemCount: savedTVShows.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final tvShow = savedTVShows[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => TvShowPage(
-                  model: savedTVShows[i],
+                  model: tvShow,
                 ),
               ),
             ),
@@ -52,8 +54,8 @@ class SavedTvShowsWidget extends StatelessWidget {
                     child: Stack(
                       children: <Widget>[
                         CachedNetworkImage(
-                          imageUrl:
-                              'https://image.tmdb.org/t/p/w500${savedTVShows[i].posterPath}',
+                          imageUrl: PosterPathHelper.generatePosterPath(
+                              tvShow.posterPath),
                           cacheManager: DefaultCacheManager(),
                           fit: BoxFit.cover,
                           fadeInCurve: Curves.ease,
@@ -74,7 +76,7 @@ class SavedTvShowsWidget extends StatelessWidget {
                                 size: 10,
                               ),
                               Text(
-                                savedTVShows[i].voteAverage.toString(),
+                                tvShow.voteAverage.toString(),
                                 style: Styles.mBold.copyWith(
                                   fontSize: 10,
                                 ),
@@ -94,15 +96,15 @@ class SavedTvShowsWidget extends StatelessWidget {
                       final result = await showDialog(
                         context: context,
                         builder: (context) => ShowRemoveConfirmationDialog(
-                          type: savedTVShows[i].name!,
+                          type: tvShow.name!,
                         ),
                       );
                       if (result != true) return;
                       _runner.run(() async {
                         final rankingCubit = context.read<TvShowRankingCubit>();
                         await rankingCubit.removeRankingWithoutLetter(
-                            RankingModel.fromTvShowModel(savedTVShows[i]));
-                        await cubit.save(savedTVShows[i]);
+                            RankingModel.fromTvShowModel(tvShow));
+                        await cubit.save(tvShow);
                       });
                     },
                     child: Container(

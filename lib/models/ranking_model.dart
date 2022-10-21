@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,8 +24,7 @@ class RankingModel extends Equatable {
   final String? photoUrl, title;
   // final RankingType type;
 
-  String? get fullPhotoUrl =>
-      photoUrl != null ? 'https://image.tmdb.org/t/p/w500$photoUrl' : null;
+  String get fullPhotoUrl => PosterPathHelper.generatePosterPath(photoUrl);
 
   static Map<String, RankingType> _rankingTypeMap = {
     'movies': RankingType.movies,

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -30,6 +31,7 @@ class SavedMoviesWidget extends StatelessWidget {
         itemCount: savedMovies.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final movie = savedMovies[i];
           return Stack(
             children: [
               AspectRatio(
@@ -39,8 +41,8 @@ class SavedMoviesWidget extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => MoviePage(
-                        model: savedMovies[i],
-                        tag: 'upcoming${savedMovies[i].posterPath}',
+                        model: movie,
+                        tag: 'upcoming${movie.posterPath}',
                       ),
                     ),
                   ),
@@ -53,8 +55,8 @@ class SavedMoviesWidget extends StatelessWidget {
                     child: Stack(
                       children: <Widget>[
                         CachedNetworkImage(
-                          imageUrl:
-                              'https://image.tmdb.org/t/p/w500${savedMovies[i].posterPath}',
+                          imageUrl: PosterPathHelper.generatePosterPath(
+                              movie.posterPath),
                           cacheManager: DefaultCacheManager(),
                           fit: BoxFit.cover,
                           fadeInCurve: Curves.ease,
@@ -75,7 +77,7 @@ class SavedMoviesWidget extends StatelessWidget {
                                 size: 10,
                               ),
                               Text(
-                                savedMovies[i].voteAverage.toString(),
+                                movie.voteAverage.toString(),
                                 style: Styles.mBold.copyWith(
                                   fontSize: 10,
                                 ),
@@ -96,15 +98,15 @@ class SavedMoviesWidget extends StatelessWidget {
                     final result = await showDialog(
                       context: context,
                       builder: (context) => ShowRemoveConfirmationDialog(
-                        type: savedMovies[i].title!,
+                        type: movie.title!,
                       ),
                     );
                     if (result != true) return;
                     _runner.run(() async {
                       final rankingCubit = context.read<MovieRankingCubit>();
                       await rankingCubit.removeRankingWithoutLetter(
-                          RankingModel.fromGenericMovieModel(savedMovies[i]));
-                      await cubit.save(savedMovies[i]);
+                          RankingModel.fromGenericMovieModel(movie));
+                      await cubit.save(movie);
                     });
                   },
                   child: Container(

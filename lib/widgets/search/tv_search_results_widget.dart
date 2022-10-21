@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -52,12 +53,13 @@ class TvSearchResultsWidget extends StatelessWidget {
         itemCount: tvShows.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final tvShow = tvShows[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => TvShowPage(
-                  model: tvShows[i],
+                  model: tvShow,
                 ),
               ),
             ),
@@ -72,11 +74,11 @@ class TvSearchResultsWidget extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     Hero(
-                      tag: 'upcoming${tvShows[i].posterPath}',
+                      tag: 'upcoming${tvShow.posterPath}',
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/placeholder_box.png',
-                        image:
-                            'https://image.tmdb.org/t/p/w500${tvShows[i].posterPath}',
+                        image: PosterPathHelper.generatePosterPath(
+                            tvShow.posterPath),
                         fit: BoxFit.cover,
                         fadeInCurve: Curves.ease,
                         fadeInDuration: Duration(milliseconds: 250),
@@ -97,7 +99,7 @@ class TvSearchResultsWidget extends StatelessWidget {
                             size: 10,
                           ),
                           Text(
-                            tvShows[i].voteAverage.toString(),
+                            tvShow.voteAverage.toString(),
                             style: Styles.mBold.copyWith(
                               fontSize: 10,
                             ),

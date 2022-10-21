@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -68,12 +69,13 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
           scrollDirection: Axis.horizontal,
           itemCount: similarTvShows.length,
           itemBuilder: (context, i) {
+            final tvShow = similarTvShows[i];
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TvShowPage(
-                    model: similarTvShows[i],
+                    model: tvShow,
                   ),
                 ),
               ),
@@ -86,10 +88,11 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
                       margin: EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: (similarTvShows[i].posterPath == null
+                          image: (tvShow.posterPath == null
                                   ? AssetImage('assets/images/placeholder.png')
                                   : NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500${similarTvShows[i].posterPath}'))
+                                      PosterPathHelper.generatePosterPath(
+                                          tvShow.posterPath)))
                               as ImageProvider<Object>,
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
@@ -110,7 +113,7 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
                             width: 2,
                           ),
                           Text(
-                            similarTvShows[i].voteAverage.toString(),
+                            tvShow.voteAverage.toString(),
                             style: Styles.mMed.copyWith(),
                           ),
                         ],

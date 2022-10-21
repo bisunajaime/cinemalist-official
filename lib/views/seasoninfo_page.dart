@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:cinemalist/models/season_model.dart';
 import 'package:cinemalist/styles/styles.dart';
@@ -104,12 +105,13 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
               scrollDirection: Axis.horizontal,
               itemCount: tv!.length,
               itemBuilder: (context, i) {
+                final tvRecord = tv![i];
                 return GestureDetector(
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SeasonInfoPage(
-                        tvShow: tv![i],
+                        tvShow: tvRecord,
                         index: i,
                         tvSeasons: widget.tvSeasons,
                         name: widget.name,
@@ -124,11 +126,9 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     decoration: BoxDecoration(
                       color: Color(0xff2e2e2e),
                       image: DecorationImage(
-                          image: (tv![i].posterPath == null
-                                  ? AssetImage('assets/images/placeholder.png')
-                                  : NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500${tv![i].posterPath}'))
-                              as ImageProvider<Object>,
+                          image: NetworkImage(
+                              PosterPathHelper.generatePosterPath(
+                                  tvRecord.posterPath)),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black26,
@@ -137,7 +137,7 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     ),
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      tv![i].name!,
+                      tvRecord.name!,
                       style: Styles.mBold,
                     ),
                   ),
@@ -187,7 +187,8 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
                     fit: BoxFit.cover,
                   )
                 : Image.network(
-                    'https://image.tmdb.org/t/p/w500${widget.tvShow!.posterPath}',
+                    PosterPathHelper.generatePosterPath(
+                        widget.tvShow?.posterPath),
                     height: double.infinity,
                     width: double.infinity,
                     fit: BoxFit.cover,

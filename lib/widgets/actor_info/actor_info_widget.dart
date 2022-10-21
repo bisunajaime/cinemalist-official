@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +46,8 @@ class ActorInfoWidget extends StatelessWidget {
             aspectRatio: 2 / 3,
             child: actorInfoModel.hasProfilePic
                 ? Image.network(
-                    'https://image.tmdb.org/t/p/w500${actorInfoModel.profilePath}',
+                    PosterPathHelper.generatePosterPath(
+                        actorInfoModel.profilePath),
                     alignment: Alignment.center,
                     fit: BoxFit.cover,
                   )

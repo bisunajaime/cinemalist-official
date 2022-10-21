@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
@@ -90,7 +91,8 @@ class RankingActorsSelectionWidget extends StatelessWidget {
                         CircleAvatar(
                           backgroundColor: Color(0xff2e2e2e),
                           backgroundImage: NetworkImage(
-                              'https://image.tmdb.org/t/p/w500${actor.profilePath!}'),
+                              PosterPathHelper.generatePosterPath(
+                                  actor.profilePath)),
                           radius: 45,
                         ),
                         SizedBox(
@@ -112,7 +114,8 @@ class RankingActorsSelectionWidget extends StatelessWidget {
                         feedback: CircleAvatar(
                           backgroundColor: Color(0xff2e2e2e),
                           backgroundImage: NetworkImage(
-                              'https://image.tmdb.org/t/p/w500${actor.profilePath!}'),
+                              PosterPathHelper.generatePosterPath(
+                                  actor.profilePath)),
                           radius: 45,
                         ),
                         child: Container(

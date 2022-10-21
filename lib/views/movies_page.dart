@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -161,7 +162,7 @@ class _MoviesSliverCarouselState extends State<MoviesSliverCarousel> {
               color: Color(0xff0E0E0E),
             ),
             child: CachedNetworkImage(
-              imageUrl: "https://image.tmdb.org/t/p/w500${movie!.posterPath}",
+              imageUrl: PosterPathHelper.generatePosterPath(movie?.posterPath),
               fit: BoxFit.cover,
               cacheManager: DefaultCacheManager(),
               placeholder: (context, _) {

@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -71,7 +72,7 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                   child: movie.posterPath == null
                       ? Image.asset('assets/images/placeholder.png')
                       : Image.network(
-                          'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                          PosterPathHelper.generatePosterPath(movie.posterPath),
                           fit: BoxFit.cover,
                         ),
                 ),

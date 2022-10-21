@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
@@ -29,6 +30,7 @@ class SavedActorsWidget extends StatelessWidget {
         itemCount: actors.length,
         physics: BouncingScrollPhysics(),
         itemBuilder: (context, i) {
+          final actor = actors[i];
           return Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 5,
@@ -38,9 +40,9 @@ class SavedActorsWidget extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ActorInfoPage(
-                    id: actors[i].id,
-                    name: actors[i].name,
-                    model: actors[i],
+                    id: actor.id,
+                    name: actor.name,
+                    model: actor,
                   ),
                 ),
               ),
@@ -53,14 +55,15 @@ class SavedActorsWidget extends StatelessWidget {
                       CircleAvatar(
                         backgroundColor: Color(0xff2e2e2e),
                         backgroundImage: NetworkImage(
-                            'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
+                            PosterPathHelper.generatePosterPath(
+                                actor.profilePath)),
                         radius: 45,
                       ),
                       SizedBox(
                         height: 1,
                       ),
                       Text(
-                        actors[i].name!,
+                        actor.name!,
                         style: Styles.mMed.copyWith(
                           fontSize: 12,
                         ),
@@ -75,7 +78,7 @@ class SavedActorsWidget extends StatelessWidget {
                         final result = await showDialog(
                           context: context,
                           builder: (context) => ShowRemoveConfirmationDialog(
-                            type: actors[i].name!,
+                            type: actor.name!,
                           ),
                         );
                         if (result != true) return;
@@ -83,8 +86,8 @@ class SavedActorsWidget extends StatelessWidget {
                           final rankingCubit =
                               context.read<ActorRankingCubit>();
                           await rankingCubit.removeRankingWithoutLetter(
-                              RankingModel.fromGenericActorModel(actors[i]));
-                          await cubit.save(actors[i]);
+                              RankingModel.fromGenericActorModel(actor));
+                          await cubit.save(actor);
                         });
                       },
                       child: Container(

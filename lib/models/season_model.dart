@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/cinemalist_constants.dart';
 import 'package:equatable/equatable.dart';
 
 class SeasonModel extends Equatable {
@@ -13,6 +14,13 @@ class SeasonModel extends Equatable {
     this.id,
     this.seasonNumber,
   });
+
+  String get mainPosterPath {
+    if (posterPath == null) {
+      return 'placeholder_posterpath';
+    }
+    return CinemalistConstants.tmdbImagePath + posterPath!;
+  }
 
   factory SeasonModel.fromJson(Map<String, dynamic> json) {
     return SeasonModel(

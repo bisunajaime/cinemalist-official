@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
@@ -115,8 +116,8 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
                 child: Stack(
                   children: [
                     CachedNetworkImage(
-                      imageUrl:
-                          'https://image.tmdb.org/t/p/w500${element.posterPath}',
+                      imageUrl: PosterPathHelper.generatePosterPath(
+                          element.posterPath),
                       cacheManager: DefaultCacheManager(),
                       fadeInCurve: Curves.ease,
                       width: double.infinity,

@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -113,8 +114,8 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                         },
                         blendMode: BlendMode.dstIn,
                         child: CachedNetworkImage(
-                          imageUrl:
-                              'https://image.tmdb.org/t/p/w500${savedMovies[i].posterPath}',
+                          imageUrl: PosterPathHelper.generatePosterPath(
+                              movie.posterPath),
                           cacheManager: DefaultCacheManager(),
                           fit: BoxFit.cover,
                           fadeInCurve: Curves.ease,
@@ -159,8 +160,8 @@ class RankingMovieSelectionWidget extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl:
-                                    'https://image.tmdb.org/t/p/w500${savedMovies[i].posterPath}',
+                                imageUrl: PosterPathHelper.generatePosterPath(
+                                    movie.posterPath),
                                 cacheManager: DefaultCacheManager(),
                                 fit: BoxFit.cover,
                                 fadeInCurve: Curves.ease,

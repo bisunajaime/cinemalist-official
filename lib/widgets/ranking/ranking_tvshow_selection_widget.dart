@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -110,8 +111,8 @@ class RankingTvShowsSelectionWidget extends StatelessWidget {
                         },
                         blendMode: BlendMode.dstIn,
                         child: CachedNetworkImage(
-                          imageUrl:
-                              'https://image.tmdb.org/t/p/w500${savedTvShow.posterPath}',
+                          imageUrl: PosterPathHelper.generatePosterPath(
+                              savedTvShow.posterPath),
                           cacheManager: DefaultCacheManager(),
                           fit: BoxFit.cover,
                           fadeInCurve: Curves.ease,
@@ -156,8 +157,8 @@ class RankingTvShowsSelectionWidget extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl:
-                                    'https://image.tmdb.org/t/p/w500${savedTvShow.posterPath}',
+                                imageUrl: PosterPathHelper.generatePosterPath(
+                                    savedTvShow.posterPath),
                                 cacheManager: DefaultCacheManager(),
                                 fit: BoxFit.cover,
                                 fadeInCurve: Curves.ease,

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -81,7 +82,8 @@ class _SimilarMoviesListState extends State<SimilarMoviesList> {
                           image: (movie.posterPath == null
                                   ? AssetImage('assets/images/placeholder.png')
                                   : NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500${movie.posterPath}'))
+                                      PosterPathHelper.generatePosterPath(
+                                          movie.posterPath)))
                               as ImageProvider<Object>,
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
@@ -94,8 +96,8 @@ class _SimilarMoviesListState extends State<SimilarMoviesList> {
                       child: Stack(
                         children: [
                           CachedNetworkImage(
-                            imageUrl:
-                                'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                            imageUrl: PosterPathHelper.generatePosterPath(
+                                movie.posterPath),
                             cacheManager: DefaultCacheManager(),
                             fit: BoxFit.cover,
                             fadeInCurve: Curves.ease,

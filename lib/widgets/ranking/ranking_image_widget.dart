@@ -20,7 +20,7 @@ class RankingImageWidget extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: CachedNetworkImage(
-          imageUrl: model.fullPhotoUrl!,
+          imageUrl: model.fullPhotoUrl,
           cacheManager: DefaultCacheManager(),
           fit: BoxFit.cover,
           fadeInCurve: Curves.ease,

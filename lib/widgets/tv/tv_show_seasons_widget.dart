@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -90,10 +91,9 @@ class TvShowSeasonsWidget extends StatelessWidget {
                     color: Color(0xff2e2e2e),
                     image: DecorationImage(
                         image: (model.posterPath == null
-                                ? AssetImage('assets/images/placeholder.png')
-                                : NetworkImage(
-                                    'https://image.tmdb.org/t/p/w500${model.posterPath}'))
-                            as ImageProvider<Object>,
+                            ? AssetImage('assets/images/placeholder.png')
+                            : NetworkImage(PosterPathHelper.generatePosterPath(
+                                model.posterPath))) as ImageProvider<Object>,
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
                           Colors.black26,

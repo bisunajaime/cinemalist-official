@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -49,13 +50,14 @@ class TrendingMoviesListWidget extends StatelessWidget {
         itemCount: trendingMovies.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final trendingMovie = trendingMovies[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MoviePage(
-                  model: trendingMovies[i],
-                  tag: 'trending${trendingMovies[i].posterPath}',
+                  model: trendingMovie,
+                  tag: 'trending${trendingMovie.posterPath}',
                 ),
               ),
             ),
@@ -70,11 +72,11 @@ class TrendingMoviesListWidget extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Hero(
-                    tag: 'trending${trendingMovies[i].posterPath}',
+                    tag: 'trending${trendingMovie.posterPath}',
                     child: FadeInImage.assetNetwork(
                       placeholder: 'assets/images/placeholder_box.png',
-                      image:
-                          'https://image.tmdb.org/t/p/w500${trendingMovies[i].posterPath}',
+                      image: PosterPathHelper.generatePosterPath(
+                          trendingMovie.posterPath),
                       fadeInCurve: Curves.ease,
                       fadeInDuration: Duration(milliseconds: 250),
                       fadeOutDuration: Duration(milliseconds: 250),
@@ -94,7 +96,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
                           size: 12,
                         ),
                         Text(
-                          trendingMovies[i].voteAverage.toString(),
+                          trendingMovie.voteAverage.toString(),
                           style: Styles.mBold.copyWith(
                             fontSize: 12,
                           ),

@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -249,7 +250,7 @@ class _MoviePageState extends State<MoviePage> {
               },
               blendMode: BlendMode.dstIn,
               child: Image.network(
-                'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
+                PosterPathHelper.generatePosterPath(widget.model?.posterPath),
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,

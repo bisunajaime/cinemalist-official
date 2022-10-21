@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -46,13 +47,14 @@ class UpcomingMoviesListWidget extends StatelessWidget {
         itemCount: upcomingMovies.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final movie = upcomingMovies[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => MoviePage(
-                  model: upcomingMovies[i],
-                  tag: 'upcoming${upcomingMovies[i].posterPath}',
+                  model: movie,
+                  tag: 'upcoming${movie.posterPath}',
                 ),
               ),
             ),
@@ -67,11 +69,11 @@ class UpcomingMoviesListWidget extends StatelessWidget {
                 child: Stack(
                   children: <Widget>[
                     Hero(
-                      tag: 'upcoming${upcomingMovies[i].posterPath}',
+                      tag: 'upcoming${movie.posterPath}',
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/placeholder_box.png',
-                        image:
-                            'https://image.tmdb.org/t/p/w500${upcomingMovies[i].posterPath}',
+                        image: PosterPathHelper.generatePosterPath(
+                            movie.posterPath),
                         fit: BoxFit.cover,
                         fadeInCurve: Curves.ease,
                         fadeInDuration: Duration(milliseconds: 250),
@@ -92,7 +94,7 @@ class UpcomingMoviesListWidget extends StatelessWidget {
                             size: 10,
                           ),
                           Text(
-                            upcomingMovies[i].voteAverage.toString(),
+                            movie.voteAverage.toString(),
                             style: Styles.mBold.copyWith(
                               fontSize: 10,
                             ),
