@@ -81,38 +81,37 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
             ),
           ),
           Container(
-            height: 30,
+            height: 80,
             width: double.infinity,
             child: ListView.builder(
-              itemCount: colorList.length,
+              itemCount: categoryEmojiMap.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                final color = colorList[index];
-                return GestureDetector(
-                  onTap: () {
-                    selectedColor = color;
-                    savedCategoryModel =
-                        savedCategoryModel.copyWith(colorHex: color.toHex());
-                    setState(() {});
-                  },
-                  child: IntrinsicHeight(
+                final key = categoryEmojiMap.keys.toList()[index];
+                final categoryEmoji = categoryEmojiMap[key];
+                return IntrinsicHeight(
+                  child: GestureDetector(
+                    onTap: () {
+                      // selectedColor = color;
+                      // savedCategoryModel =
+                      //     savedCategoryModel.copyWith(colorHex: color.toHex());
+                      setState(() {});
+                    },
                     child: Container(
-                      width: 60,
                       margin: EdgeInsets.only(
                         right: 8,
                         left: index == 0 ? 18 : 0,
                       ),
+                      padding: EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: savedCategoryModel.colorHex != null &&
-                                  HexColor.fromHex(
-                                          savedCategoryModel.colorHex!) ==
-                                      selectedColor
-                              ? Colors.white
-                              : Colors.transparent,
-                          width: selectedColor == color ? 4 : 0,
+                        color: categoryEmoji!.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        categoryEmoji.emoji,
+                        style: TextStyle(
+                          fontSize: 30,
                         ),
                       ),
                     ),
@@ -202,3 +201,143 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
     );
   }
 }
+
+class CategoryEmojiOption {
+  final String emoji, label;
+  final int primaryColorValue, secondaryColorValue;
+
+  CategoryEmojiOption({
+    required this.emoji,
+    required this.label,
+    required this.primaryColorValue,
+    required this.secondaryColorValue,
+  });
+
+  Color get primaryColor => Color(primaryColorValue);
+  Color get secondaryColor => Color(secondaryColorValue);
+}
+
+enum EmojiOption {
+  action,
+  romance,
+  comedy,
+  adventure,
+  crime,
+  animation,
+  documentary,
+  family,
+  drama,
+  horror,
+  music,
+  mystery,
+  sciFi,
+  tvMovie,
+  thriller,
+  war,
+  western,
+}
+
+final categoryEmojiMap = <EmojiOption, CategoryEmojiOption>{
+  EmojiOption.action: CategoryEmojiOption(
+    label: 'Action',
+    emoji: '💣',
+    primaryColorValue: 0xff888D8F,
+    secondaryColorValue: 0xff6A7072,
+  ),
+  EmojiOption.animation: CategoryEmojiOption(
+    label: 'Animation',
+    emoji: '🎨',
+    primaryColorValue: 0xffE1AD55,
+    secondaryColorValue: 0xffB98E45,
+  ),
+  EmojiOption.comedy: CategoryEmojiOption(
+    label: 'Comedy',
+    emoji: '🤡',
+    primaryColorValue: 0xffFCE8C0,
+    secondaryColorValue: 0xffD3BF95,
+  ),
+  EmojiOption.adventure: CategoryEmojiOption(
+    label: 'Adventure',
+    emoji: '⛰️',
+    primaryColorValue: 0xffC4C9CC,
+    secondaryColorValue: 0xff999EA1,
+  ),
+  EmojiOption.crime: CategoryEmojiOption(
+    label: 'Crime',
+    emoji: '💸',
+    primaryColorValue: 0xffE2E0CF,
+    secondaryColorValue: 0xffACA992,
+  ),
+  EmojiOption.documentary: CategoryEmojiOption(
+    label: 'Documentary',
+    emoji: '🎥',
+    primaryColorValue: 0xff707E85,
+    secondaryColorValue: 0xff546066,
+  ),
+  EmojiOption.family: CategoryEmojiOption(
+    label: 'Family',
+    emoji: '👨‍👨‍👧',
+    primaryColorValue: 0xffFDE095,
+    secondaryColorValue: 0xffC6AB65,
+  ),
+  EmojiOption.drama: CategoryEmojiOption(
+    label: 'Drama',
+    emoji: '🎭',
+    primaryColorValue: 0xff6D0017,
+    secondaryColorValue: 0xff540D1C,
+  ),
+  EmojiOption.horror: CategoryEmojiOption(
+    label: 'Horror',
+    emoji: '👻',
+    primaryColorValue: 0xffB1B0B2,
+    secondaryColorValue: 0xff7E7785,
+  ),
+  EmojiOption.thriller: CategoryEmojiOption(
+    label: 'Thriller',
+    emoji: '😱',
+    primaryColorValue: 0xff8EADED,
+    secondaryColorValue: 0xff647DAF,
+  ),
+  EmojiOption.mystery: CategoryEmojiOption(
+    label: 'Mystery',
+    emoji: '❔',
+    primaryColorValue: 0xffC8C8C8,
+    secondaryColorValue: 0xff8E8A8A,
+  ),
+  EmojiOption.war: CategoryEmojiOption(
+    label: 'War',
+    emoji: '🪖',
+    primaryColorValue: 0xff5D7851,
+    secondaryColorValue: 0xff3F5336,
+  ),
+  EmojiOption.sciFi: CategoryEmojiOption(
+    label: 'Sci-Fi',
+    emoji: '🌍',
+    primaryColorValue: 0xffC5D764,
+    secondaryColorValue: 0xff97A649,
+  ),
+  EmojiOption.music: CategoryEmojiOption(
+    label: 'Music',
+    emoji: '🎶',
+    primaryColorValue: 0xffC4C9CC,
+    secondaryColorValue: 0xff999EA1,
+  ),
+  EmojiOption.tvMovie: CategoryEmojiOption(
+    label: 'TV Movie',
+    emoji: '📺',
+    primaryColorValue: 0xffBEB6A2,
+    secondaryColorValue: 0xff8E8469,
+  ),
+  EmojiOption.romance: CategoryEmojiOption(
+    label: 'Romance',
+    emoji: '🌹',
+    primaryColorValue: 0xffB5195A,
+    secondaryColorValue: 0xff8A1647,
+  ),
+  EmojiOption.western: CategoryEmojiOption(
+    label: 'Western',
+    emoji: '🤠',
+    primaryColorValue: 0xffBEA48C,
+    secondaryColorValue: 0xff927963,
+  ),
+};
