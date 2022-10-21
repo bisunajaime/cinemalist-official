@@ -1,4 +1,5 @@
 import 'package:cinemalist/models/saved_category_model.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 extension HexColor on Color {
@@ -43,6 +44,7 @@ class CreateSavedCategoryDialog extends StatefulWidget {
 class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
   late SavedCategoryModel savedCategoryModel;
   late TextEditingController labelController;
+  CategoryEmojiOption? selectedEmoji;
   final colorList = [
     Color(0xffFF3F61),
     Color(0xff3B37FF),
@@ -63,146 +65,235 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xff2E2C2C),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Text(
-              'Create a category',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        color: Color(0xff2E2C2C),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: MediaQuery.of(context).padding.top),
+            SampleCategoryCard(
+              categoryEmojiOption: selectedEmoji,
+              label: labelController.text,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 12,
+              ),
+              child: Text(
+                'Create a category',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ),
-          ),
-          Container(
-            height: 80,
-            width: double.infinity,
-            child: ListView.builder(
-              itemCount: categoryEmojiMap.length,
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                final key = categoryEmojiMap.keys.toList()[index];
-                final categoryEmoji = categoryEmojiMap[key];
-                return IntrinsicHeight(
-                  child: GestureDetector(
-                    onTap: () {
-                      // selectedColor = color;
-                      // savedCategoryModel =
-                      //     savedCategoryModel.copyWith(colorHex: color.toHex());
-                      setState(() {});
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        right: 8,
-                        left: index == 0 ? 18 : 0,
+            Container(
+              height: 80,
+              width: double.infinity,
+              child: ListView.builder(
+                itemCount: categoryEmojiMap.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final key = categoryEmojiMap.keys.toList()[index];
+                  final categoryEmoji = categoryEmojiMap[key];
+                  final isSelected = categoryEmoji == selectedEmoji;
+                  return IntrinsicHeight(
+                    child: GestureDetector(
+                      onTap: () {
+                        selectedEmoji = categoryEmoji;
+                        savedCategoryModel = savedCategoryModel.copyWith(
+                          emojiOption: categoryEmoji,
+                        );
+                        setState(() {});
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          right: 8,
+                          left: index == 0 ? 18 : 0,
+                        ),
+                        padding: EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          color: categoryEmoji!.primaryColor,
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                )
+                              : Border.all(
+                                  width: 3,
+                                  color: Colors.transparent,
+                                ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          categoryEmoji.emoji,
+                          style: TextStyle(
+                            fontSize: 30,
+                          ),
+                        ),
                       ),
-                      padding: EdgeInsets.all(18),
-                      decoration: BoxDecoration(
-                        color: categoryEmoji!.primaryColor,
-                        shape: BoxShape.circle,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
+              child: TextField(
+                autofocus: true,
+                controller: labelController,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                onChanged: (value) {
+                  savedCategoryModel =
+                      savedCategoryModel.copyWith(label: value);
+                  setState(() {});
+                },
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Color(0xff484848),
+                  contentPadding: EdgeInsets.all(18),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 18,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 18,
+                        ),
                       ),
-                      alignment: Alignment.center,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
                       child: Text(
-                        categoryEmoji.emoji,
+                        'Dismiss',
                         style: TextStyle(
-                          fontSize: 30,
+                          color: Colors.white,
                         ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
-            child: TextField(
-              autofocus: true,
-              controller: labelController,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              onChanged: (value) {
-                savedCategoryModel = savedCategoryModel.copyWith(label: value);
-                setState(() {});
-              },
-              cursorColor: Colors.white,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Color(0xff484848),
-                contentPadding: EdgeInsets.all(18),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 16),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 18,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 18,
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.pinkAccent,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 18,
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Dismiss',
-                      style: TextStyle(
-                        color: Colors.white,
+                      onPressed: () {
+                        if (!savedCategoryModel.isValid) return;
+                        Navigator.pop(context, savedCategoryModel);
+                      },
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 18,
-                      ),
-                    ),
-                    onPressed: () {
-                      if (!savedCategoryModel.isValid) return;
-                      Navigator.pop(context, savedCategoryModel);
-                    },
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
-        ],
+            SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
 }
 
-class CategoryEmojiOption {
+class SampleCategoryCard extends StatelessWidget {
+  final CategoryEmojiOption? categoryEmojiOption;
+  final String label;
+  const SampleCategoryCard({
+    Key? key,
+    this.categoryEmojiOption,
+    required this.label,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (categoryEmojiOption == null) return Container();
+    return Container(
+      height: 140,
+      child: ListView.builder(
+        itemCount: 3,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) => Container(
+          margin: EdgeInsets.only(
+            right: 12,
+            left: index == 0 ? 12 : 0,
+            top: 12,
+          ),
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: categoryEmojiOption!.secondaryColor,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          height: 120,
+          width: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: categoryEmojiOption!.primaryColor,
+                ),
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  categoryEmojiOption!.emoji,
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              Expanded(child: SizedBox()),
+              Text(
+                label.isEmpty ? 'Label will appear here' : label,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 14,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CategoryEmojiOption extends Equatable {
   final String emoji, label;
   final int primaryColorValue, secondaryColorValue;
 
@@ -215,6 +306,25 @@ class CategoryEmojiOption {
 
   Color get primaryColor => Color(primaryColorValue);
   Color get secondaryColor => Color(secondaryColorValue);
+
+  factory CategoryEmojiOption.fromJson(Map<String, dynamic> json) {
+    return CategoryEmojiOption(
+      emoji: json['emoji'],
+      label: json['label'],
+      primaryColorValue: json['primaryColorValue'],
+      secondaryColorValue: json['secondaryColorValue'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'emoji': emoji,
+        'label': label,
+        'primaryColorValue': primaryColorValue,
+        'secondaryColorValue': secondaryColorValue,
+      };
+
+  @override
+  List<Object?> get props => [emoji];
 }
 
 enum EmojiOption {

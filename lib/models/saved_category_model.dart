@@ -5,11 +5,13 @@ import 'package:uuid/uuid.dart';
 
 class SavedCategoryModel extends Equatable {
   final String? id, label, colorHex;
+  final CategoryEmojiOption? emojiOption;
 
   SavedCategoryModel({
     this.id,
     this.label,
     this.colorHex,
+    this.emojiOption,
   });
 
   Color get color => HexColor.fromHex(colorHex!); // use colorHex
@@ -21,11 +23,13 @@ class SavedCategoryModel extends Equatable {
     String? id,
     String? label,
     String? colorHex,
+    CategoryEmojiOption? emojiOption,
   }) {
     return SavedCategoryModel(
       id: id ?? this.id,
       label: label ?? this.label,
       colorHex: colorHex ?? this.colorHex,
+      emojiOption: emojiOption ?? this.emojiOption,
     );
   }
 
@@ -34,6 +38,7 @@ class SavedCategoryModel extends Equatable {
       id: json['id'],
       label: json['label'],
       colorHex: json['colorHex'],
+      emojiOption: CategoryEmojiOption.fromJson(json['emojiOption']),
     );
   }
 
@@ -41,6 +46,7 @@ class SavedCategoryModel extends Equatable {
         'id': id,
         'label': label,
         'colorHex': colorHex,
+        'emojiOption': emojiOption?.toJson(),
       };
 
   @override
