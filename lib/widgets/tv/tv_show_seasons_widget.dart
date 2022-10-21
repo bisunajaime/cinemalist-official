@@ -90,10 +90,9 @@ class TvShowSeasonsWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Color(0xff2e2e2e),
                     image: DecorationImage(
-                        image: (model.posterPath == null
-                            ? AssetImage('assets/images/placeholder.png')
-                            : NetworkImage(PosterPathHelper.generatePosterPath(
-                                model.posterPath))) as ImageProvider<Object>,
+                        image: NetworkImage(
+                          PosterPathHelper.generatePosterPath(model.posterPath),
+                        ),
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
                           Colors.black26,

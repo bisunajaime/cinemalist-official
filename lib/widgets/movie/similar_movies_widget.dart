@@ -78,12 +78,10 @@ class _SimilarMoviesListState extends State<SimilarMoviesList> {
                       margin: EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: (movie.posterPath == null
-                                  ? AssetImage('assets/images/placeholder.png')
-                                  : NetworkImage(
-                                      PosterPathHelper.generatePosterPath(
-                                          movie.posterPath)))
-                              as ImageProvider<Object>,
+                          image: NetworkImage(
+                            PosterPathHelper.generatePosterPath(
+                                movie.posterPath),
+                          ),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black26,

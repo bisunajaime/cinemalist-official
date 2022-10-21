@@ -88,12 +88,10 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
                       margin: EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: (tvShow.posterPath == null
-                                  ? AssetImage('assets/images/placeholder.png')
-                                  : NetworkImage(
-                                      PosterPathHelper.generatePosterPath(
-                                          tvShow.posterPath)))
-                              as ImageProvider<Object>,
+                          image: NetworkImage(
+                            PosterPathHelper.generatePosterPath(
+                                tvShow.posterPath),
+                          ),
                           fit: BoxFit.cover,
                           colorFilter: ColorFilter.mode(
                             Colors.black26,

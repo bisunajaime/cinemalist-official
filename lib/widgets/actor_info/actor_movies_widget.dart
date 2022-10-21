@@ -69,12 +69,10 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                 aspectRatio: 2 / 3,
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                  child: movie.posterPath == null
-                      ? Image.asset('assets/images/placeholder.png')
-                      : Image.network(
-                          PosterPathHelper.generatePosterPath(movie.posterPath),
-                          fit: BoxFit.cover,
-                        ),
+                  child: Image.network(
+                    PosterPathHelper.generatePosterPath(movie.posterPath),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );

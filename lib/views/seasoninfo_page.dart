@@ -179,20 +179,12 @@ class _SeasonInfoPageState extends State<SeasonInfoPage> {
               );
             },
             blendMode: BlendMode.dstIn,
-            child: widget.tvShow!.posterPath == null
-                ? Image.asset(
-                    'assets/images/placeholder.png',
-                    height: double.infinity,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                : Image.network(
-                    PosterPathHelper.generatePosterPath(
-                        widget.tvShow?.posterPath),
-                    height: double.infinity,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+            child: Image.network(
+              PosterPathHelper.generatePosterPath(widget.tvShow?.posterPath),
+              height: double.infinity,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

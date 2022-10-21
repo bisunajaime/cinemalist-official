@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cinemalist/utils/cinemalist_constants.dart';
 import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,7 +93,7 @@ class MovieCastWidget extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorWidget: (_, __, ___) => Image(
                                   image: AssetImage(
-                                'assets/images/placeholder_actor.png',
+                                CinemalistConstants.assetPlaceholderImage,
                               )),
                             ),
                           ),

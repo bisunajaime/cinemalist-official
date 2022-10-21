@@ -1,3 +1,4 @@
+import 'package:cinemalist/utils/cinemalist_constants.dart';
 import 'package:cinemalist/utils/poster_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,7 @@ class ActorInfoWidget extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
                 : Image.asset(
-                    'assets/images/placeholder_actor.png',
+                    CinemalistConstants.assetPlaceholderImage,
                     alignment: Alignment.center,
                     fit: BoxFit.cover,
                   ),
