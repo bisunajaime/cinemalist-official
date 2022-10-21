@@ -29,6 +29,14 @@ class SavedCategoryModel extends Equatable {
     );
   }
 
+  factory SavedCategoryModel.defaultOption() {
+    return SavedCategoryModel(
+      id: null,
+      label: 'Default',
+      colorHex: Color(0xff212121).toHex(),
+    );
+  }
+
   factory SavedCategoryModel.fromJson(Map<String, dynamic> json) {
     return SavedCategoryModel(
       id: json['id'],
