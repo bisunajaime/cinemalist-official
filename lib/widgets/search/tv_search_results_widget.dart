@@ -44,7 +44,6 @@ class TvSearchResultsWidget extends StatelessWidget {
       return Container();
     }
     tvShows!;
-    tvShows.removeWhere((element) => element.posterPath == null);
     return Container(
       height: MediaQuery.of(context).size.height * .2,
       width: MediaQuery.of(context).size.width,

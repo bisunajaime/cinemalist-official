@@ -64,7 +64,6 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
       );
     }
     list!;
-    list.removeWhere((element) => element.posterPath == null);
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         final maxScroll = notification.metrics.maxScrollExtent;

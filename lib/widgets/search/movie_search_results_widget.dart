@@ -45,7 +45,6 @@ class MovieSearchResultsWidget extends StatelessWidget {
       return Container();
     }
     movies!;
-    movies.removeWhere((element) => element.posterPath == null);
     return Container(
       height: MediaQuery.of(context).size.height * .2,
       width: MediaQuery.of(context).size.width,

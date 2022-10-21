@@ -19,7 +19,6 @@ class SimilarMoviesWidget extends StatelessWidget {
       return CircularProgressIndicator();
     }
     movies!;
-    movies.removeWhere((element) => element.posterPath == null);
     return SimilarMoviesList(movies: movies);
   }
 }

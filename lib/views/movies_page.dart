@@ -125,7 +125,6 @@ class _MoviesSliverCarouselState extends State<MoviesSliverCarousel> {
       );
     }
     state!;
-    state.removeWhere((element) => element?.posterPath == null);
     return PageView.builder(
       itemCount: state.length,
       physics: NeverScrollableScrollPhysics(),
