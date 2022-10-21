@@ -47,7 +47,7 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
     Color(0xffFF3F61),
     Color(0xff3B37FF),
     Color(0xff05E100),
-    Color(0xffFF3838),
+    Color(0xffFF8E3D),
   ];
   Color? selectedColor;
 
