@@ -1,3 +1,4 @@
+import 'package:cinemalist/widgets/dialogs/save_to_category_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -80,10 +81,13 @@ class _MoviePageState extends State<MoviePage> {
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
-                  final rankingCubit = context.read<MovieRankingCubit>();
-                  await rankingCubit.removeRankingWithoutLetter(
-                      RankingModel.fromGenericMovieModel(elem));
-                  await context.read<MoviesWatchLaterCubit>().save(elem);
+                  // final rankingCubit = context.read<MovieRankingCubit>();
+                  // await rankingCubit.removeRankingWithoutLetter(
+                  //     RankingModel.fromGenericMovieModel(elem));
+                  // await context.read<MoviesWatchLaterCubit>().save(elem);
+                  final selectedCategories =
+                      await showSaveToCategoryDialog(context);
+                  if (selectedCategories == null) return;
                 });
               },
             ),
