@@ -4,20 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class SavedCategoryModel extends Equatable {
-  final String? id, label, colorHex;
+  final String? id, label;
   final CategoryEmojiOption? emojiOption;
 
   SavedCategoryModel({
     this.id,
     this.label,
-    this.colorHex,
     this.emojiOption,
   });
 
-  Color get color => HexColor.fromHex(colorHex!); // use colorHex
-
   bool get isValid =>
-      label != null && label?.isNotEmpty == true && colorHex != null;
+      label != null && label?.isNotEmpty == true && emojiOption != null;
 
   SavedCategoryModel copyWith({
     String? id,
@@ -28,7 +25,6 @@ class SavedCategoryModel extends Equatable {
     return SavedCategoryModel(
       id: id ?? this.id,
       label: label ?? this.label,
-      colorHex: colorHex ?? this.colorHex,
       emojiOption: emojiOption ?? this.emojiOption,
     );
   }
@@ -37,7 +33,6 @@ class SavedCategoryModel extends Equatable {
     return SavedCategoryModel(
       id: json['id'],
       label: json['label'],
-      colorHex: json['colorHex'],
       emojiOption: CategoryEmojiOption.fromJson(json['emojiOption']),
     );
   }
@@ -45,7 +40,6 @@ class SavedCategoryModel extends Equatable {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
-        'colorHex': colorHex,
         'emojiOption': emojiOption?.toJson(),
       };
 
@@ -54,7 +48,7 @@ class SavedCategoryModel extends Equatable {
 
   @override
   String toString() {
-    return 'ID: $id | label: $label | colorHex: $colorHex';
+    return 'ID: $id | label: $label';
   }
 
   factory SavedCategoryModel.initial() {

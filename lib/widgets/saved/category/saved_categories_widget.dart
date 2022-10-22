@@ -17,14 +17,14 @@ class SavedCategoriesListWidget extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(
           horizontal: 4,
-          vertical: 16,
+          // vertical: 16,
         ),
         child: CreateSavedCategoryWidget(),
       );
     }
 
     return Container(
-      height: 100,
+      height: 120,
       width: double.infinity,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -34,8 +34,21 @@ class SavedCategoriesListWidget extends StatelessWidget {
             return CreateSavedCategoryWidget();
           }
           final category = savedCategoryCubit.state[index - 1];
-          return SavedCategoryWidget(
-            savedCategoryModel: category,
+          return GestureDetector(
+            onLongPress: () async {
+              final model = await showSavedCategoryDialog(
+                context,
+                model: category,
+              );
+              if (model == null) return;
+              final savedCategoryCubit = context.read<SavedCategoryCubit>();
+              await savedCategoryCubit.saveCategory(model);
+            },
+            onDoubleTap: () async {
+              final savedCategoryCubit = context.read<SavedCategoryCubit>();
+              final delete = await savedCategoryCubit.removeCategory(category);
+            },
+            child: SavedCategoryCard(category),
           );
         },
       ),
@@ -57,8 +70,8 @@ class CreateSavedCategoryWidget extends StatelessWidget {
         await savedCategoryCubit.saveCategory(savedCategoryModel);
       },
       child: Container(
-        height: 100,
-        width: 100,
+        height: 80,
+        width: 80,
         margin: EdgeInsets.only(
           right: 8,
         ),
@@ -70,73 +83,6 @@ class CreateSavedCategoryWidget extends StatelessWidget {
           Icons.add_circle_outline_rounded,
           color: Colors.pinkAccent,
           size: 30,
-        ),
-      ),
-    );
-  }
-}
-
-class SavedCategoryWidget extends StatelessWidget {
-  final SavedCategoryModel savedCategoryModel;
-  const SavedCategoryWidget({Key? key, required this.savedCategoryModel})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: GestureDetector(
-        onTap: () {
-          // todo: navigate to saved screen
-        },
-        onDoubleTap: () async {
-          final savedCategoryCubit = context.read<SavedCategoryCubit>();
-          final delete =
-              await savedCategoryCubit.removeCategory(savedCategoryModel);
-        },
-        onLongPress: () async {
-          final model = await showSavedCategoryDialog(
-            context,
-            model: savedCategoryModel,
-          );
-          if (model == null) return;
-          final savedCategoryCubit = context.read<SavedCategoryCubit>();
-          await savedCategoryCubit.saveCategory(model);
-        },
-        child: Container(
-          width: 180,
-          decoration: BoxDecoration(
-            color: savedCategoryModel.color,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: EdgeInsets.all(12),
-          margin: EdgeInsets.only(
-            right: 8,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '4 results',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
-              ),
-              Expanded(
-                child: SizedBox(),
-              ),
-              Text(
-                savedCategoryModel.label ?? 'No Label',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            ],
-          ),
         ),
       ),
     );

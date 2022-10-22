@@ -51,16 +51,12 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
     Color(0xff05E100),
     Color(0xffFF3838),
   ];
-  Color? selectedColor;
 
   @override
   void initState() {
     super.initState();
     savedCategoryModel = widget.model ?? SavedCategoryModel.initial();
     labelController = TextEditingController(text: widget.model?.label ?? '');
-    selectedColor = widget.model?.colorHex != null
-        ? HexColor.fromHex(widget.model!.colorHex!)
-        : null;
   }
 
   @override
@@ -77,10 +73,7 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: MediaQuery.of(context).padding.top),
-              SampleCategoryCard(
-                categoryEmojiOption: selectedEmoji,
-                label: labelController.text,
-              ),
+              SampleCategoryCard(savedCategoryModel),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
@@ -164,6 +157,11 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
                   cursorColor: Colors.white,
                   decoration: InputDecoration(
                     filled: true,
+                    hintText: 'Enter category label',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(.5),
+                      fontWeight: FontWeight.w300,
+                    ),
                     fillColor: Color(0xff484848),
                     contentPadding: EdgeInsets.all(18),
                     border: OutlineInputBorder(
@@ -231,67 +229,85 @@ class _CreateSavedCategoryDialogState extends State<CreateSavedCategoryDialog> {
 }
 
 class SampleCategoryCard extends StatelessWidget {
-  final CategoryEmojiOption? categoryEmojiOption;
-  final String label;
-  const SampleCategoryCard({
+  final SavedCategoryModel savedCategoryModel;
+  const SampleCategoryCard(
+    this.savedCategoryModel, {
     Key? key,
-    this.categoryEmojiOption,
-    required this.label,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (categoryEmojiOption == null) return Container();
+    if (savedCategoryModel.emojiOption == null) return Container();
     return Container(
       height: 140,
       child: ListView.builder(
         itemCount: 3,
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => Container(
-          margin: EdgeInsets.only(
-            right: 12,
+        itemBuilder: (context, index) => Padding(
+          padding: EdgeInsets.only(
+            // right: 12,
             left: index == 0 ? 12 : 0,
             top: 12,
           ),
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: categoryEmojiOption!.secondaryColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          height: 120,
-          width: 200,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: categoryEmojiOption!.primaryColor,
-                ),
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  categoryEmojiOption!.emoji,
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              Expanded(child: SizedBox()),
-              Text(
-                label.isEmpty ? 'Label will appear here' : label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontStyle:
-                      label.isEmpty ? FontStyle.italic : FontStyle.normal,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 14,
-                ),
-              )
-            ],
-          ),
+          child: SavedCategoryCard(savedCategoryModel),
         ),
+      ),
+    );
+  }
+}
+
+class SavedCategoryCard extends StatelessWidget {
+  final SavedCategoryModel savedCategoryModel;
+  const SavedCategoryCard(this.savedCategoryModel, {Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    savedCategoryModel.emojiOption!;
+    return Container(
+      padding: EdgeInsets.all(12),
+      margin: EdgeInsets.only(
+        right: 8,
+      ),
+      decoration: BoxDecoration(
+        color: savedCategoryModel.emojiOption!.secondaryColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      height: 120,
+      width: 200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: savedCategoryModel.emojiOption!.primaryColor,
+            ),
+            padding: EdgeInsets.all(10),
+            child: Text(
+              savedCategoryModel.emojiOption!.emoji,
+              style: TextStyle(
+                fontSize: 20,
+              ),
+            ),
+          ),
+          Expanded(child: SizedBox()),
+          Text(
+            savedCategoryModel.label == null
+                ? 'Label will appear here'
+                : savedCategoryModel.label!,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontStyle: savedCategoryModel.label == null
+                  ? FontStyle.italic
+                  : FontStyle.normal,
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              fontSize: 14,
+            ),
+          )
+        ],
       ),
     );
   }
