@@ -15,7 +15,7 @@ class TMDBUriLoader implements UriLoader {
     if (queryParams == null) {
       queryParams = {};
     }
-    queryParams['language'] = 'en-US';
+    // queryParams['language'] = 'en-US';
     queryParams['api_key'] = apiKey;
     return Uri.https(baseUrl, pathWithVersion, queryParams);
   }
