@@ -1,6 +1,8 @@
+import 'package:cinemalist/bloc/carousel/carousel_cubit.dart';
 import 'package:cinemalist/main.dart';
 import 'package:cinemalist/views/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,9 +11,16 @@ class CarouselPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xff0F0D0E),
-      body: CarouselBody(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CarouselCubit(),
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: Color(0xff0F0D0E),
+        body: CarouselBody(),
+      ),
     );
   }
 }
@@ -24,7 +33,7 @@ class CarouselBody extends StatefulWidget {
 }
 
 class _CarouselBodyState extends State<CarouselBody> {
-  int currentIndex = 0;
+  // int currentIndex = 0;
   final pageController = PageController();
   final carouselItems = <IntroCarouselModel>[
     IntroCarouselModel(
@@ -43,75 +52,22 @@ class _CarouselBodyState extends State<CarouselBody> {
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      controller: pageController,
-      onPageChanged: (value) {
-        currentIndex = value;
-        setState(() {});
-      },
-      itemCount: carouselItems.length,
-      itemBuilder: (context, index) {
-        final item = carouselItems[index];
-        return CarouselWidget(
-          item: item,
-          index: index,
-          isSelected: currentIndex == index,
-          onNextPress: () async {
-            if (index == carouselItems.length - 1) {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('CAROUSEL_LOADED', true);
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainPage(),
-                  ));
-              return;
-            }
-            pageController.nextPage(
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease,
-            );
-          },
-          onSkipPress: () async {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setBool('CAROUSEL_LOADED', true);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MainPage(),
-                ));
-          },
-        );
-      },
-    );
-  }
-}
-
-class CarouselWidget extends StatelessWidget {
-  final IntroCarouselModel item;
-  final int index;
-  final bool isSelected;
-  final VoidCallback onNextPress;
-  final VoidCallback onSkipPress;
-  const CarouselWidget({
-    Key? key,
-    required this.item,
-    required this.index,
-    required this.isSelected,
-    required this.onNextPress,
-    required this.onSkipPress,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+    final carouselCubit = context.watch<CarouselCubit>();
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Expanded(
-          child: SvgPicture.asset(
-            item.svgPath,
-            width: double.infinity,
+          child: PageView.builder(
+            controller: pageController,
+            onPageChanged: (value) {
+              carouselCubit.setPage(value);
+            },
+            itemCount: carouselItems.length,
+            itemBuilder: (context, index) {
+              final item = carouselItems[index];
+              return CarouselWidget(
+                item: item,
+              );
+            },
           ),
         ),
         Container(
@@ -128,7 +84,7 @@ class CarouselWidget extends StatelessWidget {
                           padding: EdgeInsets.all(8),
                           margin: EdgeInsets.only(right: 4),
                           decoration: BoxDecoration(
-                            color: i == index
+                            color: i == carouselCubit.state
                                 ? Color(0xffFF4181)
                                 : Color(0xff615858),
                             shape: BoxShape.circle,
@@ -137,7 +93,7 @@ class CarouselWidget extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                item.label,
+                carouselItems[carouselCubit.state].label,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
@@ -156,7 +112,15 @@ class CarouselWidget extends StatelessWidget {
                 child: Container(
                   height: 70,
                   child: TextButton(
-                    onPressed: onSkipPress,
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('CAROUSEL_LOADED', true);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MainPage(),
+                          ));
+                    },
                     style: TextButton.styleFrom(
                         backgroundColor: Color(0xff272727),
                         shape: RoundedRectangleBorder(
@@ -177,7 +141,22 @@ class CarouselWidget extends StatelessWidget {
                 child: Container(
                   height: 70,
                   child: TextButton(
-                    onPressed: onNextPress,
+                    onPressed: () async {
+                      if (carouselCubit.state == carouselItems.length - 1) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('CAROUSEL_LOADED', true);
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainPage(),
+                            ));
+                        return;
+                      }
+                      pageController.nextPage(
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.ease,
+                      );
+                    },
                     style: TextButton.styleFrom(
                         backgroundColor: Color(0xffFF4181),
                         shape: RoundedRectangleBorder(
@@ -198,6 +177,22 @@ class CarouselWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CarouselWidget extends StatelessWidget {
+  final IntroCarouselModel item;
+  const CarouselWidget({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      item.svgPath,
+      width: double.infinity,
     );
   }
 }
