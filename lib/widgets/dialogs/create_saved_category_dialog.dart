@@ -258,8 +258,14 @@ class SampleCategoryCard extends StatelessWidget {
 
 class SavedCategoryCard extends StatelessWidget {
   final SavedCategoryModel savedCategoryModel;
-  const SavedCategoryCard(this.savedCategoryModel, {Key? key})
-      : super(key: key);
+
+  /// [isSelected] used for selecting a category
+  final bool? isSelected;
+  const SavedCategoryCard(
+    this.savedCategoryModel, {
+    Key? key,
+    this.isSelected = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -272,6 +278,15 @@ class SavedCategoryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: savedCategoryModel.emojiOption!.secondaryColor,
         borderRadius: BorderRadius.circular(12),
+        border: isSelected == true
+            ? Border.all(
+                color: Colors.white,
+                width: 3,
+              )
+            : Border.all(
+                color: Colors.transparent,
+                width: 3,
+              ),
       ),
       height: 120,
       width: 200,
@@ -358,6 +373,7 @@ enum EmojiOption {
   family,
   drama,
   horror,
+  halloween,
   music,
   mystery,
   sciFi,
@@ -421,6 +437,12 @@ final categoryEmojiMap = <EmojiOption, CategoryEmojiOption>{
     emoji: '👻',
     primaryColorValue: 0xffB1B0B2,
     secondaryColorValue: 0xff7E7785,
+  ),
+  EmojiOption.halloween: CategoryEmojiOption(
+    label: 'Halloween',
+    emoji: '🎃',
+    primaryColorValue: 0xff964AE2,
+    secondaryColorValue: 0xff5600AC,
   ),
   EmojiOption.thriller: CategoryEmojiOption(
     label: 'Thriller',

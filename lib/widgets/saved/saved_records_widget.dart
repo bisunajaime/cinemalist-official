@@ -1,3 +1,4 @@
+import 'package:cinemalist/views/saved_categories_page.dart';
 import 'package:cinemalist/widgets/saved/category/saved_categories_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,8 +59,38 @@ class SavedRecordsWidget extends StatelessWidget {
         horizontal: 5,
       ),
       children: [
-        SizedBox(height: 4),
-        SavedCategoriesListWidget(),
+        // SizedBox(height: 8),
+        // Row(
+        //   children: [
+        //     Text(
+        //       'Saved Categories',
+        //       style: Styles.mBold.copyWith(
+        //         fontSize: 18,
+        //       ),
+        //     ),
+        //     Expanded(child: SizedBox()),
+        //     GestureDetector(
+        //       onTap: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //             builder: (context) => SavedCategoriesPage(),
+        //           ),
+        //         );
+        //       },
+        //       child: Text(
+        //         'See all',
+        //         style: TextStyle(
+        //           fontWeight: FontWeight.bold,
+        //           color: Colors.pinkAccent,
+        //           fontSize: 16,
+        //         ),
+        //       ),
+        //     )
+        //   ],
+        // ),
+        // SizedBox(height: 12),
+        // SavedCategoriesListWidget(),
         SizedBox(height: 4),
         SavedRecordsTitle(
           title: 'Movies',

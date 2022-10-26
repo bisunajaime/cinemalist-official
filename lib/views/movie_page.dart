@@ -1,4 +1,5 @@
 import 'package:cinemalist/utils/poster_path_helper.dart';
+import 'package:cinemalist/widgets/dialogs/select_category_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -85,6 +86,8 @@ class _MoviePageState extends State<MoviePage> {
                   await rankingCubit.removeRankingWithoutLetter(
                       RankingModel.fromGenericMovieModel(elem));
                   await context.read<MoviesWatchLaterCubit>().save(elem);
+                  // final category = await showSelectCategoryDialog(context);
+                  // if (category == null) return;
                 });
               },
             ),

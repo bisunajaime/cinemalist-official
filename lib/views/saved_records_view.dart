@@ -16,9 +16,9 @@ class _SavedRecordsPageState extends State<SavedRecordsPage>
   Widget build(BuildContext context) {
     super.build(context);
     return CinemalistSliverAppBar(
-      body: SavedRecordsWidget(),
       topText: 'SAVED',
       bottomText: 'Check it out for later',
+      body: SavedRecordsWidget(),
     );
   }
 

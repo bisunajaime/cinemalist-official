@@ -5,39 +5,42 @@ class CinemalistSliverAppBar extends StatelessWidget {
   final String topText;
   final String bottomText;
   final Widget body;
-  const CinemalistSliverAppBar(
-      {Key? key,
-      required this.body,
-      required this.topText,
-      required this.bottomText})
-      : super(key: key);
+  const CinemalistSliverAppBar({
+    Key? key,
+    required this.topText,
+    required this.bottomText,
+    required this.body,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return NestedScrollView(
-      headerSliverBuilder: (context, innerBoxIsScrolled) {
-        return [
-          SliverAppBar(
-            backgroundColor: Color(0xff0E0E0E),
-            automaticallyImplyLeading: false,
-            pinned: true,
-            expandedHeight: MediaQuery.of(context).size.height * .2,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: EdgeInsets.zero,
-              stretchModes: [StretchMode.blurBackground],
-              collapseMode: CollapseMode.parallax,
-              title: Align(
-                alignment: Alignment.bottomLeft,
-                child: buildTitle(),
+    return Material(
+      color: Color(0xff0E0E0E),
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              backgroundColor: Color(0xff0E0E0E),
+              automaticallyImplyLeading: false,
+              pinned: true,
+              expandedHeight: MediaQuery.of(context).size.height * .2,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: EdgeInsets.zero,
+                stretchModes: [StretchMode.blurBackground],
+                collapseMode: CollapseMode.parallax,
+                title: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: buildTitle(),
+                ),
+                background: Container(
+                  color: Color(0xff0E0E0E),
+                ),
               ),
-              background: Container(
-                color: Color(0xff0E0E0E),
-              ),
-            ),
-          )
-        ];
-      },
-      body: body,
+            )
+          ];
+        },
+        body: body,
+      ),
     );
   }
 
