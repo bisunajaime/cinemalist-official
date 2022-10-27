@@ -117,6 +117,9 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
                     child: ReorderableListView.builder(
                       padding: EdgeInsets.zero,
                       onReorder: (oldIndex, newIndex) async {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
                         await rankingCubit.updateRankingIndex(
                           letter,
                           oldIndex,
@@ -151,6 +154,25 @@ class HorizontalRankingWidgetItem extends StatelessWidget {
                                     child: Icon(
                                       Icons.menu,
                                       color: Colors.pinkAccent,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 4,
+                                right: 12,
+                                child: ReorderableDragStartListener(
+                                  index: index,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.pinkAccent,
+                                    ),
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.back_hand,
+                                      color: Colors.white,
                                       size: 16,
                                     ),
                                   ),

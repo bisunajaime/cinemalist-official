@@ -1,3 +1,4 @@
+import 'package:cinemalist/widgets/dialogs/close_app_confirmation_dialog.dart';
 import 'package:cinemalist/widgets/main/main_page_loader_widget.dart';
 import 'package:cinemalist/bloc/saved/saved_category_cubit.dart';
 import 'package:flutter/material.dart';
@@ -145,81 +146,87 @@ class _MainPageState extends State<MainPage>
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor: Color(0xff0E0E0E),
-        bottomNavigationBar: BottomNavigationBar(
+    return WillPopScope(
+      onWillPop: () async {
+        final closeApp = await showCloseAppConfirmationDialog(context);
+        return closeApp == true;
+      },
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
           backgroundColor: Color(0xff0E0E0E),
-          selectedItemColor: Colors.pinkAccent,
-          selectedFontSize: 10,
-          selectedLabelStyle: Styles.mBold.copyWith(
-            color: Colors.pinkAccent,
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Color(0xff0E0E0E),
+            selectedItemColor: Colors.pinkAccent,
+            selectedFontSize: 10,
+            selectedLabelStyle: Styles.mBold.copyWith(
+              color: Colors.pinkAccent,
+            ),
+            unselectedFontSize: 9,
+            unselectedItemColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: index,
+            onTap: (i) {
+              controller.animateToPage(
+                i,
+                duration: Duration(milliseconds: 500),
+                curve: Curves.ease,
+              );
+              setState(() {
+                index = i;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home,
+                ),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.movie,
+                ),
+                label: 'Movie',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.tv,
+                ),
+                label: 'TV',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.bookmark,
+                ),
+                label: 'Saved',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.search,
+                ),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.more_horiz,
+                ),
+                label: 'More',
+              ),
+            ],
           ),
-          unselectedFontSize: 9,
-          unselectedItemColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: index,
-          onTap: (i) {
-            controller.animateToPage(
-              i,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease,
-            );
-            setState(() {
-              index = i;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.movie,
-              ),
-              label: 'Movie',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.tv,
-              ),
-              label: 'TV',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.bookmark,
-              ),
-              label: 'Saved',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.search,
-              ),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.more_horiz,
-              ),
-              label: 'More',
-            ),
-          ],
-        ),
-        body: PageView(
-          controller: controller,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            HomePage(),
-            MoviesPage(),
-            TvShowsPage(),
-            SavedRecordsPage(),
-            SearchPage(),
-            MorePage(),
-          ],
+          body: PageView(
+            controller: controller,
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              HomePage(),
+              MoviesPage(),
+              TvShowsPage(),
+              SavedRecordsPage(),
+              SearchPage(),
+              MorePage(),
+            ],
+          ),
         ),
       ),
     );
