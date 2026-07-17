@@ -13,54 +13,64 @@ enum SavedRecordType {
 
 class SavedRecordsTitle extends StatelessWidget {
   final String title;
+  final IconData icon;
   final LocalStorageCubit localCubit;
   final SavedRecordType type;
+
   const SavedRecordsTitle({
-    Key? key,
+    super.key,
     required this.title,
     required this.localCubit,
     required this.type,
-  }) : super(key: key);
+    this.icon = Icons.movie_rounded,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (localCubit.state.length == 0) return Container();
+    if (localCubit.state.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Icon(icon, size: 18, color: AppColors.primaryLight),
+          const SizedBox(width: 8),
           Text(
-            '$title (${localCubit.state.length})',
-            style: Styles.mBold.copyWith(
-              fontSize: 18,
+            title.toUpperCase(),
+            style: Styles.heading.copyWith(fontSize: 20),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              '${localCubit.state.length}',
+              style: Styles.mBold.copyWith(fontSize: 12, color: AppColors.primaryLight),
             ),
           ),
-          GestureDetector(
-            onTap: () async {
-              final result = await showDialog(
-                context: context,
-                builder: (context) => ShowRemoveConfirmationDialog(
-                  type: 'all $title',
+          const Spacer(),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () async {
+                final result = await showDialog(
+                  context: context,
+                  builder: (_) => ShowRemoveConfirmationDialog(type: 'all $title'),
+                );
+                if (result != true) return;
+                await RankingHelper.removeRankingWithType(context, type);
+                localCubit.remove();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.error.withValues(alpha: 0.1),
                 ),
-              );
-              if (result != true) return;
-              await RankingHelper.removeRankingWithType(context, type);
-              localCubit.remove();
-            },
-            child: Container(
-              padding: EdgeInsets.all(8),
-              margin: EdgeInsets.only(right: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary,
-              ),
-              child: Icon(
-                Icons.delete_forever,
-                size: 18,
-                color: Colors.white,
+                child: Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.error),
               ),
             ),
           ),

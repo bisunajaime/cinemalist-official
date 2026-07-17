@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
@@ -6,102 +7,93 @@ import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
-import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
-final _runner = DelayedRunner(milliseconds: 250);
-
 class SavedActorsWidget extends StatelessWidget {
-  const SavedActorsWidget({Key? key}) : super(key: key);
+  const SavedActorsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<SavedActorsCubit>();
     final actors = cubit.state;
-    if (actors.isEmpty == true) {
-      return Container();
-    }
+    if (actors.isEmpty) return const SizedBox.shrink();
 
-    return Container(
-      height: 110,
-      width: double.infinity,
+    return SizedBox(
+      height: 120,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: actors.length,
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
-            ),
-            child: GestureDetector(
-              onTap: () => showGenericActorPreview(context, actors[i], list: actors, initialIndex: i),
+          final actor = actors[i];
+          return GestureDetector(
+            onTap: () => showGenericActorPreview(context, actor, list: actors, initialIndex: i),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
               child: Stack(
                 children: [
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: AppColors.card,
-                        backgroundImage: NetworkImage(
-                            'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
-                        radius: 45,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3), width: 2),
+                        ),
+                        child: CircleAvatar(
+                          backgroundColor: AppColors.card,
+                          backgroundImage: actor.profilePath != null
+                              ? NetworkImage('https://image.tmdb.org/t/p/w200${actor.profilePath}')
+                              : null,
+                          radius: 38,
+                          child: actor.profilePath == null
+                              ? const Icon(Icons.person_rounded, color: AppColors.textMuted)
+                              : null,
+                        ),
                       ),
+                      const SizedBox(height: 6),
                       SizedBox(
-                        height: 1,
-                      ),
-                      Text(
-                        actors[i].name!,
-                        style: Styles.mMed.copyWith(
-                          fontSize: 12,
+                        width: 76,
+                        child: Text(
+                          actor.name ?? '',
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Styles.mMed.copyWith(fontSize: 10),
                         ),
                       ),
                     ],
                   ),
                   Positioned(
-                    top: 0,
-                    right: 0,
+                    top: 0, right: 0,
                     child: GestureDetector(
                       onTap: () async {
                         final result = await showDialog(
                           context: context,
-                          builder: (context) => ShowRemoveConfirmationDialog(
-                            type: actors[i].name!,
-                          ),
+                          builder: (_) => ShowRemoveConfirmationDialog(type: actor.name!),
                         );
                         if (result != true) return;
-                        _runner.run(() async {
-                          final rankingCubit =
-                              context.read<ActorRankingCubit>();
-                          await rankingCubit.removeRankingWithoutLetter(
-                              RankingModel.fromGenericActorModel(actors[i]));
-                          await cubit.save(actors[i]);
+                        final runner = DelayedRunner(milliseconds: 250);
+                        runner.run(() async {
+                          await context.read<ActorRankingCubit>().removeRankingWithoutLetter(
+                              RankingModel.fromGenericActorModel(actor));
+                          await cubit.save(actor);
                         });
                       },
                       child: Container(
-                        padding: EdgeInsets.all(4),
-                        margin: EdgeInsets.only(
-                          right: 8,
-                          bottom: 8,
-                        ),
+                        padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary,
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        child: Icon(Icons.close_rounded, color: AppColors.error, size: 14),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-          );
+          ).animate(delay: (50 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.08, end: 0);
         },
       ),
     );
