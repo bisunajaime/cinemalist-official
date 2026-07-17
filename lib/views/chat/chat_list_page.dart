@@ -8,6 +8,7 @@ import 'package:cinemalist/models/chat/chat_models.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/chat/chat_screen.dart';
+import 'package:cinemalist/views/chat/chat_settings_page.dart';
 
 class ChatListPage extends StatefulWidget {
   const ChatListPage();
@@ -25,10 +26,17 @@ class _ChatListPageState extends State<ChatListPage>
       headerSliverBuilder: (context, innerBoxIsScrolled) {
         return [
           SliverAppBar(
-            backgroundColor: AppColors.background,
             automaticallyImplyLeading: false,
             pinned: true,
             expandedHeight: MediaQuery.of(context).size.height * 0.18,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.settings_rounded, size: 22),
+                color: AppColors.textMuted,
+                onPressed: () => Navigator.push(context, AppRoutes.slideUp(const ChatSettingsPage())),
+              ),
+              const SizedBox(width: 4),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: EdgeInsets.zero,
               collapseMode: CollapseMode.parallax,
@@ -40,7 +48,14 @@ class _ChatListPageState extends State<ChatListPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text('AI CHAT', style: Styles.mBold.copyWith(color: AppColors.primaryLight, fontSize: 10, letterSpacing: 2)),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.auto_awesome_rounded, size: 11, color: Color(0xFF5C6BC0)),
+                          const SizedBox(width: 4),
+                          Text('AI CHAT', style: Styles.mBold.copyWith(color: const Color(0xFF7986CB), fontSize: 10, letterSpacing: 2)),
+                        ],
+                      ),
                       Text('Conversations', style: Styles.heading.copyWith(fontSize: 28)),
                     ],
                   ),
@@ -58,17 +73,24 @@ class _ChatListPageState extends State<ChatListPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(color: AppColors.card, shape: BoxShape.circle),
-                    child: Icon(Icons.chat_bubble_outline_rounded, color: AppColors.textMuted, size: 56),
-                  ),
-                  const SizedBox(height: 20),
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                      shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
+                    ),
+                    child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 44),
+                  ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
+                  const SizedBox(height: 24),
                   Text('No conversations yet', style: Styles.heading.copyWith(fontSize: 22, color: AppColors.textMuted)),
                   const SizedBox(height: 8),
-                  Text(
-                    'Open any movie, TV show, or actor\nand tap "Ask AI" to start chatting.',
-                    textAlign: TextAlign.center,
-                    style: Styles.mReg.copyWith(fontSize: 14, color: AppColors.textMuted, height: 1.5),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      'Open any movie, TV show, or actor and tap the sparkle icon to start chatting with AI.',
+                      textAlign: TextAlign.center,
+                      style: Styles.mReg.copyWith(fontSize: 14, color: AppColors.textMuted, height: 1.5),
+                    ),
                   ),
                 ],
               ),
@@ -76,12 +98,12 @@ class _ChatListPageState extends State<ChatListPage>
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             itemCount: state.conversations.length,
             itemBuilder: (context, i) {
               final convo = state.conversations[i];
               return _ConversationTile(convo: convo)
-                  .animate(delay: (40 * i).ms).fadeIn(duration: 250.ms).slideX(begin: 0.05, end: 0);
+                  .animate(delay: (40 * i).ms).fadeIn(duration: 250.ms).slideY(begin: 0.05, end: 0);
             },
           );
         },
@@ -99,99 +121,127 @@ class _ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typeLabel = convo.subject.type == ChatSubjectType.movie
+        ? 'Movie'
+        : convo.subject.type == ChatSubjectType.tvShow
+            ? 'TV Show'
+            : 'Actor';
     final typeIcon = convo.subject.type == ChatSubjectType.movie
         ? Icons.movie_rounded
         : convo.subject.type == ChatSubjectType.tvShow
             ? Icons.tv_rounded
             : Icons.person_rounded;
+    final msgCount = convo.messages.where((m) => m.role != ChatRole.system).length;
 
     return Dismissible(
       key: Key(convo.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.only(right: 24),
+        margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(14),
+          color: AppColors.error.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 28),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 24),
+            const SizedBox(height: 2),
+            Text('Delete', style: Styles.mMed.copyWith(fontSize: 10, color: AppColors.error)),
+          ],
+        ),
       ),
       onDismissed: (_) => context.read<ChatListCubit>().deleteConversation(convo.id),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: convo)));
-        },
+        onTap: () => Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: convo))),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: AppColors.card,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.cardLight.withValues(alpha: 0.5)),
           ),
           child: Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: convo.subject.posterPath != null
-                      ? CachedNetworkImage(
-                          imageUrl: 'https://image.tmdb.org/t/p/w200${convo.subject.posterPath}',
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          color: AppColors.cardLight,
-                          child: Icon(typeIcon, color: AppColors.textMuted, size: 24),
-                        ),
-                ),
+              // Poster with type badge
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: SizedBox(
+                      width: 52,
+                      height: 52,
+                      child: convo.subject.posterPath != null
+                          ? CachedNetworkImage(
+                              imageUrl: 'https://image.tmdb.org/t/p/w200${convo.subject.posterPath}',
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: AppColors.cardLight,
+                              child: Icon(typeIcon, color: AppColors.textMuted, size: 24),
+                            ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -2,
+                    right: -2,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 10),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
+              // Content
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Icon(typeIcon, size: 12, color: AppColors.primaryLight),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            convo.subject.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Styles.mBold.copyWith(fontSize: 14),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      convo.subject.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Styles.mBold.copyWith(fontSize: 15),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       convo.lastMessagePreview ?? 'New conversation',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Styles.mReg.copyWith(fontSize: 12, color: AppColors.textMuted),
+                      style: Styles.mReg.copyWith(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(typeLabel, style: Styles.mBold.copyWith(fontSize: 9, color: AppColors.primaryLight)),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(Icons.chat_bubble_outline_rounded, size: 10, color: AppColors.textMuted),
+                        const SizedBox(width: 3),
+                        Text('$msgCount', style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted)),
+                        const Spacer(),
+                        Text(_formatTime(convo.updatedAt), style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted)),
+                      ],
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    _formatTime(convo.updatedAt),
-                    style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${convo.messages.where((m) => m.role != ChatRole.system).length} msgs',
-                    style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted),
-                  ),
-                ],
-              ),
+              Icon(Icons.chevron_right_rounded, color: AppColors.textMuted, size: 20),
             ],
           ),
         ),
@@ -203,9 +253,9 @@ class _ConversationTile extends StatelessWidget {
     final now = DateTime.now();
     final diff = now.difference(dt);
     if (diff.inMinutes < 1) return 'now';
-    if (diff.inHours < 1) return '${diff.inMinutes}m';
-    if (diff.inDays < 1) return '${diff.inHours}h';
-    if (diff.inDays < 7) return '${diff.inDays}d';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
     return DateFormat.MMMd().format(dt);
   }
 }

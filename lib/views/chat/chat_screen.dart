@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/chat/chat_cubit.dart';
@@ -19,6 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late final ActiveChatCubit _chatCubit;
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
+  final _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _chatCubit.close();
     _controller.dispose();
     _scrollController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -57,6 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final subject = widget.conversation.subject;
     return BlocProvider.value(
       value: _chatCubit,
       child: Scaffold(
@@ -64,21 +68,36 @@ class _ChatScreenState extends State<ChatScreen> {
           titleSpacing: 0,
           title: Row(
             children: [
-              if (widget.conversation.subject.posterPath != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: CachedNetworkImage(
-                    imageUrl: 'https://image.tmdb.org/t/p/w200${widget.conversation.subject.posterPath}',
-                    width: 30, height: 30, fit: BoxFit.cover,
+              if (subject.posterPath != null)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 8)],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: 'https://image.tmdb.org/t/p/w200${subject.posterPath}',
+                      width: 34, height: 34, fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              if (widget.conversation.subject.posterPath != null) const SizedBox(width: 10),
+              if (subject.posterPath != null) const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  widget.conversation.subject.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Styles.mBold.copyWith(fontSize: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subject.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Styles.mBold.copyWith(fontSize: 15),
+                    ),
+                    Text(
+                      subject.type == ChatSubjectType.movie ? 'Movie' : subject.type == ChatSubjectType.tvShow ? 'TV Show' : 'Actor',
+                      style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -92,7 +111,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (state.isStreaming) _scrollToBottom();
                   if (state.error != null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error!)),
+                      SnackBar(
+                        content: Text(state.error!, style: Styles.mReg.copyWith(fontSize: 13)),
+                        backgroundColor: AppColors.error,
+                      ),
                     );
                     _chatCubit.clearError();
                   }
@@ -102,58 +124,150 @@ class _ChatScreenState extends State<ChatScreen> {
                       .where((m) => m.role != ChatRole.system)
                       .toList() ?? [];
 
+                  if (messages.isEmpty && !state.isStreaming) {
+                    return _WelcomeView(
+                      subject: subject,
+                      suggestions: state.suggestions,
+                      onSuggestionTap: _send,
+                    );
+                  }
+
                   return ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                    padding: const EdgeInsets.fromLTRB(14, 16, 14, 8),
                     itemCount: messages.length + (state.isStreaming ? 1 : 0),
                     itemBuilder: (context, i) {
                       if (i == messages.length && state.isStreaming) {
                         return _StreamingBubble(content: state.streamingContent);
                       }
-                      return _MessageBubble(message: messages[i]);
+                      final msg = messages[i];
+                      final showAvatar = msg.role == ChatRole.assistant &&
+                          (i == 0 || messages[i - 1].role != ChatRole.assistant);
+                      return _MessageBubble(message: msg, showAvatar: showAvatar, posterPath: subject.posterPath);
                     },
                   );
                 },
               ),
             ),
+            // Suggestions
             BlocBuilder<ActiveChatCubit, ActiveChatState>(
               builder: (context, state) {
-                if (state.suggestions.isNotEmpty && !state.isStreaming) {
-                  return SizedBox(
-                    height: 44,
-                    child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      scrollDirection: Axis.horizontal,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
-                      itemCount: state.suggestions.length,
-                      itemBuilder: (_, i) {
-                        return GestureDetector(
-                          onTap: () => _send(state.suggestions[i]),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                final messages = state.conversation?.messages.where((m) => m.role != ChatRole.system).toList() ?? [];
+                if (state.suggestions.isNotEmpty && !state.isStreaming && messages.isNotEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.only(top: 4, bottom: 4),
+                    child: SizedBox(
+                      height: 38,
+                      child: ListView.separated(
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        scrollDirection: Axis.horizontal,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemCount: state.suggestions.length,
+                        itemBuilder: (_, i) {
+                          return GestureDetector(
+                            onTap: () => _send(state.suggestions[i]),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                              ),
+                              child: Text(
+                                state.suggestions[i],
+                                style: Styles.mMed.copyWith(fontSize: 12, color: AppColors.primaryLight),
+                              ),
                             ),
-                            child: Text(
-                              state.suggestions[i],
-                              style: Styles.mMed.copyWith(fontSize: 12, color: AppColors.primaryLight),
-                            ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.2, end: 0);
+                  ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.15, end: 0);
                 }
                 return const SizedBox.shrink();
               },
             ),
-            _ChatInput(
-              controller: _controller,
-              onSend: () => _send(),
-              isStreaming: _chatCubit.state.isStreaming,
+            // Input
+            BlocBuilder<ActiveChatCubit, ActiveChatState>(
+              builder: (context, state) => _ChatInput(
+                controller: _controller,
+                focusNode: _focusNode,
+                onSend: () => _send(),
+                isStreaming: state.isStreaming,
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WelcomeView extends StatelessWidget {
+  final ChatSubject subject;
+  final List<String> suggestions;
+  final Function(String) onSuggestionTap;
+
+  const _WelcomeView({required this.subject, required this.suggestions, required this.onSuggestionTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                shape: BoxShape.circle,
+                boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
+              ),
+              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 36),
+            ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
+            const SizedBox(height: 20),
+            Text(
+              'Ask about ${subject.title}',
+              textAlign: TextAlign.center,
+              style: Styles.heading.copyWith(fontSize: 22, color: AppColors.primaryLight),
+            ).animate(delay: 200.ms).fadeIn(duration: 400.ms),
+            const SizedBox(height: 8),
+            Text(
+              'AI knows the details — ask anything!',
+              textAlign: TextAlign.center,
+              style: Styles.mReg.copyWith(fontSize: 13, color: AppColors.textMuted),
+            ).animate(delay: 300.ms).fadeIn(duration: 400.ms),
+            const SizedBox(height: 28),
+            if (suggestions.isNotEmpty)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: suggestions.asMap().entries.map((entry) {
+                  return GestureDetector(
+                    onTap: () => onSuggestionTap(entry.value),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColors.card,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.chat_bubble_outline_rounded, size: 14, color: AppColors.primaryLight),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(entry.value, style: Styles.mMed.copyWith(fontSize: 13)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).animate(delay: (400 + 80 * entry.key).ms).fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
+                }).toList(),
+              ),
           ],
         ),
       ),
@@ -163,34 +277,83 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
-  const _MessageBubble({required this.message});
+  final bool showAvatar;
+  final String? posterPath;
+
+  const _MessageBubble({required this.message, this.showAvatar = false, this.posterPath});
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.role == ChatRole.user;
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: isUser ? AppColors.primary : AppColors.card,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isUser ? 16 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 16),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 6, left: isUser ? 40 : 0, right: isUser ? 0 : 40),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isUser && showAvatar)
+            Container(
+              margin: const EdgeInsets.only(right: 8, bottom: 2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+              ),
+              padding: const EdgeInsets.all(6),
+              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 12),
+            )
+          else if (!isUser)
+            const SizedBox(width: 32),
+          Flexible(
+            child: GestureDetector(
+              onLongPress: () {
+                Clipboard.setData(ClipboardData(text: _cleanContent(message.content)));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Copied to clipboard'), duration: Duration(seconds: 1)),
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isUser ? AppColors.primary : AppColors.card,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(18),
+                    topRight: const Radius.circular(18),
+                    bottomLeft: Radius.circular(isUser ? 18 : 4),
+                    bottomRight: Radius.circular(isUser ? 4 : 18),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isUser ? AppColors.primary : Colors.black).withValues(alpha: 0.1),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SelectableText(
+                      _cleanContent(message.content),
+                      style: Styles.mReg.copyWith(
+                        fontSize: 14,
+                        height: 1.55,
+                        color: isUser ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatTime(message.timestamp),
+                      style: Styles.mReg.copyWith(
+                        fontSize: 9,
+                        color: isUser ? Colors.white54 : AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-        child: Text(
-          _cleanContent(message.content),
-          style: Styles.mReg.copyWith(
-            fontSize: 14,
-            height: 1.5,
-            color: isUser ? Colors.white : AppColors.textPrimary,
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -199,6 +362,12 @@ class _MessageBubble extends StatelessWidget {
     final lines = content.split('\n');
     lines.removeWhere((l) => l.trim().startsWith('SUGGESTIONS:'));
     return lines.join('\n').trim();
+  }
+
+  String _formatTime(DateTime dt) {
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$h:$m';
   }
 }
 
@@ -208,37 +377,51 @@ class _StreamingBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-            bottomLeft: Radius.circular(4),
-            bottomRight: Radius.circular(16),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6, right: 40),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 8, bottom: 2),
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+            ),
+            padding: const EdgeInsets.all(6),
+            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 12),
           ),
-        ),
-        child: content.isEmpty
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 16, height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primaryLight),
-                  ),
-                  const SizedBox(width: 8),
-                  Text('Thinking...', style: Styles.mReg.copyWith(fontSize: 13, color: AppColors.textMuted)),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18),
+                  topRight: Radius.circular(18),
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(18),
+                ),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6, offset: const Offset(0, 2)),
                 ],
-              )
-            : Text(
-                _cleanContent(content),
-                style: Styles.mReg.copyWith(fontSize: 14, height: 1.5),
               ),
+              child: content.isEmpty
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _TypingIndicator(),
+                        const SizedBox(width: 10),
+                        Text('Thinking...', style: Styles.mReg.copyWith(fontSize: 13, color: AppColors.textMuted)),
+                      ],
+                    )
+                  : SelectableText(
+                      _cleanContent(content),
+                      style: Styles.mReg.copyWith(fontSize: 14, height: 1.55),
+                    ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -250,46 +433,90 @@ class _StreamingBubble extends StatelessWidget {
   }
 }
 
+class _TypingIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (i) {
+        return Container(
+          width: 7,
+          height: 7,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          decoration: BoxDecoration(
+            color: AppColors.primaryLight,
+            shape: BoxShape.circle,
+          ),
+        ).animate(
+          onComplete: (c) => c.repeat(),
+          delay: (i * 200).ms,
+        ).fadeIn(duration: 400.ms).then().fadeOut(duration: 400.ms);
+      }),
+    );
+  }
+}
+
 class _ChatInput extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode focusNode;
   final VoidCallback onSend;
   final bool isStreaming;
 
-  const _ChatInput({required this.controller, required this.onSend, required this.isStreaming});
+  const _ChatInput({required this.controller, required this.focusNode, required this.onSend, required this.isStreaming});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12, 8, 12, MediaQuery.of(context).padding.bottom + 8),
+      padding: EdgeInsets.fromLTRB(14, 10, 14, MediaQuery.of(context).padding.bottom + 10),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, -2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 12, offset: const Offset(0, -3))],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            child: TextField(
-              controller: controller,
-              enabled: !isStreaming,
-              onSubmitted: (_) => onSend(),
-              textInputAction: TextInputAction.send,
-              style: Styles.mReg.copyWith(fontSize: 15),
-              maxLines: 3,
-              minLines: 1,
-              decoration: InputDecoration(
-                hintText: isStreaming ? 'AI is responding...' : 'Ask about this...',
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: TextField(
+                controller: controller,
+                focusNode: focusNode,
+                enabled: !isStreaming,
+                onSubmitted: (_) => onSend(),
+                textInputAction: TextInputAction.send,
+                style: Styles.mReg.copyWith(fontSize: 15),
+                maxLines: 4,
+                minLines: 1,
+                decoration: InputDecoration(
+                  hintText: isStreaming ? 'AI is responding...' : 'Ask something...',
+                  hintStyle: Styles.mReg.copyWith(color: AppColors.textMuted, fontSize: 14),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  filled: false,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: isStreaming ? null : onSend,
-            child: Container(
-              padding: const EdgeInsets.all(10),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isStreaming ? AppColors.cardLight : AppColors.primary,
+                gradient: isStreaming
+                    ? null
+                    : const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                color: isStreaming ? AppColors.cardLight : null,
                 shape: BoxShape.circle,
+                boxShadow: isStreaming ? [] : [
+                  BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3)),
+                ],
               ),
               child: Icon(
                 Icons.send_rounded,
