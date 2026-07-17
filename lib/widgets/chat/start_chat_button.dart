@@ -7,6 +7,7 @@ import 'package:cinemalist/models/tvshow_model.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
+import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 import 'package:cinemalist/views/chat/chat_screen.dart';
 
 Future<void> startMovieChat(BuildContext context, GenericMoviesModel movie) async {
@@ -74,13 +75,16 @@ class AskAIChip extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 16),
-            const SizedBox(width: 6),
-            Text('Ask AI', style: Styles.mBold.copyWith(fontSize: 12, color: Colors.white)),
-          ],
+        child: ShimmerGradient(
+          colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.auto_awesome_rounded, size: 16),
+              const SizedBox(width: 6),
+              Text('Ask AI', style: Styles.mBold.copyWith(fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );

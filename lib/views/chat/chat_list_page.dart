@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:cinemalist/bloc/chat/chat_cubit.dart';
 import 'package:cinemalist/models/chat/chat_models.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/chat/chat_screen.dart';
 import 'package:cinemalist/views/chat/chat_settings_page.dart';
@@ -49,13 +50,15 @@ class _ChatListPageState extends State<ChatListPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.auto_awesome_rounded, size: 11, color: Color(0xFF5C6BC0)),
-                          const SizedBox(width: 4),
-                          Text('AI CHAT', style: Styles.mBold.copyWith(color: const Color(0xFF7986CB), fontSize: 10, letterSpacing: 2)),
-                        ],
+                      ShimmerGradient(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.auto_awesome_rounded, size: 11),
+                            const SizedBox(width: 4),
+                            Text('AI CHAT', style: Styles.mBold.copyWith(fontSize: 10, letterSpacing: 2)),
+                          ],
+                        ),
                       ),
                       Text('Conversations', style: Styles.heading.copyWith(fontSize: 28)),
                     ],
@@ -87,7 +90,10 @@ class _ChatListPageState extends State<ChatListPage>
                       shape: BoxShape.circle,
                       boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
                     ),
-                    child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 44),
+                    child: ShimmerGradient(
+                      colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+                      child: const Icon(Icons.auto_awesome_rounded, size: 44),
+                    ),
                   ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
                   const SizedBox(height: 24),
                   Text('No conversations yet', style: Styles.heading.copyWith(fontSize: 22, color: AppColors.textMuted)),
@@ -237,13 +243,12 @@ class _ConversationTile extends StatelessWidget {
                   Positioned(
                     bottom: -2,
                     right: -2,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
-                        borderRadius: BorderRadius.circular(6),
+                    child: ShimmerGradient(
+                      colors: const [Color(0xFF7986CB), Color(0xFFCE93D8), Color(0xFF7986CB)],
+                      child: Container(
+                        padding: const EdgeInsets.all(3),
+                        child: const Icon(Icons.auto_awesome_rounded, size: 12),
                       ),
-                      child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 10),
                     ),
                   ),
                 ],

@@ -133,9 +133,10 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
       }
       final model = await _settings.getModel();
       final prompt = ChatMessage.user(
-        'Generate exactly 4 short, engaging conversation starter questions a user might ask about "${subject.title}" '
+        'Generate exactly 4 short (under 8 words each), spoiler-free conversation starter questions a user might ask about "${subject.title}" '
         '(${subject.type == ChatSubjectType.movie ? "a movie" : subject.type == ChatSubjectType.tvShow ? "a TV show" : "an actor"}). '
-        'Return ONLY a JSON array of strings, nothing else. Example: ["Question 1","Question 2","Question 3","Question 4"]',
+        'Questions should be generic and safe for someone who hasn\'t seen it yet. '
+        'Return ONLY a JSON array of strings, nothing else. Example: ["Is it worth watching?","What genre is it?","Who stars in it?","Any similar picks?"]',
       );
       final buffer = StringBuffer();
       await for (final chunk in _api.streamCompletion(

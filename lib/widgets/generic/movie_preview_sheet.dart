@@ -11,6 +11,7 @@ import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/genre_utils.dart';
 import 'package:cinemalist/views/movie_page.dart';
 import 'package:cinemalist/widgets/chat/start_chat_button.dart';
+import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 
 Future<void> showMoviePreview(
   BuildContext context,
@@ -255,13 +256,16 @@ class _MoviePreviewContent extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.auto_awesome_rounded, size: 16, color: Colors.white),
-                    const SizedBox(width: 4),
-                    Text('AI', style: Styles.mBold.copyWith(fontSize: 13)),
-                  ],
+                child: ShimmerGradient(
+                  colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.auto_awesome_rounded, size: 16),
+                      const SizedBox(width: 4),
+                      Text('AI', style: Styles.mBold.copyWith(fontSize: 13)),
+                    ],
+                  ),
                 ),
               ),
             ],

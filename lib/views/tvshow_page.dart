@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cinemalist/widgets/chat/start_chat_button.dart';
+import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/tvshows/credits/tvshow_credits_bloc.dart';
 import 'package:cinemalist/bloc/tvshows/seasons/tvseasons_bloc.dart';
@@ -180,7 +181,10 @@ class _TvShowPageState extends State<TvShowPage> {
               color: const Color(0xFF3949AB).withValues(alpha: 0.7),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 16),
+            child: ShimmerGradient(
+              colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+              child: const Icon(Icons.auto_awesome_rounded, size: 16),
+            ),
           ),
         ),
         GestureDetector(

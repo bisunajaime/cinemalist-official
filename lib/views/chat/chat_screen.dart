@@ -8,6 +8,7 @@ import 'package:cinemalist/models/chat/chat_models.dart';
 import 'package:cinemalist/models/generic_movies_model.dart';
 import 'package:cinemalist/models/tvshow_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/views/movie_page.dart';
@@ -212,27 +213,29 @@ class _ChatScreenState extends State<ChatScreen> {
                 final messages = state.conversation?.messages.where((m) => m.role != ChatRole.system).toList() ?? [];
                 if (state.suggestions.isNotEmpty && !state.isStreaming && messages.isNotEmpty) {
                   return Container(
-                    padding: const EdgeInsets.only(top: 4, bottom: 4),
+                    padding: const EdgeInsets.only(top: 6, bottom: 6),
                     child: SizedBox(
-                      height: 38,
+                      height: 34,
                       child: ListView.separated(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         scrollDirection: Axis.horizontal,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        separatorBuilder: (_, __) => const SizedBox(width: 6),
                         itemCount: state.suggestions.length,
                         itemBuilder: (_, i) {
                           return GestureDetector(
                             onTap: () => _send(state.suggestions[i]),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                                color: AppColors.card,
+                                borderRadius: BorderRadius.circular(17),
+                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                               ),
                               child: Text(
                                 state.suggestions[i],
-                                style: Styles.mMed.copyWith(fontSize: 12, color: AppColors.primaryLight),
+                                style: Styles.mMed.copyWith(fontSize: 11, color: AppColors.primaryLight),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           );
@@ -282,7 +285,10 @@ class _WelcomeView extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
               ),
-              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 36),
+              child: ShimmerGradient(
+                colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+                child: const Icon(Icons.auto_awesome_rounded, size: 36),
+              ),
             ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
             const SizedBox(height: 20),
             Text(
@@ -361,12 +367,15 @@ class _MessageBubble extends StatelessWidget {
           if (!isUser && showAvatar)
             Container(
               margin: const EdgeInsets.only(right: 8, bottom: 2),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                gradient: LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
               ),
               padding: const EdgeInsets.all(6),
-              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 12),
+              child: ShimmerGradient(
+                colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+                child: const Icon(Icons.auto_awesome_rounded, size: 12),
+              ),
             )
           else if (!isUser)
             const SizedBox(width: 32),
@@ -456,7 +465,10 @@ class _StreamingBubble extends StatelessWidget {
               gradient: LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
             ),
             padding: const EdgeInsets.all(6),
-            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 12),
+            child: ShimmerGradient(
+              colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+              child: const Icon(Icons.auto_awesome_rounded, size: 12),
+            ),
           ),
           Flexible(
             child: Container(
