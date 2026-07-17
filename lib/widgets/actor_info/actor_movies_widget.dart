@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/actors/actor_movies_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
 
@@ -22,25 +23,41 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
 
     if (cubit.loading) {
       return SizedBox(
-        height: 220,
-        child: Shimmer.fromColors(
-          baseColor: AppColors.shimmerBase,
-          highlightColor: AppColors.shimmerHighlight,
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(12),
+        height: 240,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 4,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemBuilder: (_, __) => Container(
+            width: 120,
+            margin: const EdgeInsets.only(right: 10),
+            child: Shimmer.fromColors(
+              baseColor: AppColors.shimmerBase,
+              highlightColor: AppColors.shimmerHighlight,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
           ),
         ),
       );
     }
 
-    if (cubit.error || movies == null) return const SizedBox.shrink();
+    if (cubit.error || movies == null) {
+      return Center(
+        child: TextButton.icon(
+          onPressed: () => cubit.loadData(),
+          icon: const Icon(Icons.refresh_rounded, color: AppColors.textMuted),
+          label: Text('Retry', style: Styles.mMed.copyWith(color: AppColors.textMuted)),
+        ),
+      );
+    }
 
     return SizedBox(
-      height: 220,
+      height: 240,
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           final maxScroll = notification.metrics.maxScrollExtent;
@@ -59,6 +76,9 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, i) {
             final movie = movies[i];
+            final year = movie.releaseDate != null && movie.releaseDate!.length >= 4
+                ? movie.releaseDate!.substring(0, 4)
+                : '';
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
@@ -68,19 +88,37 @@ class _ActorMoviesWidgetState extends State<ActorMoviesWidget> {
                 )),
               ),
               child: Container(
-                margin: const EdgeInsets.only(right: 8),
-                child: AspectRatio(
-                  aspectRatio: 2 / 3,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: movie.posterPath != null
-                        ? CachedNetworkImage(
-                            imageUrl: 'https://image.tmdb.org/t/p/w300${movie.posterPath}',
-                            fit: BoxFit.cover,
-                            fadeInDuration: const Duration(milliseconds: 250),
-                          )
-                        : Image.asset('assets/images/placeholder.png', fit: BoxFit.cover),
-                  ),
+                width: 120,
+                margin: const EdgeInsets.only(right: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: movie.posterPath != null
+                            ? CachedNetworkImage(
+                                imageUrl: 'https://image.tmdb.org/t/p/w300${movie.posterPath}',
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                fadeInDuration: const Duration(milliseconds: 250),
+                              )
+                            : Image.asset('assets/images/placeholder.png', fit: BoxFit.cover, width: double.infinity),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      movie.title ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Styles.mMed.copyWith(fontSize: 11),
+                    ),
+                    if (year.isNotEmpty)
+                      Text(
+                        year,
+                        style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted),
+                      ),
+                  ],
                 ),
               ),
             ).animate(delay: (40 * i).ms).fadeIn(duration: 250.ms);

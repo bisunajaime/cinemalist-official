@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/actors/actor_info_cubit.dart';
@@ -35,6 +39,8 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
   @override
   Widget build(BuildContext context) {
     final tmdbRepo = context.read<TMDBRepository>();
+    final hasPhoto = widget.model.profilePath != null;
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -53,6 +59,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
               isSaved: context.watch<SavedActorsCubit>().isSaved(widget.model),
               record: widget.model,
               onTap: (elem) async {
+                HapticFeedback.lightImpact();
                 _runner.run(() async {
                   final rankingCubit = context.read<ActorRankingCubit>();
                   await rankingCubit.removeRankingWithoutLetter(
@@ -70,10 +77,22 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
           headerSliverBuilder: (context, innerScrolled) {
             return [
               SliverAppBar(
-                backgroundColor: const Color(0xFF2C2458),
                 pinned: true,
                 centerTitle: false,
-                expandedHeight: MediaQuery.of(context).size.height * 0.22,
+                expandedHeight: MediaQuery.of(context).size.height * 0.25,
+                leading: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+                    ),
+                  ),
+                ),
                 flexibleSpace: FlexibleSpaceBar(
                   titlePadding: EdgeInsets.zero,
                   collapseMode: CollapseMode.parallax,
@@ -82,14 +101,42 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
                     alignment: Alignment.bottomLeft,
                     child: _buildTitle(),
                   ),
-                  background: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [const Color(0xFF2C2458), const Color(0xFF1A1640)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (hasPhoto)
+                        ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                          child: CachedNetworkImage(
+                            imageUrl: 'https://image.tmdb.org/t/p/w300${widget.model.profilePath}',
+                            fit: BoxFit.cover,
+                            color: Colors.black45,
+                            colorBlendMode: BlendMode.darken,
+                          ),
+                        )
+                      else
+                        Container(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF2C2458), Color(0xFF1A1640)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                        ),
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.6),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -104,7 +151,7 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Movies',
+                  'FILMOGRAPHY',
                   textAlign: TextAlign.center,
                   style: Styles.heading.copyWith(fontSize: 28),
                 ),

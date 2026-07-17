@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:cinemalist/bloc/movies/info/movie_info_cubit.dart';
 import 'package:cinemalist/bloc/movies/similar/similar_movies_bloc.dart';
@@ -13,9 +15,11 @@ import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/generic/expandable_text.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
 import 'package:cinemalist/widgets/generic/fab_save_record.dart';
 import 'package:cinemalist/widgets/generic/genres_of_movie_list_widget.dart';
+import 'package:cinemalist/widgets/generic/info_chip.dart';
 import 'package:cinemalist/widgets/movie/movie_cast_widget.dart';
 import 'package:cinemalist/widgets/movie/movie_info_widget.dart';
 import 'package:cinemalist/widgets/movie/similar_movies_widget.dart';
@@ -66,6 +70,7 @@ class _MoviePageState extends State<MoviePage> {
               isSaved: context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
               record: widget.model!,
               onTap: (elem) async {
+                HapticFeedback.lightImpact();
                 _runner.run(() async {
                   final rankingCubit = context.read<MovieRankingCubit>();
                   await rankingCubit.removeRankingWithoutLetter(
@@ -96,48 +101,25 @@ class _MoviePageState extends State<MoviePage> {
             ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
             const SizedBox(height: 8),
             GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                if (widget.model?.releaseDate != null &&
-                    widget.model!.releaseDate!.isNotEmpty) ...[
-                  Icon(Icons.calendar_today_rounded, size: 14, color: AppColors.amber),
-                  const SizedBox(width: 4),
-                  Text(
-                    DateFormat.yMMMd().format(DateTime.parse(widget.model!.releaseDate!)),
-                    style: Styles.mMed.copyWith(fontSize: 13, color: AppColors.amber),
-                  ),
-                  const SizedBox(width: 16),
-                ],
-                Icon(Icons.star_rounded, color: AppColors.gold, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  (widget.model!.voteAverage ?? 0).toStringAsFixed(1),
-                  style: Styles.mBold.copyWith(fontSize: 13),
-                ),
-              ],
-            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
             const SizedBox(height: 12),
-            Text(
-              widget.model!.overview ?? '',
-              style: Styles.mReg.copyWith(
-                fontSize: 13,
-                height: 1.6,
-                color: AppColors.textSecondary,
-              ),
-            ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+            // Metadata chips
+            _buildMetadataChips().animate().fadeIn(delay: 100.ms, duration: 400.ms),
+            const SizedBox(height: 16),
+            // Expandable overview
+            ExpandableText(text: widget.model!.overview ?? '')
+                .animate().fadeIn(delay: 200.ms, duration: 400.ms),
             const SizedBox(height: 24),
-            Text('Trailers', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
+            Text('TRAILERS', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
                 .animate().fadeIn(delay: 300.ms, duration: 400.ms),
             const SizedBox(height: 12),
             const MovieInfoWidget(),
             const SizedBox(height: 24),
-            Text('Cast', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
+            Text('CAST', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
                 .animate().fadeIn(delay: 400.ms, duration: 400.ms),
             const SizedBox(height: 12),
             const MovieCastWidget(),
             const SizedBox(height: 24),
-            Text('Similar Movies', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
+            Text('SIMILAR MOVIES', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
                 .animate().fadeIn(delay: 500.ms, duration: 400.ms),
             const SizedBox(height: 12),
             const SimilarMoviesWidget(),
@@ -148,12 +130,100 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 
+  Widget _buildMetadataChips() {
+    final movie = widget.model!;
+    final infoCubit = context.watch<MovieInfoCubit>();
+    final info = infoCubit.state;
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        if (movie.releaseDate != null && movie.releaseDate!.isNotEmpty)
+          InfoChip(
+            icon: Icons.calendar_today_rounded,
+            label: DateFormat.yMMMd().format(DateTime.parse(movie.releaseDate!)),
+            iconColor: AppColors.amber,
+          ),
+        InfoChip(
+          icon: Icons.star_rounded,
+          label: (movie.voteAverage ?? 0).toStringAsFixed(1),
+          iconColor: AppColors.ratingColor(movie.voteAverage ?? 0),
+        ),
+        if (info?.runtime != null && info!.runtime! > 0)
+          InfoChip(
+            icon: Icons.schedule_rounded,
+            label: '${info.runtime! ~/ 60}h ${info.runtime! % 60}m',
+          ),
+        if (info?.vote_count != null)
+          InfoChip(
+            icon: Icons.how_to_vote_rounded,
+            label: '${_formatCount(info!.vote_count!)} votes',
+          ),
+      ],
+    );
+  }
+
+  String _formatCount(int count) {
+    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}k';
+    return count.toString();
+  }
+
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     return SliverAppBar(
       expandedHeight: MediaQuery.of(context).size.height * 0.6,
       backgroundColor: AppColors.background,
       pinned: true,
       stretch: true,
+      leading: Padding(
+        padding: const EdgeInsets.all(8),
+        child: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+          ),
+        ),
+      ),
+      actions: [
+        GestureDetector(
+          onTap: () {
+            SharePlus.instance.share(
+              ShareParams(
+                text: 'Check out "${widget.model!.title}" on TMDB!\nhttps://www.themoviedb.org/movie/${widget.model!.id}',
+              ),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.share_rounded, color: Colors.white, size: 18),
+          ),
+        ),
+      ],
+      title: Builder(
+        builder: (context) {
+          final settings = context.dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
+          final collapsed = settings != null && settings.currentExtent <= kToolbarHeight + MediaQuery.of(context).padding.top + 20;
+          return AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: collapsed ? 1.0 : 0.0,
+            child: Text(
+              widget.model!.title ?? '',
+              style: Styles.mBold.copyWith(fontSize: 16),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        },
+      ),
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
         stretchModes: const [StretchMode.zoomBackground],
