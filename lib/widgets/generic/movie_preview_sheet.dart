@@ -68,9 +68,6 @@ class _MoviePreviewPagerState extends State<_MoviePreviewPager> {
   Widget build(BuildContext context) {
     final hasMultiple = widget.movies.length > 1;
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.78,
-      ),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -95,7 +92,8 @@ class _MoviePreviewPagerState extends State<_MoviePreviewPager> {
             ),
           ],
           const SizedBox(height: 8),
-          Flexible(
+          SizedBox(
+            height: 420,
             child: PageView.builder(
               controller: _controller,
               itemCount: widget.movies.length,

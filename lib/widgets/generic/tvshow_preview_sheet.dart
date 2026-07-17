@@ -63,7 +63,6 @@ class _TvShowPreviewPagerState extends State<_TvShowPreviewPager> {
   Widget build(BuildContext context) {
     final hasMultiple = widget.shows.length > 1;
     return Container(
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.78),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -78,7 +77,8 @@ class _TvShowPreviewPagerState extends State<_TvShowPreviewPager> {
             Text('${_currentIndex + 1} / ${widget.shows.length}', style: Styles.mReg.copyWith(fontSize: 11, color: AppColors.textMuted)),
           ],
           const SizedBox(height: 8),
-          Flexible(
+          SizedBox(
+            height: 420,
             child: PageView.builder(
               controller: _controller,
               itemCount: widget.shows.length,
