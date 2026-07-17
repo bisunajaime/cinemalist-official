@@ -97,14 +97,15 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  bool _scrollPending = false;
+
   void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
+    if (_scrollPending) return;
+    _scrollPending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollPending = false;
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + 200,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       }
     });
   }
