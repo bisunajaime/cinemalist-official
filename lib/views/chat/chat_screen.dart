@@ -143,11 +143,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      subject.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Styles.mBold.copyWith(fontSize: 15),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            subject.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Styles.mBold.copyWith(fontSize: 15),
+                          ),
+                        ),
+                        if (subject.type != ChatSubjectType.general) ...[
+                          const SizedBox(width: 6),
+                          Icon(Icons.open_in_new_rounded, size: 12, color: AppColors.textMuted),
+                        ],
+                      ],
                     ),
                     Text(
                       subject.type == ChatSubjectType.movie ? 'Movie' : subject.type == ChatSubjectType.tvShow ? 'TV Show' : subject.type == ChatSubjectType.actor ? 'Actor' : 'General Chat',
@@ -156,10 +166,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
-              if (subject.type != ChatSubjectType.general) ...[
-                const SizedBox(width: 4),
-                Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.textMuted),
-              ],
             ],
           )),
         ),
