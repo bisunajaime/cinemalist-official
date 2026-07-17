@@ -19,12 +19,10 @@ class _ChatSettingsPageState extends State<ChatSettingsPage> {
   bool _loaded = false;
 
   static const _models = [
-    ('deepseek/deepseek-chat', 'DeepSeek Chat'),
-    ('deepseek/deepseek-r1', 'DeepSeek R1'),
-    ('qwen/qwen-2.5-72b-instruct', 'Qwen 2.5 72B'),
-    ('qwen/qwen-2.5-coder-32b-instruct', 'Qwen 2.5 Coder 32B'),
-    ('google/gemini-2.0-flash-001', 'Gemini 2.0 Flash'),
-    ('meta-llama/llama-3.3-70b-instruct', 'Llama 3.3 70B'),
+    ('qwen/qwen3.6-flash', 'Qwen 3.6 Flash'),
+    ('deepseek/deepseek-v4-flash', 'DeepSeek V4 Flash'),
+    ('qwen/qwen3.6-plus', 'Qwen 3.6 Plus'),
+    ('qwen/qwen3.7-max', 'Qwen 3.7 Max'),
   ];
 
   @override

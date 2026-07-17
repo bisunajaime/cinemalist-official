@@ -107,7 +107,7 @@ class ChatSettingsRepository {
 
   Future<String> getModel() async {
     final settings = await load();
-    return settings['model'] ?? 'deepseek/deepseek-chat';
+    return settings['model'] ?? 'qwen/qwen3.6-flash';
   }
 
   Future<void> setModel(String model) async {
