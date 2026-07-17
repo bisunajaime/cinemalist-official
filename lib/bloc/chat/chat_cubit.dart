@@ -113,7 +113,9 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
   }
 
   void loadConversation(Conversation convo) {
-    if (convo.messages.isEmpty) {
+    if (convo.messages.isEmpty && convo.subject.type == ChatSubjectType.general) {
+      emit(ActiveChatState(conversation: convo, suggestions: []));
+    } else if (convo.messages.isEmpty) {
       emit(ActiveChatState(conversation: convo, isLoadingSuggestions: true, suggestions: []));
       _generateStarterSuggestions(convo.subject);
     } else {
