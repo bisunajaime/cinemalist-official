@@ -7,17 +7,16 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/actors/actor_info_cubit.dart';
 import 'package:cinemalist/bloc/actors/actor_movies_cubit.dart';
-import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
-import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
+import 'package:cinemalist/bloc/collections/collections_cubit.dart';
+import 'package:cinemalist/models/collections/collection_models.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
-import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/widgets/actor_info/actor_info_widget.dart';
 import 'package:cinemalist/widgets/actor_info/actor_movies_widget.dart';
 import 'package:cinemalist/widgets/chat/start_chat_button.dart';
+import 'package:cinemalist/widgets/collections/collection_picker_sheet.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
-import 'package:cinemalist/widgets/generic/fab_save_record.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 
@@ -63,19 +62,28 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
               child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20),
             ),
             const SizedBox(width: 8),
-            FABSaveRecord<GenericActorModel>(
-              tag: 'actor-${widget.id!}',
-              isSaved: context.watch<SavedActorsCubit>().isSaved(widget.model),
-              record: widget.model,
-              onTap: (elem) async {
-                HapticFeedback.lightImpact();
-                _runner.run(() async {
-                  final rankingCubit = context.read<ActorRankingCubit>();
-                  await rankingCubit.removeRankingWithoutLetter(
-                      RankingModel.fromGenericActorModel(elem));
-                  await context.read<SavedActorsCubit>().save(elem);
-                });
-              },
+            FloatingActionButton(
+              heroTag: 'save-actor-${widget.id}',
+              elevation: 4,
+              backgroundColor: context.watch<CollectionsCubit>().state.isItemSaved(widget.id!, CollectionItemType.actor)
+                  ? AppColors.primary
+                  : AppColors.card,
+              onPressed: () => showCollectionPicker(
+                context,
+                CollectionItem(
+                  id: widget.id!,
+                  type: CollectionItemType.actor,
+                  title: widget.name ?? '',
+                  posterPath: widget.model.profilePath,
+                  addedAt: DateTime.now(),
+                ),
+              ),
+              child: Icon(
+                context.watch<CollectionsCubit>().state.isItemSaved(widget.id!, CollectionItemType.actor)
+                    ? Icons.bookmark_rounded
+                    : Icons.bookmark_add_outlined,
+                color: AppColors.textPrimary,
+              ),
             ),
             const SizedBox(width: 8),
             const FABGoHome(),

@@ -10,16 +10,15 @@ import 'package:cinemalist/widgets/generic/shimmer_gradient_text.dart';
 import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:cinemalist/bloc/movies/info/movie_info_cubit.dart';
 import 'package:cinemalist/bloc/movies/similar/similar_movies_bloc.dart';
-import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
-import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
-import 'package:cinemalist/models/ranking_model.dart';
+import 'package:cinemalist/bloc/collections/collections_cubit.dart';
+import 'package:cinemalist/models/collections/collection_models.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/collections/collection_picker_sheet.dart';
 import 'package:cinemalist/widgets/generic/expandable_text.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
-import 'package:cinemalist/widgets/generic/fab_save_record.dart';
 import 'package:cinemalist/widgets/generic/genres_of_movie_list_widget.dart';
 import 'package:cinemalist/widgets/generic/info_chip.dart';
 import 'package:cinemalist/widgets/movie/movie_cast_widget.dart';
@@ -68,19 +67,29 @@ class _MoviePageState extends State<MoviePage> {
           floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              FABSaveRecord<GenericMoviesModel>(
-                tag: 'movie-${widget.model!.id!}',
-                isSaved: context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
-                record: widget.model!,
-                onTap: (elem) async {
-                  HapticFeedback.lightImpact();
-                  _runner.run(() async {
-                    final rankingCubit = context.read<MovieRankingCubit>();
-                    await rankingCubit.removeRankingWithoutLetter(
-                        RankingModel.fromGenericMovieModel(elem));
-                    await context.read<MoviesWatchLaterCubit>().save(elem);
-                  });
-                },
+              FloatingActionButton(
+                heroTag: 'save-movie-${widget.model!.id}',
+                elevation: 4,
+                backgroundColor: context.watch<CollectionsCubit>().state.isItemSaved(widget.model!.id!, CollectionItemType.movie)
+                    ? AppColors.primary
+                    : AppColors.card,
+                onPressed: () => showCollectionPicker(
+                  context,
+                  CollectionItem(
+                    id: widget.model!.id!,
+                    type: CollectionItemType.movie,
+                    title: widget.model!.title ?? '',
+                    posterPath: widget.model!.posterPath,
+                    rating: widget.model!.voteAverage,
+                    addedAt: DateTime.now(),
+                  ),
+                ),
+                child: Icon(
+                  context.watch<CollectionsCubit>().state.isItemSaved(widget.model!.id!, CollectionItemType.movie)
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_add_outlined,
+                  color: AppColors.textPrimary,
+                ),
               ),
               const SizedBox(width: 8),
               const FABGoHome(),

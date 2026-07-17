@@ -12,6 +12,7 @@ import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/chat/chat_cubit.dart';
+import 'package:cinemalist/bloc/collections/collections_cubit.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/bloc/theme/theme_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
@@ -75,6 +76,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => TvShowRankingCubit()),
           BlocProvider(create: (_) => RankingFilterCubit()),
           BlocProvider(create: (_) => ChatListCubit()),
+          BlocProvider(create: (_) => CollectionsCubit()),
         ],
         child: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
