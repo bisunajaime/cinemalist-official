@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/chat/chat_cubit.dart';
 import 'package:cinemalist/models/chat/chat_models.dart';
@@ -34,6 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _chatCubit = ActiveChatCubit(listCubit: context.read<ChatListCubit>());
     _chatCubit.loadConversation(widget.conversation);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
   @override
@@ -425,14 +427,21 @@ class _MessageBubble extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SelectableText(
-                      _cleanContent(message.content),
-                      style: Styles.mReg.copyWith(
-                        fontSize: 14,
-                        height: 1.55,
-                        color: isUser ? Colors.white : AppColors.textPrimary,
-                      ),
-                    ),
+                    isUser
+                        ? SelectableText(
+                            _cleanContent(message.content),
+                            style: Styles.mReg.copyWith(
+                              fontSize: 14,
+                              height: 1.55,
+                              color: Colors.white,
+                            ),
+                          )
+                        : MarkdownBody(
+                            data: _cleanContent(message.content),
+                            selectable: true,
+                            shrinkWrap: true,
+                            styleSheet: _mdStyle(context),
+                          ),
                     const SizedBox(height: 4),
                     Text(
                       _formatTime(message.timestamp),
@@ -511,9 +520,10 @@ class _StreamingBubble extends StatelessWidget {
                         Text('Thinking...', style: Styles.mReg.copyWith(fontSize: 13, color: AppColors.textMuted)),
                       ],
                     )
-                  : SelectableText(
-                      _cleanContent(content),
-                      style: Styles.mReg.copyWith(fontSize: 14, height: 1.55),
+                  : MarkdownBody(
+                      data: _cleanContent(content),
+                      shrinkWrap: true,
+                      styleSheet: _mdStyle(context),
                     ),
             ),
           ),
@@ -527,6 +537,36 @@ class _StreamingBubble extends StatelessWidget {
     lines.removeWhere((l) => l.trim().startsWith('SUGGESTIONS:'));
     return lines.join('\n').trim();
   }
+}
+
+MarkdownStyleSheet _mdStyle(BuildContext context) {
+  final baseText = Styles.mReg.copyWith(fontSize: 14, height: 1.55, color: AppColors.textPrimary);
+  return MarkdownStyleSheet(
+    p: baseText,
+    h1: Styles.mBold.copyWith(fontSize: 22, color: AppColors.primaryLight),
+    h2: Styles.mBold.copyWith(fontSize: 18, color: AppColors.primaryLight),
+    h3: Styles.mBold.copyWith(fontSize: 16, color: AppColors.primaryLight),
+    strong: Styles.mBold.copyWith(fontSize: 14, color: AppColors.textPrimary),
+    em: baseText.copyWith(fontStyle: FontStyle.italic),
+    listBullet: baseText,
+    code: Styles.mReg.copyWith(
+      fontSize: 13,
+      color: AppColors.primaryLight,
+      backgroundColor: AppColors.cardLight,
+    ),
+    codeblockDecoration: BoxDecoration(
+      color: AppColors.cardLight,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    codeblockPadding: const EdgeInsets.all(12),
+    blockquoteDecoration: BoxDecoration(
+      border: Border(left: BorderSide(color: AppColors.primaryLight, width: 3)),
+    ),
+    blockquotePadding: const EdgeInsets.only(left: 12),
+    horizontalRuleDecoration: BoxDecoration(
+      border: Border(top: BorderSide(color: AppColors.cardLight, width: 1)),
+    ),
+  );
 }
 
 class _TypingIndicator extends StatelessWidget {

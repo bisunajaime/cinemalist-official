@@ -109,7 +109,7 @@ class ChatSubject {
       if (extraContext != null && extraContext!.isNotEmpty) buf.writeln('Additional info: $extraContext');
     }
     buf.writeln('Be concise, engaging, and spoiler-aware. If the user asks about spoilers, warn them first.');
-    buf.writeln('After each response, suggest 2-3 very short follow-up questions (max 6 words each) the user might want to ask, formatted as a JSON array on the last line prefixed with "SUGGESTIONS:" like: SUGGESTIONS:["Short question?","Another one?","Third one?"]');
+    buf.writeln('After each response, suggest 2-3 very short follow-up questions (max 6 words each) that THE USER would ask YOU as a next message. These should be things the user might want to know next. Format as a JSON array on the last line prefixed with "SUGGESTIONS:" like: SUGGESTIONS:["Is there a sequel?","Who directed it?","Worth watching?"]');
     return buf.toString();
   }
 }
