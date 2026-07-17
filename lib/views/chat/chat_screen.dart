@@ -90,6 +90,8 @@ class _ChatScreenState extends State<ChatScreen> {
           model: GenericActorModel(subject.id, subject.title, subject.posterPath),
         )));
         break;
+      case ChatSubjectType.general:
+        break;
     }
   }
 

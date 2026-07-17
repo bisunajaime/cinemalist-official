@@ -103,7 +103,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
 
   void loadConversation(Conversation convo) {
     if (convo.messages.isEmpty) {
-      emit(ActiveChatState(conversation: convo, isLoadingSuggestions: true, suggestions: _defaultSuggestions(convo.subject)));
+      emit(ActiveChatState(conversation: convo, isLoadingSuggestions: true, suggestions: []));
       _generateStarterSuggestions(convo.subject);
     } else {
       final suggestions = _extractSuggestions(convo);
@@ -115,7 +115,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
     try {
       final apiKey = await _settings.getApiKey();
       if (apiKey == null || apiKey.isEmpty) {
-        emit(state.copyWith(isLoadingSuggestions: false));
+        emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
         return;
       }
       final model = await _settings.getModel();
@@ -152,9 +152,9 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
           } catch (_) {}
         }
       }
-      emit(state.copyWith(isLoadingSuggestions: false));
+      emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
     } catch (_) {
-      emit(state.copyWith(isLoadingSuggestions: false));
+      emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
     }
   }
 
