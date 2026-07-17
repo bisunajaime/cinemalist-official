@@ -52,6 +52,18 @@ Future<void> _showChatPicker(BuildContext context, ChatSubject subject) async {
       .where((c) => c.subject.id == subject.id && c.subject.type == subject.type)
       .toList();
 
+  // Reuse empty conversation if one exists
+  final empty = existing.where((c) => c.messages.isEmpty).toList();
+  if (empty.isNotEmpty) {
+    if (existing.length == 1) {
+      // Only one chat and it's empty — go straight to it
+      if (context.mounted) {
+        Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: empty.first)));
+      }
+      return;
+    }
+  }
+
   if (existing.isEmpty) {
     final convo = await listCubit.createConversation(subject);
     if (context.mounted) {
@@ -120,7 +132,10 @@ class _ChatPickerSheet extends StatelessWidget {
               onTap: () async {
                 Navigator.pop(context);
                 final listCubit = parentContext.read<ChatListCubit>();
-                final convo = await listCubit.createConversation(subject);
+                final emptyExisting = existing.where((c) => c.messages.isEmpty).toList();
+                final convo = emptyExisting.isNotEmpty
+                    ? emptyExisting.first
+                    : await listCubit.createConversation(subject);
                 if (parentContext.mounted) {
                   Navigator.push(parentContext, AppRoutes.slideUp(ChatScreen(conversation: convo)));
                 }
