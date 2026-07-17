@@ -37,7 +37,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    _chatCubit.close();
+    // Don't close _chatCubit — let streaming finish in background
+    // It will save the conversation via ChatListCubit when done
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();

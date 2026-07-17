@@ -93,6 +93,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
   final ChatApiRepository _api;
   final ChatListCubit _listCubit;
   final ChatSettingsRepository _settings;
+  bool _disposed = false;
 
   ActiveChatCubit({
     required ChatListCubit listCubit,
@@ -100,6 +101,16 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
         _listCubit = listCubit,
         _settings = ChatSettingsRepository(),
         super(const ActiveChatState());
+
+  void _safeEmit(ActiveChatState state) {
+    if (!_disposed) emit(state);
+  }
+
+  @override
+  Future<void> close() {
+    _disposed = true;
+    return super.close();
+  }
 
   void loadConversation(Conversation convo) {
     if (convo.messages.isEmpty) {
@@ -115,7 +126,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
     try {
       final apiKey = await _settings.getApiKey();
       if (apiKey == null || apiKey.isEmpty) {
-        emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
+        _safeEmit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
         return;
       }
       final model = await _settings.getModel();
@@ -136,25 +147,24 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
       try {
         final parsed = (jsonDecode(raw) as List).cast<String>();
         if (parsed.isNotEmpty) {
-          emit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
+          _safeEmit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
           return;
         }
       } catch (_) {
-        // Try extracting JSON array from response
         final match = RegExp(r'\[.*\]', dotAll: true).firstMatch(raw);
         if (match != null) {
           try {
             final parsed = (jsonDecode(match.group(0)!) as List).cast<String>();
             if (parsed.isNotEmpty) {
-              emit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
+              _safeEmit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
               return;
             }
           } catch (_) {}
         }
       }
-      emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
+      _safeEmit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
     } catch (_) {
-      emit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
+      _safeEmit(state.copyWith(isLoadingSuggestions: false, suggestions: _defaultSuggestions(subject)));
     }
   }
 
@@ -163,7 +173,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
 
     final apiKey = await _settings.getApiKey();
     if (apiKey == null || apiKey.isEmpty) {
-      emit(state.copyWith(error: 'Please set your OpenRouter API key in Settings.'));
+      _safeEmit(state.copyWith(error: 'Please set your OpenRouter API key in Settings.'));
       return;
     }
 
@@ -173,7 +183,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
     final userMsg = ChatMessage.user(content);
     final updatedMessages = [...convo.messages, userMsg];
     final updatedConvo = convo.copyWith(messages: updatedMessages, updatedAt: DateTime.now());
-    emit(state.copyWith(
+    _safeEmit(state.copyWith(
       conversation: updatedConvo,
       isStreaming: true,
       streamingContent: '',
@@ -194,7 +204,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
         messages: apiMessages,
       )) {
         buffer.write(chunk);
-        emit(state.copyWith(streamingContent: buffer.toString()));
+        _safeEmit(state.copyWith(streamingContent: buffer.toString()));
       }
 
       final fullResponse = buffer.toString();
@@ -204,7 +214,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
       final finalMessages = [...updatedMessages, assistantMsg];
       final finalConvo = convo.copyWith(messages: finalMessages, updatedAt: DateTime.now());
 
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         conversation: finalConvo,
         isStreaming: false,
         streamingContent: '',
@@ -213,7 +223,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
 
       await _listCubit.updateConversation(finalConvo);
     } catch (e) {
-      emit(state.copyWith(
+      _safeEmit(state.copyWith(
         isStreaming: false,
         streamingContent: '',
         error: e.toString(),
@@ -221,7 +231,7 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
     }
   }
 
-  void clearError() => emit(state.copyWith(error: null));
+  void clearError() => _safeEmit(state.copyWith(error: null));
 
   List<String> _extractSuggestions(Conversation convo) {
     if (convo.messages.isEmpty) return _defaultSuggestions(convo.subject);
