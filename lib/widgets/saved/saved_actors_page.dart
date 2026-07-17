@@ -36,15 +36,7 @@ class SavedActorsWidget extends StatelessWidget {
               horizontal: 5,
             ),
             child: GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                AppRoutes.slideUp(ActorInfoPage(
-                    id: actors[i].id,
-                    name: actors[i].name,
-                    model: actors[i],
-                  )),
-              ),
-              onLongPress: () => showGenericActorPreview(context, actors[i]),
+              onTap: () => showGenericActorPreview(context, actors[i], list: actors, initialIndex: i),
               child: Stack(
                 children: [
                   Column(

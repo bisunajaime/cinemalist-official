@@ -75,14 +75,7 @@ class _SimilarMoviesListState extends State<_SimilarMoviesList> {
         itemBuilder: (context, i) {
           final movie = widget.movies[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(MoviePage(
-                model: movie,
-                tag: 'similar${movie.posterPath}',
-              )),
-            ),
-            onLongPress: () => showMoviePreview(context, movie),
+            onTap: () => showMoviePreview(context, movie, list: widget.movies, initialIndex: i),
             child: Container(
               width: 140,
               margin: const EdgeInsets.only(right: 12),

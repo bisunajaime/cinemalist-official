@@ -119,10 +119,10 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
             final isSaved = widget.localCubit.ids.contains(element.id);
 
             return GestureDetector(
-              onTap: () => widget.onTap(element),
-              onLongPress: widget.onLongPress != null
+              onTap: widget.onLongPress != null
                   ? () => widget.onLongPress!(element)
-                  : () => showMoviePreview(context, element),
+                  : () => showMoviePreview(context, element, list: filtered.cast(), initialIndex: i),
+              onLongPress: () => widget.onTap(element),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Stack(

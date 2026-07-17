@@ -4,11 +4,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
+import 'package:cinemalist/models/actors_model.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/models/actors_model.dart';
-import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 
 class MovieCastWidget extends StatelessWidget {
@@ -21,30 +20,21 @@ class MovieCastWidget extends StatelessWidget {
 
     if (cubit.isLoading) {
       return SizedBox(
-        height: 190,
+        height: 180,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: 5,
           itemBuilder: (_, __) => Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 10),
             child: Shimmer.fromColors(
               baseColor: AppColors.shimmerBase,
               highlightColor: AppColors.shimmerHighlight,
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.card,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(height: 10, width: 70, decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(4))),
-                  const SizedBox(height: 4),
-                  Container(height: 8, width: 50, decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(4))),
-                ],
+              child: Container(
+                width: 110,
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -72,8 +62,13 @@ class MovieCastWidget extends StatelessWidget {
       );
     }
 
+    final castAsActors = cast.map((c) => ActorsModel(
+      id: c.id, name: c.name, profilePath: c.profilePath,
+      department: c.knownForDepartment, popularity: c.popularity,
+    )).toList();
+
     return SizedBox(
-      height: 190,
+      height: 180,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: cast.length,
@@ -81,79 +76,66 @@ class MovieCastWidget extends StatelessWidget {
         itemBuilder: (context, i) {
           final actor = cast[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(ActorInfoPage(
-                id: actor.id,
-                name: actor.name,
-                model: GenericActorModel.fromCastModel(actor),
-              )),
-            ),
-            onLongPress: () => showActorPreview(context, ActorsModel(
-              id: actor.id,
-              name: actor.name,
-              profilePath: actor.profilePath,
-              department: actor.knownForDepartment,
-              popularity: actor.popularity,
-            )),
+            onTap: () => showActorPreview(context, castAsActors[i], list: castAsActors, initialIndex: i),
             child: Container(
-              width: 100,
-              margin: const EdgeInsets.only(right: 12),
+              width: 110,
+              margin: const EdgeInsets.only(right: 10),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.primaryLight.withValues(alpha: 0.2),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      radius: 42,
-                      backgroundColor: AppColors.card,
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: 'https://image.tmdb.org/t/p/w200${actor.profilePath}',
-                          fit: BoxFit.cover,
-                          width: 84,
-                          height: 84,
-                          errorWidget: (_, __, ___) => Image.asset(
-                            'assets/images/placeholder_actor.png',
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: 'https://image.tmdb.org/t/p/w200${actor.profilePath}',
                             fit: BoxFit.cover,
-                            width: 84,
-                            height: 84,
+                            errorWidget: (_, __, ___) => Container(
+                              color: AppColors.card,
+                              child: Image.asset('assets/images/placeholder_actor.png', fit: BoxFit.cover),
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0, left: 0, right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [Colors.black.withValues(alpha: 0.7), Colors.transparent],
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    actor.name ?? '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Styles.mBold.copyWith(fontSize: 10),
+                                  ),
+                                  if (actor.character != null && actor.character!.isNotEmpty)
+                                    Text(
+                                      actor.character!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Styles.mReg.copyWith(fontSize: 8, color: AppColors.primaryLight),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    actor.name ?? '',
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Styles.mBold.copyWith(fontSize: 11),
-                  ),
-                  if (actor.character != null && actor.character!.isNotEmpty)
-                    Text(
-                      actor.character!,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Styles.mReg.copyWith(fontSize: 9, color: AppColors.textMuted),
-                    ),
                 ],
               ),
             ),
-          ).animate(delay: (50 * i).ms).fadeIn(duration: 250.ms).slideX(begin: 0.08, end: 0);
+          ).animate(delay: (40 * i).ms).fadeIn(duration: 250.ms).slideX(begin: 0.08, end: 0);
         },
       ),
     );

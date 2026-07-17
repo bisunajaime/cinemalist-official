@@ -4,7 +4,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/views/tvshow_page.dart';
 import 'package:cinemalist/widgets/generic/tvshow_preview_sheet.dart';
 
 class TvSearchResultsWidget extends StatelessWidget {
@@ -29,12 +28,7 @@ class TvSearchResultsWidget extends StatelessWidget {
               child: Shimmer.fromColors(
                 baseColor: AppColors.shimmerBase,
                 highlightColor: AppColors.shimmerHighlight,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+                child: Container(decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(8))),
               ),
             ),
           ),
@@ -53,11 +47,7 @@ class TvSearchResultsWidget extends StatelessWidget {
         itemBuilder: (context, i) {
           final show = filtered[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(TvShowPage(model: show)),
-            ),
-            onLongPress: () => showTvShowPreview(context, show),
+            onTap: () => showTvShowPreview(context, show, list: filtered, initialIndex: i),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(
@@ -74,28 +64,15 @@ class TvSearchResultsWidget extends StatelessWidget {
                         fadeInDuration: const Duration(milliseconds: 250),
                       ),
                       Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                        bottom: 0, left: 0, right: 0,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Colors.black87, Colors.transparent],
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
-                              const SizedBox(width: 2),
-                              Text(
-                                (show.voteAverage ?? 0).toStringAsFixed(1),
-                                style: Styles.mBold.copyWith(fontSize: 10),
-                              ),
-                            ],
-                          ),
+                          decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
+                          child: Row(children: [
+                            Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
+                            const SizedBox(width: 2),
+                            Text((show.voteAverage ?? 0).toStringAsFixed(1), style: Styles.mBold.copyWith(fontSize: 10)),
+                          ]),
                         ),
                       ),
                     ],

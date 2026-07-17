@@ -5,7 +5,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/upcoming_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/views/movie_page.dart';
 import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class UpcomingMoviesListWidget extends StatelessWidget {
@@ -30,12 +29,7 @@ class UpcomingMoviesListWidget extends StatelessWidget {
             child: Shimmer.fromColors(
               baseColor: AppColors.shimmerBase,
               highlightColor: AppColors.shimmerHighlight,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.card,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              child: Container(decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(10))),
             ),
           ),
         ),
@@ -54,14 +48,7 @@ class UpcomingMoviesListWidget extends StatelessWidget {
         itemBuilder: (context, i) {
           final movie = movies[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(MoviePage(
-                model: movie,
-                tag: 'upcoming${movie.posterPath}',
-              )),
-            ),
-            onLongPress: () => showMoviePreview(context, movie),
+            onTap: () => showMoviePreview(context, movie, list: movies, initialIndex: i),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(
@@ -81,28 +68,15 @@ class UpcomingMoviesListWidget extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                        bottom: 0, left: 0, right: 0,
                         child: Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Colors.black87, Colors.transparent],
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
-                              const SizedBox(width: 2),
-                              Text(
-                                (movie.voteAverage ?? 0).toStringAsFixed(1),
-                                style: Styles.mBold.copyWith(fontSize: 10),
-                              ),
-                            ],
-                          ),
+                          decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
+                          child: Row(children: [
+                            Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
+                            const SizedBox(width: 2),
+                            Text((movie.voteAverage ?? 0).toStringAsFixed(1), style: Styles.mBold.copyWith(fontSize: 10)),
+                          ]),
                         ),
                       ),
                     ],

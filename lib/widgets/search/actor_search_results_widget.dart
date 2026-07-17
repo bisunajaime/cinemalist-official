@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
-import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 
 class ActorSearchResultsWidget extends StatelessWidget {
@@ -45,15 +43,7 @@ class ActorSearchResultsWidget extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                AppRoutes.slideUp(ActorInfoPage(
-                  id: actor.id,
-                  name: actor.name,
-                  model: GenericActorModel.fromActorModel(actor),
-                )),
-              ),
-              onLongPress: () => showActorPreview(context, actor),
+              onTap: () => showActorPreview(context, actor, list: actors, initialIndex: i),
               child: Column(
                 children: [
                   CircleAvatar(

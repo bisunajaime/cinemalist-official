@@ -71,11 +71,7 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
           itemCount: similarTvShows.length,
           itemBuilder: (context, i) {
             return GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                AppRoutes.slideUp(TvShowPage(model: similarTvShows[i])),
-              ),
-              onLongPress: () => showTvShowPreview(context, similarTvShows[i]),
+              onTap: () => showTvShowPreview(context, similarTvShows[i], list: similarTvShows, initialIndex: i),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

@@ -5,7 +5,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/trending_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/views/movie_page.dart';
 import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class TrendingMoviesListWidget extends StatelessWidget {
@@ -31,10 +30,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
               baseColor: AppColors.shimmerBase,
               highlightColor: AppColors.shimmerHighlight,
               child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.card,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
@@ -56,14 +52,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
         itemBuilder: (context, i) {
           final movie = movies[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(MoviePage(
-                model: movie,
-                tag: 'trending${movie.posterPath}',
-              )),
-            ),
-            onLongPress: () => showMoviePreview(context, movie),
+            onTap: () => showMoviePreview(context, movie, list: movies, initialIndex: i),
             child: Container(
               width: 160,
               margin: const EdgeInsets.all(4),
@@ -82,31 +71,15 @@ class TrendingMoviesListWidget extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
+                      bottom: 0, left: 0, right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black87,
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.star_rounded, color: AppColors.gold, size: 14),
-                            const SizedBox(width: 3),
-                            Text(
-                              (movie.voteAverage ?? 0).toStringAsFixed(1),
-                              style: Styles.mBold.copyWith(fontSize: 12),
-                            ),
-                          ],
-                        ),
+                        decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
+                        child: Row(children: [
+                          Icon(Icons.star_rounded, color: AppColors.gold, size: 14),
+                          const SizedBox(width: 3),
+                          Text((movie.voteAverage ?? 0).toStringAsFixed(1), style: Styles.mBold.copyWith(fontSize: 12)),
+                        ]),
                       ),
                     ),
                   ],

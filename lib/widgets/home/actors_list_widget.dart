@@ -3,10 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/actors_barrel.dart';
-import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
-import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 
 class ActorsListWidget extends StatelessWidget {
@@ -50,15 +48,7 @@ class ActorsListWidget extends StatelessWidget {
         itemBuilder: (context, i) {
           final actor = actors[i];
           return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              AppRoutes.slideUp(ActorInfoPage(
-                id: actor.id,
-                name: actor.name,
-                model: GenericActorModel.fromActorModel(actor),
-              )),
-            ),
-            onLongPress: () => showActorPreview(context, actor),
+            onTap: () => showActorPreview(context, actor, list: actors, initialIndex: i),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Column(
@@ -66,16 +56,8 @@ class ActorsListWidget extends StatelessWidget {
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.4),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.15),
-                          blurRadius: 12,
-                        ),
-                      ],
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.4), width: 2),
+                      boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.15), blurRadius: 12)],
                     ),
                     child: CircleAvatar(
                       backgroundColor: AppColors.card,
