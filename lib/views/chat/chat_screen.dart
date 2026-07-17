@@ -278,18 +278,34 @@ class _WelcomeView extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
-                shape: BoxShape.circle,
-                boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
-              ),
-              child: ShimmerGradient(
-                colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
-                child: const Icon(Icons.auto_awesome_rounded, size: 36),
-              ),
-            ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
+            subject.posterPath != null
+                ? Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: CachedNetworkImage(
+                        imageUrl: 'https://image.tmdb.org/t/p/w300${subject.posterPath}',
+                        width: 120,
+                        height: 180,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9), curve: Curves.easeOutCubic, duration: 600.ms)
+                : Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [Color(0xFF5C6BC0), Color(0xFF3949AB)]),
+                      shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: const Color(0xFF3949AB).withValues(alpha: 0.3), blurRadius: 20)],
+                    ),
+                    child: ShimmerGradient(
+                      colors: const [Colors.white, Color(0xFFCE93D8), Colors.white],
+                      child: const Icon(Icons.auto_awesome_rounded, size: 36),
+                    ),
+                  ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.7, 0.7), curve: Curves.elasticOut, duration: 800.ms),
             const SizedBox(height: 20),
             Text(
               'Ask about ${subject.title}',
