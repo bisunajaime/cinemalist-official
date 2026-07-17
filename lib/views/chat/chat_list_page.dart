@@ -179,6 +179,29 @@ class _ConversationTile extends StatelessWidget {
           ],
         ),
       ),
+      confirmDismiss: (_) async {
+        return await showDialog<bool>(
+          context: context,
+          builder: (_) => AlertDialog(
+            backgroundColor: AppColors.surface,
+            title: Text('Delete conversation?', style: Styles.mBold),
+            content: Text(
+              'This will permanently remove your chat about "${convo.subject.title}".',
+              style: Styles.mReg.copyWith(color: AppColors.textSecondary),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text('Cancel', style: Styles.mMed.copyWith(color: AppColors.textMuted)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: Text('Delete', style: Styles.mBold.copyWith(color: AppColors.error)),
+              ),
+            ],
+          ),
+        ) ?? false;
+      },
       onDismissed: (_) => context.read<ChatListCubit>().deleteConversation(convo.id),
       child: GestureDetector(
         onTap: () => Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: convo))),
