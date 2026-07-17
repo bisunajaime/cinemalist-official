@@ -19,10 +19,10 @@ class MovieCastWidget extends StatelessWidget {
 
     if (cubit.isLoading) {
       return SizedBox(
-        height: 160,
+        height: 190,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: 6,
+          itemCount: 5,
           itemBuilder: (_, __) => Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Shimmer.fromColors(
@@ -31,15 +31,17 @@ class MovieCastWidget extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    height: 120,
-                    width: 90,
+                    height: 100,
+                    width: 100,
                     decoration: BoxDecoration(
                       color: AppColors.card,
-                      borderRadius: BorderRadius.circular(10),
+                      shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Container(height: 10, width: 60, color: AppColors.card),
+                  Container(height: 10, width: 70, decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(4))),
+                  const SizedBox(height: 4),
+                  Container(height: 8, width: 50, decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(4))),
                 ],
               ),
             ),
@@ -52,19 +54,24 @@ class MovieCastWidget extends StatelessWidget {
 
     if (cast.isEmpty) {
       return Container(
-        height: 80,
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
           color: AppColors.card,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: Center(
-          child: Text('Cast not available', style: Styles.mMed.copyWith(color: AppColors.textMuted)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline_rounded, color: AppColors.textMuted, size: 28),
+            const SizedBox(width: 12),
+            Text('Cast not available', style: Styles.mMed.copyWith(color: AppColors.textMuted, fontSize: 14)),
+          ],
         ),
       );
     }
 
     return SizedBox(
-      height: 160,
+      height: 190,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: cast.length,
@@ -80,41 +87,64 @@ class MovieCastWidget extends StatelessWidget {
                 model: GenericActorModel.fromCastModel(actor),
               )),
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              width: 100,
+              margin: const EdgeInsets.only(right: 12),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      height: 120,
-                      width: 90,
-                      child: CachedNetworkImage(
-                        imageUrl: 'https://image.tmdb.org/t/p/w200${actor.profilePath}',
-                        fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => Image.asset(
-                          'assets/images/placeholder_actor.png',
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primaryLight.withValues(alpha: 0.2),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 42,
+                      backgroundColor: AppColors.card,
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: 'https://image.tmdb.org/t/p/w200${actor.profilePath}',
                           fit: BoxFit.cover,
+                          width: 84,
+                          height: 84,
+                          errorWidget: (_, __, ___) => Image.asset(
+                            'assets/images/placeholder_actor.png',
+                            fit: BoxFit.cover,
+                            width: 84,
+                            height: 84,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  SizedBox(
-                    width: 90,
-                    child: Text(
-                      actor.name ?? '',
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Styles.mMed.copyWith(fontSize: 10),
-                    ),
+                  const SizedBox(height: 8),
+                  Text(
+                    actor.name ?? '',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Styles.mBold.copyWith(fontSize: 11),
                   ),
+                  if (actor.character != null && actor.character!.isNotEmpty)
+                    Text(
+                      actor.character!,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Styles.mReg.copyWith(fontSize: 9, color: AppColors.textMuted),
+                    ),
                 ],
               ),
             ),
-          ).animate(delay: (40 * i).ms).fadeIn(duration: 250.ms).slideX(begin: 0.08, end: 0);
+          ).animate(delay: (50 * i).ms).fadeIn(duration: 250.ms).slideX(begin: 0.08, end: 0);
         },
       ),
     );

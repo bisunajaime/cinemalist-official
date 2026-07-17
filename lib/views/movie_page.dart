@@ -54,40 +54,42 @@ class _MoviePageState extends State<MoviePage> {
           create: (context) => SimilarMoviesCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
       ],
-      child: Scaffold(
-        body: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            _buildSliverAppBar(context),
-            _buildContent(),
-          ],
-        ),
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            FABSaveRecord<GenericMoviesModel>(
-              tag: 'movie-${widget.model!.id!}',
-              isSaved: context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
-              record: widget.model!,
-              onTap: (elem) async {
-                HapticFeedback.lightImpact();
-                _runner.run(() async {
-                  final rankingCubit = context.read<MovieRankingCubit>();
-                  await rankingCubit.removeRankingWithoutLetter(
-                      RankingModel.fromGenericMovieModel(elem));
-                  await context.read<MoviesWatchLaterCubit>().save(elem);
-                });
-              },
-            ),
-            const SizedBox(width: 8),
-            const FABGoHome(),
-          ],
+      child: Builder(
+        builder: (context) => Scaffold(
+          body: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              _buildSliverAppBar(context),
+              _buildContent(context),
+            ],
+          ),
+          floatingActionButton: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FABSaveRecord<GenericMoviesModel>(
+                tag: 'movie-${widget.model!.id!}',
+                isSaved: context.watch<MoviesWatchLaterCubit>().isSaved(widget.model!),
+                record: widget.model!,
+                onTap: (elem) async {
+                  HapticFeedback.lightImpact();
+                  _runner.run(() async {
+                    final rankingCubit = context.read<MovieRankingCubit>();
+                    await rankingCubit.removeRankingWithoutLetter(
+                        RankingModel.fromGenericMovieModel(elem));
+                    await context.read<MoviesWatchLaterCubit>().save(elem);
+                  });
+                },
+              ),
+              const SizedBox(width: 8),
+              const FABGoHome(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter _buildContent() {
+  SliverToBoxAdapter _buildContent(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -103,7 +105,7 @@ class _MoviePageState extends State<MoviePage> {
             GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
             const SizedBox(height: 12),
             // Metadata chips
-            _buildMetadataChips().animate().fadeIn(delay: 100.ms, duration: 400.ms),
+            _buildMetadataChips(context).animate().fadeIn(delay: 100.ms, duration: 400.ms),
             const SizedBox(height: 16),
             // Expandable overview
             ExpandableText(text: widget.model!.overview ?? '')
@@ -130,7 +132,7 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 
-  Widget _buildMetadataChips() {
+  Widget _buildMetadataChips(BuildContext context) {
     final movie = widget.model!;
     final infoCubit = context.watch<MovieInfoCubit>();
     final info = infoCubit.state;
@@ -191,11 +193,7 @@ class _MoviePageState extends State<MoviePage> {
       actions: [
         GestureDetector(
           onTap: () {
-            SharePlus.instance.share(
-              ShareParams(
-                text: 'Check out "${widget.model!.title}" on TMDB!\nhttps://www.themoviedb.org/movie/${widget.model!.id}',
-              ),
-            );
+            Share.share('Check out "${widget.model!.title}" on TMDB!\nhttps://www.themoviedb.org/movie/${widget.model!.id}');
           },
           child: Container(
             margin: const EdgeInsets.only(right: 12),

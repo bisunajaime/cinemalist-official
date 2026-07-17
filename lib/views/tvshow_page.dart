@@ -172,11 +172,7 @@ class _TvShowPageState extends State<TvShowPage> {
       actions: [
         GestureDetector(
           onTap: () {
-            SharePlus.instance.share(
-              ShareParams(
-                text: 'Check out "${widget.model!.name}" on TMDB!\nhttps://www.themoviedb.org/tv/${widget.model!.id}',
-              ),
-            );
+            Share.share('Check out "${widget.model!.name}" on TMDB!\nhttps://www.themoviedb.org/tv/${widget.model!.id}');
           },
           child: Container(
             margin: const EdgeInsets.only(right: 12),
