@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/tvshows/credits/tvshow_credits_bloc.dart';
 import 'package:cinemalist/bloc/tvshows/seasons/tvseasons_bloc.dart';
@@ -170,6 +171,18 @@ class _TvShowPageState extends State<TvShowPage> {
         ),
       ),
       actions: [
+        GestureDetector(
+          onTap: () => startTvShowChat(context, widget.model!),
+          child: Container(
+            margin: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3949AB).withValues(alpha: 0.7),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 16),
+          ),
+        ),
         GestureDetector(
           onTap: () {
             Share.share('Check out "${widget.model!.name}" on TMDB!\nhttps://www.themoviedb.org/tv/${widget.model!.id}');

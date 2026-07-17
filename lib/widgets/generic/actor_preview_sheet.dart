@@ -7,6 +7,7 @@ import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 
 Future<void> showActorPreview(
   BuildContext context,
@@ -90,10 +91,14 @@ class _ActorPreviewPagerState extends State<_ActorPreviewPager> {
               itemBuilder: (_, i) {
                 final a = widget.actors[i];
                 return _ActorContent(
-                  name: a.name ?? '', profilePath: a.profilePath, department: a.department, popularity: a.popularity,
+                  name: a.name ?? '', profilePath: a.profilePath, actorId: a.id, department: a.department, popularity: a.popularity,
                   onViewDetails: () {
                     Navigator.pop(context);
                     Navigator.push(widget.parentContext, AppRoutes.slideUp(ActorInfoPage(id: a.id, name: a.name, model: GenericActorModel.fromActorModel(a))));
+                  },
+                  onAskAI: () {
+                    Navigator.pop(context);
+                    startActorChat(widget.parentContext, a.name ?? '', a.id!, a.profilePath);
                   },
                 );
               },
@@ -154,11 +159,15 @@ class _GenericActorPreviewPagerState extends State<_GenericActorPreviewPager> {
               itemBuilder: (_, i) {
                 final a = widget.actors[i];
                 return _ActorContent(
-                  name: a.name ?? '', profilePath: a.profilePath,
+                  name: a.name ?? '', profilePath: a.profilePath, actorId: a.id,
                   onViewDetails: () {
                     Navigator.pop(context);
                     Navigator.push(widget.parentContext, AppRoutes.slideUp(ActorInfoPage(id: a.id, name: a.name, model: a)));
                   },
+                  onAskAI: a.id != null ? () {
+                    Navigator.pop(context);
+                    startActorChat(widget.parentContext, a.name ?? '', a.id!, a.profilePath);
+                  } : null,
                 );
               },
             ),
@@ -173,11 +182,13 @@ class _GenericActorPreviewPagerState extends State<_GenericActorPreviewPager> {
 class _ActorContent extends StatelessWidget {
   final String name;
   final String? profilePath;
+  final int? actorId;
   final String? department;
   final double? popularity;
   final VoidCallback onViewDetails;
+  final VoidCallback? onAskAI;
 
-  const _ActorContent({required this.name, this.profilePath, this.department, this.popularity, required this.onViewDetails});
+  const _ActorContent({required this.name, this.profilePath, this.actorId, this.department, this.popularity, required this.onViewDetails, this.onAskAI});
 
   @override
   Widget build(BuildContext context) {
@@ -215,13 +226,28 @@ class _ActorContent extends StatelessWidget {
             ],
           ).animate(delay: 150.ms).fadeIn(duration: 300.ms),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: onViewDetails,
-              style: FilledButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: Text('View Full Profile', style: Styles.mBold.copyWith(fontSize: 14)),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: onViewDetails,
+                  style: FilledButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  child: Text('View Profile', style: Styles.mBold.copyWith(fontSize: 13)),
+                ),
+              ),
+              if (onAskAI != null) ...[
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: onAskAI,
+                  style: FilledButton.styleFrom(backgroundColor: const Color(0xFF3949AB), padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    const Icon(Icons.auto_awesome_rounded, size: 16, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Text('AI', style: Styles.mBold.copyWith(fontSize: 13)),
+                  ]),
+                ),
+              ],
+            ],
           ).animate(delay: 200.ms).fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0),
         ],
       ),

@@ -5,7 +5,9 @@ import 'package:cinemalist/bloc/theme/theme_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/about_page.dart';
+import 'package:cinemalist/views/chat/chat_settings_page.dart';
 import 'package:cinemalist/views/ranking_page.dart';
+import 'package:cinemalist/views/saved_records_view.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -33,7 +35,7 @@ class MorePage extends StatelessWidget {
           ),
         ];
       },
-      body: _MoreBody(),
+      body: const _MoreBody(),
     );
   }
 
@@ -44,18 +46,8 @@ class MorePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Text(
-            'EXPLORE',
-            style: Styles.mBold.copyWith(
-              color: context.primaryLightColor,
-              fontSize: 10,
-              letterSpacing: 2,
-            ),
-          ),
-          Text(
-            'More',
-            style: Styles.heading.copyWith(fontSize: 28, color: context.textPrimary),
-          ),
+          Text('EXPLORE', style: Styles.mBold.copyWith(color: context.primaryLightColor, fontSize: 10, letterSpacing: 2)),
+          Text('More', style: Styles.heading.copyWith(fontSize: 28, color: context.textPrimary)),
         ],
       ),
     );
@@ -63,34 +55,51 @@ class MorePage extends StatelessWidget {
 }
 
 class _MoreBody extends StatelessWidget {
+  const _MoreBody();
+
   @override
   Widget build(BuildContext context) {
     final themeCubit = context.watch<ThemeCubit>();
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           _FeatureCard(
-            title: 'Rank your favorites',
+            title: 'Saved Items',
             subtitle: 'Movies, TV Shows & Actors',
-            icon: Icons.bar_chart_rounded,
-            gradient: [const Color(0xFFAD1457), const Color(0xFF880E4F)],
-            onTap: () => Navigator.push(context, AppRoutes.slideUp(const RankingPage())),
+            icon: Icons.bookmark_rounded,
+            gradient: const [Color(0xFFD4A039), Color(0xFFB8860B)],
+            onTap: () => Navigator.push(context, AppRoutes.slideUp(const SavedRecordsPage())),
           ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
+          _FeatureCard(
+            title: 'Rank your favorites',
+            subtitle: 'Create tier lists',
+            icon: Icons.bar_chart_rounded,
+            gradient: const [Color(0xFFAD1457), Color(0xFF880E4F)],
+            onTap: () => Navigator.push(context, AppRoutes.slideUp(const RankingPage())),
+          ).animate(delay: 80.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+          const SizedBox(height: 12),
+          _FeatureCard(
+            title: 'AI Chat Settings',
+            subtitle: 'API key & model selection',
+            icon: Icons.settings_rounded,
+            gradient: const [Color(0xFF5C6BC0), Color(0xFF3949AB)],
+            onTap: () => Navigator.push(context, AppRoutes.slideUp(const ChatSettingsPage())),
+          ).animate(delay: 160.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+          const SizedBox(height: 12),
           _FeatureCard(
             title: 'About Cinemalist',
             subtitle: 'Credits & Attribution',
             icon: Icons.info_outline_rounded,
-            gradient: [const Color(0xFF0277BD), const Color(0xFF01579B)],
+            gradient: const [Color(0xFF0277BD), Color(0xFF01579B)],
             onTap: () => Navigator.push(context, AppRoutes.slideUp(const AboutPage())),
-          ).animate(delay: 100.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
-          const SizedBox(height: 16),
+          ).animate(delay: 240.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+          const SizedBox(height: 12),
           _ThemeToggleCard(
             isDark: themeCubit.isDark,
             onToggle: () => themeCubit.toggle(),
-          ).animate(delay: 200.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+          ).animate(delay: 320.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
         ],
       ),
     );
@@ -100,7 +109,6 @@ class _MoreBody extends StatelessWidget {
 class _ThemeToggleCard extends StatelessWidget {
   final bool isDark;
   final VoidCallback onToggle;
-
   const _ThemeToggleCard({required this.isDark, required this.onToggle});
 
   @override
@@ -115,27 +123,17 @@ class _ThemeToggleCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: context.primaryColor.withValues(alpha: 0.2),
-            ),
+            border: Border.all(color: context.primaryColor.withValues(alpha: 0.2)),
           ),
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: context.primaryColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: BoxDecoration(color: context.primaryColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
-                  child: Icon(
-                    isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                    key: ValueKey(isDark),
-                    color: context.primaryLightColor,
-                    size: 28,
-                  ),
+                  child: Icon(isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded, key: ValueKey(isDark), color: context.primaryLightColor, size: 28),
                 ),
               ),
               const SizedBox(width: 16),
@@ -143,26 +141,15 @@ class _ThemeToggleCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      isDark ? 'Dark Mode' : 'Light Mode',
-                      style: Styles.mBold.copyWith(fontSize: 16, color: context.textPrimary),
-                    ),
+                    Text(isDark ? 'Dark Mode' : 'Light Mode', style: Styles.mBold.copyWith(fontSize: 16, color: context.textPrimary)),
                     const SizedBox(height: 4),
-                    Text(
-                      isDark ? 'Tap to switch to light' : 'Tap to switch to dark',
-                      style: Styles.mReg.copyWith(fontSize: 12, color: context.textSecondary),
-                    ),
+                    Text(isDark ? 'Tap to switch to light' : 'Tap to switch to dark', style: Styles.mReg.copyWith(fontSize: 12, color: context.textSecondary)),
                   ],
                 ),
               ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                child: Icon(
-                  isDark ? Icons.toggle_off_rounded : Icons.toggle_on_rounded,
-                  key: ValueKey(isDark),
-                  color: context.primaryLightColor,
-                  size: 36,
-                ),
+                child: Icon(isDark ? Icons.toggle_off_rounded : Icons.toggle_on_rounded, key: ValueKey(isDark), color: context.primaryLightColor, size: 36),
               ),
             ],
           ),
@@ -178,14 +165,7 @@ class _FeatureCard extends StatelessWidget {
   final IconData icon;
   final List<Color> gradient;
   final VoidCallback onTap;
-
-  const _FeatureCard({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.gradient,
-    required this.onTap,
-  });
+  const _FeatureCard({required this.title, required this.subtitle, required this.icon, required this.gradient, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -197,29 +177,16 @@ class _FeatureCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Ink(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: gradient,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: LinearGradient(colors: gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: gradient.first.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: gradient.first.withValues(alpha: 0.3), blurRadius: 12, offset: const Offset(0, 6))],
           ),
           padding: const EdgeInsets.all(20),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
                 child: Icon(icon, color: Colors.white, size: 28),
               ),
               const SizedBox(width: 16),

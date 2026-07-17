@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:cinemalist/bloc/movies/info/movie_info_cubit.dart';
 import 'package:cinemalist/bloc/movies/similar/similar_movies_bloc.dart';
@@ -191,6 +192,18 @@ class _MoviePageState extends State<MoviePage> {
         ),
       ),
       actions: [
+        GestureDetector(
+          onTap: () => startMovieChat(context, widget.model!),
+          child: Container(
+            margin: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF3949AB).withValues(alpha: 0.7),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 16),
+          ),
+        ),
         GestureDetector(
           onTap: () {
             Share.share('Check out "${widget.model!.title}" on TMDB!\nhttps://www.themoviedb.org/movie/${widget.model!.id}');

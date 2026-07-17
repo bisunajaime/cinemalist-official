@@ -9,6 +9,7 @@ import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/genre_utils.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 
 Future<void> showTvShowPreview(
   BuildContext context,
@@ -170,16 +171,26 @@ class _TvShowContent extends StatelessWidget {
           if (show.overview != null && show.overview!.isNotEmpty)
             Text(show.overview!, maxLines: 4, overflow: TextOverflow.ellipsis, style: Styles.mReg.copyWith(fontSize: 13, height: 1.5, color: AppColors.textSecondary)),
           const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(parentContext, AppRoutes.slideUp(TvShowPage(model: show)));
-              },
-              style: FilledButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-              child: Text('View Full Details', style: Styles.mBold.copyWith(fontSize: 14)),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  onPressed: () { Navigator.pop(context); Navigator.push(parentContext, AppRoutes.slideUp(TvShowPage(model: show))); },
+                  style: FilledButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  child: Text('View Details', style: Styles.mBold.copyWith(fontSize: 13)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              FilledButton(
+                onPressed: () { Navigator.pop(context); startTvShowChat(parentContext, show); },
+                style: FilledButton.styleFrom(backgroundColor: const Color(0xFF3949AB), padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.auto_awesome_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 4),
+                  Text('AI', style: Styles.mBold.copyWith(fontSize: 13)),
+                ]),
+              ),
+            ],
           ),
           SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
         ],

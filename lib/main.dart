@@ -11,6 +11,7 @@ import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
 import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
+import 'package:cinemalist/bloc/chat/chat_cubit.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/bloc/theme/theme_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
@@ -22,7 +23,7 @@ import 'package:cinemalist/views/home_page.dart';
 import 'package:cinemalist/views/splash_page.dart';
 import 'package:cinemalist/views/more_page.dart';
 import 'package:cinemalist/views/movies_page.dart';
-import 'package:cinemalist/views/saved_records_view.dart';
+import 'package:cinemalist/views/chat/chat_list_page.dart';
 import 'package:cinemalist/views/search_page.dart';
 import 'package:cinemalist/views/tvshows_page.dart';
 
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => ActorRankingCubit()),
           BlocProvider(create: (_) => TvShowRankingCubit()),
           BlocProvider(create: (_) => RankingFilterCubit()),
+          BlocProvider(create: (_) => ChatListCubit()),
         ],
         child: BlocBuilder<ThemeCubit, ThemeMode>(
           builder: (context, themeMode) {
@@ -151,7 +153,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             HomePage(),
             MoviesPage(),
             TvShowsPage(),
-            SavedRecordsPage(),
+            ChatListPage(),
             SearchPage(),
             MorePage(),
           ],
@@ -195,9 +197,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   label: 'TV',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.bookmark_outline_rounded),
-                  activeIcon: Icon(Icons.bookmark_rounded),
-                  label: 'Saved',
+                  icon: Icon(Icons.chat_bubble_outline_rounded),
+                  activeIcon: Icon(Icons.chat_bubble_rounded),
+                  label: 'Chat',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.search_rounded),

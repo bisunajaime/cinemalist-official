@@ -15,6 +15,7 @@ import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/widgets/actor_info/actor_info_widget.dart';
 import 'package:cinemalist/widgets/actor_info/actor_movies_widget.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
 import 'package:cinemalist/widgets/generic/fab_save_record.dart';
 import 'package:cinemalist/styles/styles.dart';
@@ -54,6 +55,14 @@ class _ActorInfoPageState extends State<ActorInfoPage> {
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            FloatingActionButton(
+              heroTag: 'ai-${widget.id}',
+              elevation: 4,
+              backgroundColor: const Color(0xFF3949AB),
+              onPressed: () => startActorChat(context, widget.name ?? '', widget.id!, widget.model.profilePath),
+              child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 8),
             FABSaveRecord<GenericActorModel>(
               tag: 'actor-${widget.id!}',
               isSaved: context.watch<SavedActorsCubit>().isSaved(widget.model),
