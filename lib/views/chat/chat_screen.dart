@@ -5,8 +5,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/chat/chat_cubit.dart';
 import 'package:cinemalist/models/chat/chat_models.dart';
+import 'package:cinemalist/models/generic_movies_model.dart';
+import 'package:cinemalist/models/tvshow_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
+import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/views/tvshow_page.dart';
+import 'package:cinemalist/models/generic_actor_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation conversation;
@@ -46,6 +52,47 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
   }
 
+  void _navigateToDetail(BuildContext context, ChatSubject subject) {
+    switch (subject.type) {
+      case ChatSubjectType.movie:
+        Navigator.push(context, AppRoutes.slideUp(MoviePage(
+          model: GenericMoviesModel(
+            id: subject.id,
+            title: subject.title,
+            posterPath: subject.posterPath,
+            overview: subject.overview,
+            voteAverage: subject.rating,
+            genreIds: [],
+          ),
+          tag: 'chat${subject.posterPath}',
+        )));
+        break;
+      case ChatSubjectType.tvShow:
+        Navigator.push(context, AppRoutes.slideUp(TvShowPage(
+          model: TVShowModel(
+            id: subject.id,
+            name: subject.title,
+            originalName: subject.title,
+            posterPath: subject.posterPath,
+            overview: subject.overview,
+            voteAverage: subject.rating,
+            firstAirDate: null,
+            popularity: null,
+            voteCount: null,
+            genreIds: [],
+          ),
+        )));
+        break;
+      case ChatSubjectType.actor:
+        Navigator.push(context, AppRoutes.slideUp(ActorInfoPage(
+          id: subject.id,
+          name: subject.title,
+          model: GenericActorModel(subject.id, subject.title, subject.posterPath),
+        )));
+        break;
+    }
+  }
+
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
@@ -66,7 +113,9 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Scaffold(
         appBar: AppBar(
           titleSpacing: 0,
-          title: Row(
+          title: GestureDetector(
+            onTap: () => _navigateToDetail(context, subject),
+            child: Row(
             children: [
               if (subject.posterPath != null)
                 Container(
@@ -100,8 +149,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ],
                 ),
               ),
+              const SizedBox(width: 4),
+              Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.textMuted),
             ],
-          ),
+          )),
         ),
         body: Column(
           children: [
