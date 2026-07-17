@@ -193,62 +193,32 @@ class _ChatScreenState extends State<ChatScreen> {
                     );
                   }
 
+                  final showSuggestions = state.suggestions.isNotEmpty && !state.isStreaming;
+                  final itemCount = messages.length + (state.isStreaming ? 1 : 0) + (showSuggestions ? 1 : 0);
+
                   return ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.fromLTRB(14, 16, 14, 8),
-                    itemCount: messages.length + (state.isStreaming ? 1 : 0),
+                    itemCount: itemCount,
                     itemBuilder: (context, i) {
-                      if (i == messages.length && state.isStreaming) {
+                      if (i < messages.length) {
+                        final msg = messages[i];
+                        final showAvatar = msg.role == ChatRole.assistant &&
+                            (i == 0 || messages[i - 1].role != ChatRole.assistant);
+                        return _MessageBubble(message: msg, showAvatar: showAvatar, posterPath: subject.posterPath);
+                      }
+                      if (state.isStreaming && i == messages.length) {
                         return _StreamingBubble(content: state.streamingContent);
                       }
-                      final msg = messages[i];
-                      final showAvatar = msg.role == ChatRole.assistant &&
-                          (i == 0 || messages[i - 1].role != ChatRole.assistant);
-                      return _MessageBubble(message: msg, showAvatar: showAvatar, posterPath: subject.posterPath);
+                      // Inline suggestions after last message
+                      return _InlineSuggestions(
+                        suggestions: state.suggestions,
+                        onTap: _send,
+                      );
                     },
                   );
                 },
               ),
-            ),
-            // Suggestions
-            BlocBuilder<ActiveChatCubit, ActiveChatState>(
-              builder: (context, state) {
-                final messages = state.conversation?.messages.where((m) => m.role != ChatRole.system).toList() ?? [];
-                if (state.suggestions.isNotEmpty && !state.isStreaming && messages.isNotEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.only(top: 6, bottom: 6),
-                    child: SizedBox(
-                      height: 34,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (_, __) => const SizedBox(width: 6),
-                        itemCount: state.suggestions.length,
-                        itemBuilder: (_, i) {
-                          return GestureDetector(
-                            onTap: () => _send(state.suggestions[i]),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppColors.card,
-                                borderRadius: BorderRadius.circular(17),
-                                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
-                              ),
-                              child: Text(
-                                state.suggestions[i],
-                                style: Styles.mMed.copyWith(fontSize: 11, color: AppColors.primaryLight),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.15, end: 0);
-                }
-                return const SizedBox.shrink();
-              },
             ),
             // Input
             BlocBuilder<ActiveChatCubit, ActiveChatState>(
@@ -536,6 +506,50 @@ class _StreamingBubble extends StatelessWidget {
     final lines = content.split('\n');
     lines.removeWhere((l) => l.trim().startsWith('SUGGESTIONS:'));
     return lines.join('\n').trim();
+  }
+}
+
+class _InlineSuggestions extends StatelessWidget {
+  final List<String> suggestions;
+  final Function(String) onTap;
+
+  const _InlineSuggestions({required this.suggestions, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 32, top: 4, bottom: 8),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: suggestions.asMap().entries.map((entry) {
+          return GestureDetector(
+            onTap: () => onTap(entry.value),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.reply_rounded, size: 12, color: AppColors.primaryLight),
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      entry.value,
+                      style: Styles.mMed.copyWith(fontSize: 12, color: AppColors.primaryLight),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ).animate(delay: (80 * entry.key).ms).fadeIn(duration: 250.ms).slideY(begin: 0.1, end: 0);
+        }).toList(),
+      ),
+    );
   }
 }
 

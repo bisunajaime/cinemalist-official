@@ -119,7 +119,9 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
       emit(ActiveChatState(conversation: convo, isLoadingSuggestions: true, suggestions: []));
       _generateStarterSuggestions(convo.subject);
     } else {
-      final suggestions = _extractSuggestions(convo);
+      final suggestions = convo.lastSuggestions.isNotEmpty
+          ? convo.lastSuggestions
+          : _extractSuggestions(convo);
       emit(ActiveChatState(conversation: convo, suggestions: suggestions));
     }
   }
@@ -215,7 +217,11 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
 
       final assistantMsg = ChatMessage.assistant(parsed.content);
       final finalMessages = [...updatedMessages, assistantMsg];
-      final finalConvo = convo.copyWith(messages: finalMessages, updatedAt: DateTime.now());
+      final finalConvo = convo.copyWith(
+        messages: finalMessages,
+        lastSuggestions: parsed.suggestions,
+        updatedAt: DateTime.now(),
+      );
 
       _safeEmit(state.copyWith(
         conversation: finalConvo,

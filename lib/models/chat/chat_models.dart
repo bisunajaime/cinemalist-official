@@ -118,6 +118,7 @@ class Conversation {
   final String id;
   final ChatSubject subject;
   final List<ChatMessage> messages;
+  final List<String> lastSuggestions;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -125,6 +126,7 @@ class Conversation {
     required this.id,
     required this.subject,
     required this.messages,
+    this.lastSuggestions = const [],
     required this.createdAt,
     required this.updatedAt,
   });
@@ -148,11 +150,12 @@ class Conversation {
     return text.length > 80 ? '${text.substring(0, 80)}...' : text;
   }
 
-  Conversation copyWith({List<ChatMessage>? messages, DateTime? updatedAt}) {
+  Conversation copyWith({List<ChatMessage>? messages, List<String>? lastSuggestions, DateTime? updatedAt}) {
     return Conversation(
       id: id,
       subject: subject,
       messages: messages ?? this.messages,
+      lastSuggestions: lastSuggestions ?? this.lastSuggestions,
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -162,6 +165,7 @@ class Conversation {
         'id': id,
         'subject': subject.toJson(),
         'messages': messages.map((m) => m.toJson()).toList(),
+        'lastSuggestions': lastSuggestions,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt.toIso8601String(),
       };
@@ -170,6 +174,7 @@ class Conversation {
         id: json['id'],
         subject: ChatSubject.fromJson(json['subject']),
         messages: (json['messages'] as List).map((m) => ChatMessage.fromJson(m)).toList(),
+        lastSuggestions: (json['lastSuggestions'] as List?)?.cast<String>() ?? [],
         createdAt: DateTime.parse(json['createdAt']),
         updatedAt: DateTime.parse(json['updatedAt']),
       );
