@@ -19,6 +19,7 @@ import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/home_page.dart';
+import 'package:cinemalist/views/splash_page.dart';
 import 'package:cinemalist/views/more_page.dart';
 import 'package:cinemalist/views/movies_page.dart';
 import 'package:cinemalist/views/saved_records_view.dart';
@@ -82,7 +83,7 @@ class MyApp extends StatelessWidget {
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: themeMode,
-              home: const MainPage(),
+              home: const SplashPage(child: MainPage()),
             );
           },
         ),
