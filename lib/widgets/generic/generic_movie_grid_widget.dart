@@ -7,6 +7,7 @@ import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
+import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class GenericMovieGridWidget extends StatefulWidget {
   final PagedTMDBCubit pagedCubit;
@@ -117,6 +118,7 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
 
             return GestureDetector(
               onTap: () => widget.onTap(element),
+              onLongPress: () => showMoviePreview(context, element),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Stack(

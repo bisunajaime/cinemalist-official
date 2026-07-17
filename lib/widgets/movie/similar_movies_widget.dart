@@ -8,6 +8,7 @@ import 'package:cinemalist/models/generic_movies_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class SimilarMoviesWidget extends StatelessWidget {
   const SimilarMoviesWidget({super.key});
@@ -81,6 +82,7 @@ class _SimilarMoviesListState extends State<_SimilarMoviesList> {
                 tag: 'similar${movie.posterPath}',
               )),
             ),
+            onLongPress: () => showMoviePreview(context, movie),
             child: Container(
               width: 140,
               margin: const EdgeInsets.only(right: 12),

@@ -6,6 +6,7 @@ import 'package:cinemalist/barrels/upcoming_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class UpcomingMoviesListWidget extends StatelessWidget {
   const UpcomingMoviesListWidget({super.key});
@@ -60,6 +61,7 @@ class UpcomingMoviesListWidget extends StatelessWidget {
                 tag: 'upcoming${movie.posterPath}',
               )),
             ),
+            onLongPress: () => showMoviePreview(context, movie),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(

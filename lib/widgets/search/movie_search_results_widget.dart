@@ -5,6 +5,7 @@ import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class MovieSearchResultsWidget extends StatelessWidget {
   const MovieSearchResultsWidget({super.key});
@@ -59,6 +60,7 @@ class MovieSearchResultsWidget extends StatelessWidget {
                 tag: 'search-movie${movie.posterPath}',
               )),
             ),
+            onLongPress: () => showMoviePreview(context, movie),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(

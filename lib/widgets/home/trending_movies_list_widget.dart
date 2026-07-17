@@ -6,6 +6,7 @@ import 'package:cinemalist/barrels/trending_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
+import 'package:cinemalist/widgets/generic/movie_preview_sheet.dart';
 
 class TrendingMoviesListWidget extends StatelessWidget {
   const TrendingMoviesListWidget({super.key});
@@ -62,6 +63,7 @@ class TrendingMoviesListWidget extends StatelessWidget {
                 tag: 'trending${movie.posterPath}',
               )),
             ),
+            onLongPress: () => showMoviePreview(context, movie),
             child: Container(
               width: 160,
               margin: const EdgeInsets.all(4),
