@@ -234,6 +234,9 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
   }
 
   List<String> _defaultSuggestions(ChatSubject subject) {
+    if (subject.type == ChatSubjectType.general) {
+      return ['Recommend a movie for tonight', 'Best TV shows of 2024', 'Top actors to watch', 'Hidden gem suggestions'];
+    }
     if (subject.type == ChatSubjectType.actor) {
       return ['What are their best movies?', 'Tell me about their career', 'Any upcoming projects?'];
     }

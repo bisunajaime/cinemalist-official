@@ -2,7 +2,7 @@ import 'dart:convert';
 
 enum ChatRole { user, assistant, system }
 
-enum ChatSubjectType { movie, tvShow, actor }
+enum ChatSubjectType { movie, tvShow, actor, general }
 
 class ChatMessage {
   final String id;
@@ -100,10 +100,14 @@ class ChatSubject {
   String get systemPrompt {
     final buf = StringBuffer();
     buf.writeln('You are a knowledgeable and friendly movie/TV expert chatbot in the Cinemalist app.');
-    buf.writeln('The user wants to discuss: "$title" (${type == ChatSubjectType.movie ? 'Movie' : type == ChatSubjectType.tvShow ? 'TV Show' : 'Actor'}).');
-    if (overview != null && overview!.isNotEmpty) buf.writeln('Overview: $overview');
-    if (rating != null) buf.writeln('Rating: $rating/10');
-    if (extraContext != null && extraContext!.isNotEmpty) buf.writeln('Additional info: $extraContext');
+    if (type == ChatSubjectType.general) {
+      buf.writeln('The user wants to chat about movies, TV shows, or actors in general. Help them discover, discuss, and get recommendations.');
+    } else {
+      buf.writeln('The user wants to discuss: "$title" (${type == ChatSubjectType.movie ? 'Movie' : type == ChatSubjectType.tvShow ? 'TV Show' : 'Actor'}).');
+      if (overview != null && overview!.isNotEmpty) buf.writeln('Overview: $overview');
+      if (rating != null) buf.writeln('Rating: $rating/10');
+      if (extraContext != null && extraContext!.isNotEmpty) buf.writeln('Additional info: $extraContext');
+    }
     buf.writeln('Be concise, engaging, and spoiler-aware. If the user asks about spoilers, warn them first.');
     buf.writeln('After each response, suggest 2-3 short follow-up questions the user might want to ask, formatted as a JSON array on the last line prefixed with "SUGGESTIONS:" like: SUGGESTIONS:["Question 1","Question 2","Question 3"]');
     return buf.toString();

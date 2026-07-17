@@ -9,6 +9,7 @@ import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/chat/chat_screen.dart';
 import 'package:cinemalist/views/chat/chat_settings_page.dart';
+import 'package:cinemalist/widgets/chat/start_chat_button.dart';
 
 class ChatListPage extends StatefulWidget {
   const ChatListPage();
@@ -65,7 +66,14 @@ class _ChatListPageState extends State<ChatListPage>
           ),
         ];
       },
-      body: BlocBuilder<ChatListCubit, ChatState>(
+      body: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          heroTag: 'new-chat',
+          backgroundColor: const Color(0xFF3949AB),
+          onPressed: () => _startGeneralChat(context),
+          child: const Icon(Icons.add_rounded, color: Colors.white),
+        ),
+        body: BlocBuilder<ChatListCubit, ChatState>(
         builder: (context, state) {
           if (state.conversations.isEmpty) {
             return Center(
@@ -108,7 +116,21 @@ class _ChatListPageState extends State<ChatListPage>
           );
         },
       ),
+      ),
     );
+  }
+
+  void _startGeneralChat(BuildContext context) async {
+    final subject = ChatSubject(
+      id: DateTime.now().microsecondsSinceEpoch,
+      title: 'Movie Chat',
+      type: ChatSubjectType.general,
+    );
+    final listCubit = context.read<ChatListCubit>();
+    final convo = await listCubit.createConversation(subject);
+    if (context.mounted) {
+      Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: convo)));
+    }
   }
 
   @override
@@ -125,12 +147,16 @@ class _ConversationTile extends StatelessWidget {
         ? 'Movie'
         : convo.subject.type == ChatSubjectType.tvShow
             ? 'TV Show'
-            : 'Actor';
+            : convo.subject.type == ChatSubjectType.actor
+                ? 'Actor'
+                : 'General';
     final typeIcon = convo.subject.type == ChatSubjectType.movie
         ? Icons.movie_rounded
         : convo.subject.type == ChatSubjectType.tvShow
             ? Icons.tv_rounded
-            : Icons.person_rounded;
+            : convo.subject.type == ChatSubjectType.actor
+                ? Icons.person_rounded
+                : Icons.auto_awesome_rounded;
     final msgCount = convo.messages.where((m) => m.role != ChatRole.system).length;
 
     return Dismissible(

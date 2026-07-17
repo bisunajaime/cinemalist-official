@@ -114,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           titleSpacing: 0,
           title: GestureDetector(
-            onTap: () => _navigateToDetail(context, subject),
+            onTap: subject.type != ChatSubjectType.general ? () => _navigateToDetail(context, subject) : null,
             child: Row(
             children: [
               if (subject.posterPath != null)
@@ -143,14 +143,16 @@ class _ChatScreenState extends State<ChatScreen> {
                       style: Styles.mBold.copyWith(fontSize: 15),
                     ),
                     Text(
-                      subject.type == ChatSubjectType.movie ? 'Movie' : subject.type == ChatSubjectType.tvShow ? 'TV Show' : 'Actor',
+                      subject.type == ChatSubjectType.movie ? 'Movie' : subject.type == ChatSubjectType.tvShow ? 'TV Show' : subject.type == ChatSubjectType.actor ? 'Actor' : 'General Chat',
                       style: Styles.mReg.copyWith(fontSize: 10, color: AppColors.textMuted),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.textMuted),
+              if (subject.type != ChatSubjectType.general) ...[
+                const SizedBox(width: 4),
+                Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.textMuted),
+              ],
             ],
           )),
         ),
