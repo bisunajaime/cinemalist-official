@@ -128,6 +128,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     return _WelcomeView(
                       subject: subject,
                       suggestions: state.suggestions,
+                      isLoadingSuggestions: state.isLoadingSuggestions,
                       onSuggestionTap: _send,
                     );
                   }
@@ -206,9 +207,10 @@ class _ChatScreenState extends State<ChatScreen> {
 class _WelcomeView extends StatelessWidget {
   final ChatSubject subject;
   final List<String> suggestions;
+  final bool isLoadingSuggestions;
   final Function(String) onSuggestionTap;
 
-  const _WelcomeView({required this.subject, required this.suggestions, required this.onSuggestionTap});
+  const _WelcomeView({required this.subject, required this.suggestions, this.isLoadingSuggestions = false, required this.onSuggestionTap});
 
   @override
   Widget build(BuildContext context) {
@@ -239,6 +241,15 @@ class _WelcomeView extends StatelessWidget {
               style: Styles.mReg.copyWith(fontSize: 13, color: AppColors.textMuted),
             ).animate(delay: 300.ms).fadeIn(duration: 400.ms),
             const SizedBox(height: 28),
+            if (isLoadingSuggestions)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primaryLight)),
+                  const SizedBox(width: 10),
+                  Text('Generating questions...', style: Styles.mReg.copyWith(fontSize: 12, color: AppColors.textMuted)),
+                ],
+              ).animate().fadeIn(duration: 300.ms),
             if (suggestions.isNotEmpty)
               Wrap(
                 spacing: 8,

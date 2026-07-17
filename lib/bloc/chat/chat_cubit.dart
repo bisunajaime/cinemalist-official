@@ -56,6 +56,7 @@ class ChatListCubit extends Cubit<ChatState> {
 class ActiveChatState {
   final Conversation? conversation;
   final bool isStreaming;
+  final bool isLoadingSuggestions;
   final String streamingContent;
   final List<String> suggestions;
   final String? error;
@@ -63,6 +64,7 @@ class ActiveChatState {
   const ActiveChatState({
     this.conversation,
     this.isStreaming = false,
+    this.isLoadingSuggestions = false,
     this.streamingContent = '',
     this.suggestions = const [],
     this.error,
@@ -71,6 +73,7 @@ class ActiveChatState {
   ActiveChatState copyWith({
     Conversation? conversation,
     bool? isStreaming,
+    bool? isLoadingSuggestions,
     String? streamingContent,
     List<String>? suggestions,
     String? error,
@@ -78,6 +81,7 @@ class ActiveChatState {
     return ActiveChatState(
       conversation: conversation ?? this.conversation,
       isStreaming: isStreaming ?? this.isStreaming,
+      isLoadingSuggestions: isLoadingSuggestions ?? this.isLoadingSuggestions,
       streamingContent: streamingContent ?? this.streamingContent,
       suggestions: suggestions ?? this.suggestions,
       error: error,
@@ -98,8 +102,60 @@ class ActiveChatCubit extends Cubit<ActiveChatState> {
         super(const ActiveChatState());
 
   void loadConversation(Conversation convo) {
-    final suggestions = _extractSuggestions(convo);
-    emit(ActiveChatState(conversation: convo, suggestions: suggestions));
+    if (convo.messages.isEmpty) {
+      emit(ActiveChatState(conversation: convo, isLoadingSuggestions: true, suggestions: _defaultSuggestions(convo.subject)));
+      _generateStarterSuggestions(convo.subject);
+    } else {
+      final suggestions = _extractSuggestions(convo);
+      emit(ActiveChatState(conversation: convo, suggestions: suggestions));
+    }
+  }
+
+  Future<void> _generateStarterSuggestions(ChatSubject subject) async {
+    try {
+      final apiKey = await _settings.getApiKey();
+      if (apiKey == null || apiKey.isEmpty) {
+        emit(state.copyWith(isLoadingSuggestions: false));
+        return;
+      }
+      final model = await _settings.getModel();
+      final prompt = ChatMessage.user(
+        'Generate exactly 4 short, engaging conversation starter questions a user might ask about "${subject.title}" '
+        '(${subject.type == ChatSubjectType.movie ? "a movie" : subject.type == ChatSubjectType.tvShow ? "a TV show" : "an actor"}). '
+        'Return ONLY a JSON array of strings, nothing else. Example: ["Question 1","Question 2","Question 3","Question 4"]',
+      );
+      final buffer = StringBuffer();
+      await for (final chunk in _api.streamCompletion(
+        apiKey: apiKey,
+        model: model,
+        messages: [prompt],
+      )) {
+        buffer.write(chunk);
+      }
+      final raw = buffer.toString().trim();
+      try {
+        final parsed = (jsonDecode(raw) as List).cast<String>();
+        if (parsed.isNotEmpty) {
+          emit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
+          return;
+        }
+      } catch (_) {
+        // Try extracting JSON array from response
+        final match = RegExp(r'\[.*\]', dotAll: true).firstMatch(raw);
+        if (match != null) {
+          try {
+            final parsed = (jsonDecode(match.group(0)!) as List).cast<String>();
+            if (parsed.isNotEmpty) {
+              emit(state.copyWith(suggestions: parsed, isLoadingSuggestions: false));
+              return;
+            }
+          } catch (_) {}
+        }
+      }
+      emit(state.copyWith(isLoadingSuggestions: false));
+    } catch (_) {
+      emit(state.copyWith(isLoadingSuggestions: false));
+    }
   }
 
   Future<void> sendMessage(String content) async {
