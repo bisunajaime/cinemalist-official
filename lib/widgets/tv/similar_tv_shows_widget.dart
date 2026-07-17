@@ -5,6 +5,7 @@ import 'package:cinemalist/bloc/tvshows/similar/similar_tv_bloc.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
+import 'package:cinemalist/widgets/generic/tvshow_preview_sheet.dart';
 
 class SimilarTvShowsWidget extends StatefulWidget {
   const SimilarTvShowsWidget({Key? key}) : super(key: key);
@@ -74,6 +75,7 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
                 context,
                 AppRoutes.slideUp(TvShowPage(model: similarTvShows[i])),
               ),
+              onLongPress: () => showTvShowPreview(context, similarTvShows[i]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

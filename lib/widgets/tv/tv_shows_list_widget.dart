@@ -5,6 +5,7 @@ import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
 import 'package:cinemalist/widgets/generic/generic_movie_grid_widget.dart';
+import 'package:cinemalist/widgets/generic/tvshow_preview_sheet.dart';
 
 class TvShowsListWidget extends StatelessWidget {
   const TvShowsListWidget({super.key});
@@ -17,11 +18,9 @@ class TvShowsListWidget extends StatelessWidget {
       pagedCubit: pagedCubit,
       localCubit: localCubit,
       onTap: (element) {
-        Navigator.push(
-          context,
-          AppRoutes.slideUp(TvShowPage(model: element)),
-        );
+        Navigator.push(context, AppRoutes.slideUp(TvShowPage(model: element)));
       },
+      onLongPress: (element) => showTvShowPreview(context, element),
     );
   }
 }

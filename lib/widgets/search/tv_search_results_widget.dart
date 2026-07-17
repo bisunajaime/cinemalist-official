@@ -5,6 +5,7 @@ import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
+import 'package:cinemalist/widgets/generic/tvshow_preview_sheet.dart';
 
 class TvSearchResultsWidget extends StatelessWidget {
   const TvSearchResultsWidget({super.key});
@@ -56,6 +57,7 @@ class TvSearchResultsWidget extends StatelessWidget {
               context,
               AppRoutes.slideUp(TvShowPage(model: show)),
             ),
+            onLongPress: () => showTvShowPreview(context, show),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(

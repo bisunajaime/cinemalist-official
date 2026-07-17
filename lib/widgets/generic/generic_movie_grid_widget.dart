@@ -13,12 +13,14 @@ class GenericMovieGridWidget extends StatefulWidget {
   final PagedTMDBCubit pagedCubit;
   final LocalStorageCubit localCubit;
   final Function(dynamic) onTap;
+  final Function(dynamic)? onLongPress;
 
   const GenericMovieGridWidget({
     super.key,
     required this.pagedCubit,
     required this.localCubit,
     required this.onTap,
+    this.onLongPress,
   });
 
   @override
@@ -118,7 +120,9 @@ class _GenericMovieGridWidgetState extends State<GenericMovieGridWidget> {
 
             return GestureDetector(
               onTap: () => widget.onTap(element),
-              onLongPress: () => showMoviePreview(context, element),
+              onLongPress: widget.onLongPress != null
+                  ? () => widget.onLongPress!(element)
+                  : () => showMoviePreview(context, element),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Stack(
