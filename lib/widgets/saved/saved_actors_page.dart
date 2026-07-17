@@ -7,6 +7,7 @@ import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 final _runner = DelayedRunner(milliseconds: 250);
@@ -43,6 +44,7 @@ class SavedActorsWidget extends StatelessWidget {
                     model: actors[i],
                   )),
               ),
+              onLongPress: () => showGenericActorPreview(context, actors[i]),
               child: Stack(
                 children: [
                   Column(

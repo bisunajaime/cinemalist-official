@@ -7,7 +7,9 @@ import 'package:cinemalist/bloc/movies/cast/movie_cast_cubit.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
+import 'package:cinemalist/models/actors_model.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 
 class MovieCastWidget extends StatelessWidget {
   const MovieCastWidget({super.key});
@@ -87,6 +89,13 @@ class MovieCastWidget extends StatelessWidget {
                 model: GenericActorModel.fromCastModel(actor),
               )),
             ),
+            onLongPress: () => showActorPreview(context, ActorsModel(
+              id: actor.id,
+              name: actor.name,
+              profilePath: actor.profilePath,
+              department: actor.knownForDepartment,
+              popularity: actor.popularity,
+            )),
             child: Container(
               width: 100,
               margin: const EdgeInsets.only(right: 12),

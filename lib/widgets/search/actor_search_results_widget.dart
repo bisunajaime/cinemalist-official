@@ -6,6 +6,7 @@ import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
 import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
+import 'package:cinemalist/widgets/generic/actor_preview_sheet.dart';
 
 class ActorSearchResultsWidget extends StatelessWidget {
   const ActorSearchResultsWidget({super.key});
@@ -52,6 +53,7 @@ class ActorSearchResultsWidget extends StatelessWidget {
                   model: GenericActorModel.fromActorModel(actor),
                 )),
               ),
+              onLongPress: () => showActorPreview(context, actor),
               child: Column(
                 children: [
                   CircleAvatar(
