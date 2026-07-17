@@ -9,7 +9,7 @@ class ShimmerGradient extends StatefulWidget {
     super.key,
     required this.child,
     this.colors = const [Color(0xFF5C6BC0), Color(0xFFAB47BC), Color(0xFF5C6BC0)],
-    this.duration = const Duration(milliseconds: 2500),
+    this.duration = const Duration(milliseconds: 3000),
   });
 
   @override
@@ -23,7 +23,8 @@ class _ShimmerGradientState extends State<ShimmerGradient>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: widget.duration)..repeat();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat();
   }
 
   @override
@@ -34,23 +35,27 @@ class _ShimmerGradientState extends State<ShimmerGradient>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          shaderCallback: (bounds) {
-            return LinearGradient(
-              colors: widget.colors,
-              stops: const [0.0, 0.5, 1.0],
-              begin: Alignment(-1.0 + 3.0 * _controller.value, 0),
-              end: Alignment(1.0 + 3.0 * _controller.value, 0),
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.srcIn,
-          child: child,
-        );
-      },
-      child: widget.child,
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final t = _controller.value;
+          return ShaderMask(
+            shaderCallback: (bounds) {
+              return LinearGradient(
+                colors: widget.colors,
+                stops: const [0.0, 0.5, 1.0],
+                begin: Alignment(-2.0 + 4.0 * t, 0),
+                end: Alignment(0.0 + 4.0 * t, 0),
+                tileMode: TileMode.clamp,
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.srcIn,
+            child: child,
+          );
+        },
+        child: widget.child,
+      ),
     );
   }
 }
