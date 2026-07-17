@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/tvshows/credits/tvshow_credits_bloc.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
 
 class TvShowCreditsWidget extends StatelessWidget {
@@ -27,8 +28,8 @@ class TvShowCreditsWidget extends StatelessWidget {
                 aspectRatio: 2 / 3,
                 child: Shimmer.fromColors(
                   child: Container(),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
+                  baseColor: AppColors.shimmerBase,
+                  highlightColor: AppColors.shimmerHighlight,
                 ),
               ),
             );
@@ -46,7 +47,7 @@ class TvShowCreditsWidget extends StatelessWidget {
           ? Container(
               width: double.infinity,
               height: double.infinity,
-              color: Color(0xff252525),
+              color: AppColors.card,
               child: Center(
                 child: Text(
                   'Casts Not Updated',
@@ -68,13 +69,11 @@ class TvShowCreditsWidget extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => ActorInfoPage(
+                      AppRoutes.slideUp(ActorInfoPage(
                           id: model.id,
                           name: model.name,
                           model: GenericActorModel.fromCastModel(model),
-                        ),
-                      ),
+                        )),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +83,7 @@ class TvShowCreditsWidget extends StatelessWidget {
                             height: double.infinity,
                             width: 100,
                             decoration: BoxDecoration(
-                              color: Color(0xff252525),
+                              color: AppColors.card,
                               image: DecorationImage(
                                 image: (model.profilePath == null
                                         ? AssetImage(

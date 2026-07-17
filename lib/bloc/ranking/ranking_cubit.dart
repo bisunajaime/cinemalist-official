@@ -32,7 +32,6 @@ abstract class RankingCubit extends Cubit<Map<String, List<RankingModel>>> {
   Future<void> initialLoad() async {
     final data = await localStorageRepository.retrieve();
     final hasData = data != null;
-    print('hasData | $hasData');
     if (hasData) {
       emit(RankingHelper.decodeRawData(data));
       return;

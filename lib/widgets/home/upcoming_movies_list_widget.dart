@@ -1,110 +1,114 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/upcoming_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
 
 class UpcomingMoviesListWidget extends StatelessWidget {
-  const UpcomingMoviesListWidget({Key? key}) : super(key: key);
+  const UpcomingMoviesListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<UpcomingMoviesCubit>();
-    final upcomingMovies = cubit.state;
+    final movies = cubit.state;
+    final height = MediaQuery.of(context).size.height * 0.22;
+
     if (cubit.isLoading) {
-      return Container(
-        height: MediaQuery.of(context).size.height * .2,
-        width: MediaQuery.of(context).size.width,
+      return SizedBox(
+        height: height,
         child: ListView.builder(
           itemCount: 6,
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
-            return Container(
-              height: double.infinity,
-              width: 90,
-              margin: EdgeInsets.all(5),
-              color: Colors.grey,
-              child: Shimmer.fromColors(
-                child: Container(
-                  color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemBuilder: (context, i) => Container(
+            width: 100,
+            margin: const EdgeInsets.all(4),
+            child: Shimmer.fromColors(
+              baseColor: AppColors.shimmerBase,
+              highlightColor: AppColors.shimmerHighlight,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                baseColor: Color(0xff313131),
-                highlightColor: Color(0xff4A4A4A),
               ),
-            );
-          },
+            ),
+          ),
         ),
       );
     }
-    upcomingMovies!;
-    return Container(
-      height: MediaQuery.of(context).size.height * .2,
-      width: MediaQuery.of(context).size.width,
+
+    if (movies == null) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: height,
       child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: upcomingMovies.length,
+        physics: const BouncingScrollPhysics(),
+        itemCount: movies.length,
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemBuilder: (context, i) {
+          final movie = movies[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => MoviePage(
-                  model: upcomingMovies[i],
-                  tag: 'upcoming${upcomingMovies[i].posterPath}',
-                ),
-              ),
+              AppRoutes.slideUp(MoviePage(
+                model: movie,
+                tag: 'upcoming${movie.posterPath}',
+              )),
             ),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(
-                margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(1),
-                  color: Colors.grey,
-                ),
-                child: Stack(
-                  children: <Widget>[
-                    Hero(
-                      tag: 'upcoming${upcomingMovies[i].posterPath}',
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/placeholder_box.png',
-                        image:
-                            'https://image.tmdb.org/t/p/w500${upcomingMovies[i].posterPath}',
-                        fit: BoxFit.cover,
-                        fadeInCurve: Curves.ease,
-                        fadeInDuration: Duration(milliseconds: 250),
-                        fadeOutDuration: Duration(milliseconds: 250),
-                        fadeOutCurve: Curves.ease,
-                        height: double.infinity,
-                        width: double.infinity,
+                margin: const EdgeInsets.all(4),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Hero(
+                        tag: 'upcoming${movie.posterPath}',
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/placeholder_box.png',
+                          image: 'https://image.tmdb.org/t/p/w300${movie.posterPath}',
+                          fit: BoxFit.cover,
+                          fadeInDuration: const Duration(milliseconds: 300),
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 2,
-                      left: 2,
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                            size: 10,
-                          ),
-                          Text(
-                            upcomingMovies[i].voteAverage.toString(),
-                            style: Styles.mBold.copyWith(
-                              fontSize: 10,
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [Colors.black87, Colors.transparent],
                             ),
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
+                              const SizedBox(width: 2),
+                              Text(
+                                (movie.voteAverage ?? 0).toStringAsFixed(1),
+                                style: Styles.mBold.copyWith(fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          );
+          ).animate(delay: (40 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.08, end: 0);
         },
       ),
     );

@@ -25,10 +25,7 @@ const genreColorPair = <String, List<Color>>{
 
 List<Color> grabColorForGenre(String genre) {
   final lower = genre.toLowerCase();
-  if (genreColorPair[lower]!.isEmpty) {
-    return [Colors.pinkAccent, Colors.redAccent];
-  }
-  return genreColorPair[lower]!;
+  return genreColorPair[lower] ?? [Colors.pinkAccent, Colors.redAccent];
 }
 
 List<GenresModel> loadGenreIds(List<int> genreIds, List<GenresModel> genres) {

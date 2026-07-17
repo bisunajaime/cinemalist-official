@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cinemalist/library/cubit.dart';
 import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
 
 enum SavedRecordType {
@@ -54,7 +55,7 @@ class SavedRecordsTitle extends StatelessWidget {
               margin: EdgeInsets.only(right: 4),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.pinkAccent,
+                color: AppColors.primary,
               ),
               child: Icon(
                 Icons.delete_forever,

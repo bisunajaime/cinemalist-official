@@ -1,198 +1,162 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cinemalist/models/season_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
 
-class SeasonInfoPage extends StatefulWidget {
+class SeasonInfoPage extends StatelessWidget {
   final List<SeasonModel>? tvSeasons;
   final SeasonModel? tvShow;
   final int? index;
   final String? name;
-  SeasonInfoPage({
-    this.tvSeasons,
-    this.tvShow,
-    this.index,
-    this.name,
-  });
 
-  @override
-  _SeasonInfoPageState createState() => _SeasonInfoPageState();
-}
-
-class _SeasonInfoPageState extends State<SeasonInfoPage> {
-  List<SeasonModel>? tv;
-  @override
-  void initState() {
-    super.initState();
-    tv = widget.tvSeasons;
-  }
+  const SeasonInfoPage({this.tvSeasons, this.tvShow, this.index, this.name});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff0E0E0E),
       body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
-        slivers: <Widget>[
-          buildSliverAppBar(context),
-          buildSliverToBoxAdapter()
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          _buildAppBar(context),
+          _buildContent(),
         ],
       ),
-      floatingActionButton: FABGoHome(),
+      floatingActionButton: const FABGoHome(),
     );
   }
 
-  SliverToBoxAdapter buildSliverToBoxAdapter() {
+  SliverToBoxAdapter _buildContent() {
     return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              widget.name!,
-              style: Styles.mBold.copyWith(
-                fontSize: 20,
-                color: Colors.pinkAccent[100],
-              ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name ?? '',
+              style: Styles.heading.copyWith(fontSize: 28, color: AppColors.primaryLight),
+            ).animate().fadeIn(duration: 400.ms),
+            const SizedBox(height: 8),
+            Text(
+              tvShow?.name ?? '',
+              style: Styles.mMed.copyWith(color: AppColors.textSecondary),
             ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              '${widget.tvShow!.name}',
-              style: Styles.mReg,
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              widget.tvShow!.overview!,
+            const SizedBox(height: 12),
+            Text(
+              tvShow?.overview ?? '',
               style: Styles.mReg.copyWith(
-                fontSize: 10,
+                fontSize: 13,
                 height: 1.6,
+                color: AppColors.textSecondary,
               ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              "Other Seasons",
-              style: Styles.mBold.copyWith(
-                fontSize: 20,
-                color: Colors.pinkAccent[100],
-              ),
-            ),
-          ),
-          Container(
-            height: 250,
-            width: double.infinity,
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: tv!.length,
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SeasonInfoPage(
-                        tvShow: tv![i],
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+            const SizedBox(height: 24),
+            Text(
+              'Other Seasons',
+              style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight),
+            ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 220,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                itemCount: tvSeasons?.length ?? 0,
+                itemBuilder: (context, i) {
+                  final season = tvSeasons![i];
+                  return GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      AppRoutes.slideUp(SeasonInfoPage(
+                        tvShow: season,
                         index: i,
-                        tvSeasons: widget.tvSeasons,
-                        name: widget.name,
+                        tvSeasons: tvSeasons,
+                        name: name,
+                      )),
+                    ),
+                    child: Container(
+                      width: 140,
+                      margin: const EdgeInsets.only(right: 12),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            season.posterPath != null
+                                ? CachedNetworkImage(
+                                    imageUrl: 'https://image.tmdb.org/t/p/w300${season.posterPath}',
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset('assets/images/placeholder.png', fit: BoxFit.cover),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [Colors.black87, Colors.transparent],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 8,
+                              left: 8,
+                              right: 8,
+                              child: Text(
+                                season.name ?? '',
+                                style: Styles.mBold.copyWith(fontSize: 13),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  child: Container(
-                    height: double.infinity,
-                    width: 150,
-                    margin: EdgeInsets.all(5),
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Color(0xff2e2e2e),
-                      image: DecorationImage(
-                          image: (tv![i].posterPath == null
-                                  ? AssetImage('assets/images/placeholder.png')
-                                  : NetworkImage(
-                                      'https://image.tmdb.org/t/p/w500${tv![i].posterPath}'))
-                              as ImageProvider<Object>,
-                          fit: BoxFit.cover,
-                          colorFilter: ColorFilter.mode(
-                            Colors.black26,
-                            BlendMode.darken,
-                          )),
-                    ),
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      tv![i].name!,
-                      style: Styles.mBold,
-                    ),
-                  ),
-                );
-              },
+                  ).animate(delay: (60 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  SliverAppBar buildSliverAppBar(BuildContext context) {
+  SliverAppBar _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: MediaQuery.of(context).size.height * .7,
-      backgroundColor: Colors.transparent,
+      expandedHeight: MediaQuery.of(context).size.height * 0.6,
+      backgroundColor: AppColors.background,
+      pinned: true,
+      stretch: true,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
-        background: Container(
-          color: Color(0xff0E0E0E),
-          height: double.infinity,
-          width: double.infinity,
-          child: ShaderMask(
-            shaderCallback: (rect) {
-              return LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  Colors.transparent,
-                ],
-              ).createShader(
-                Rect.fromLTRB(
-                  0,
-                  0,
-                  rect.width,
-                  rect.height,
-                ),
-              );
-            },
-            blendMode: BlendMode.dstIn,
-            child: widget.tvShow!.posterPath == null
-                ? Image.asset(
-                    'assets/images/placeholder.png',
-                    height: double.infinity,
-                    width: double.infinity,
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            tvShow?.posterPath != null
+                ? CachedNetworkImage(
+                    imageUrl: 'https://image.tmdb.org/t/p/w500${tvShow!.posterPath}',
                     fit: BoxFit.cover,
                   )
-                : Image.network(
-                    'https://image.tmdb.org/t/p/w500${widget.tvShow!.posterPath}',
-                    height: double.infinity,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-          ),
+                : Image.asset('assets/images/placeholder.png', fit: BoxFit.cover),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    AppColors.background.withValues(alpha: 0.3),
+                    AppColors.background,
+                  ],
+                  stops: const [0.3, 0.7, 1.0],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

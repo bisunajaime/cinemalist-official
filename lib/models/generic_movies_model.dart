@@ -39,7 +39,7 @@ class GenericMoviesModel extends SerializableClass {
       id: json['id'],
       // adult: json['adult'],
       title: json['title'],
-      genreIds: json["genre_ids"].cast<int>(),
+      genreIds: (json["genre_ids"] as List?)?.cast<int>() ?? [],
       voteAverage: json['vote_average'].toDouble(),
       overview: json['overview'],
       releaseDate: json['release_date'],

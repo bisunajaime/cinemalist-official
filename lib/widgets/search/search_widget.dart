@@ -1,134 +1,134 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/widgets/search/actor_search_results_widget.dart';
 import 'package:cinemalist/widgets/search/movie_search_results_widget.dart';
 import 'package:cinemalist/widgets/search/tv_search_results_widget.dart';
 
-class SearchWidget extends StatefulWidget {
-  const SearchWidget({Key? key}) : super(key: key);
+class SearchWidget extends StatelessWidget {
+  const SearchWidget({super.key});
 
-  @override
-  State<SearchWidget> createState() => _SearchWidgetState();
-}
-
-class _SearchWidgetState extends State<SearchWidget> {
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<SearchCubit>();
 
-    if (cubit.hasResults == false && cubit.didSearch == false) {
-      // initial page
+    if (!cubit.hasResults && !cubit.didSearch) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.search,
-              color: Colors.white.withOpacity(.5),
-              size: 100,
-            ),
+            Icon(Icons.search_rounded, color: AppColors.textMuted, size: 80),
+            const SizedBox(height: 16),
             Text(
-              'Enter a query above to look for \n'
-              'a movie, tv show, or actor',
+              'Search for movies, TV shows,\nor actors',
               textAlign: TextAlign.center,
               style: Styles.mReg.copyWith(
-                fontSize: 18,
-                color: Colors.white.withOpacity(.5),
+                fontSize: 16,
+                color: AppColors.textMuted,
+                height: 1.5,
               ),
             ),
           ],
         ),
-      );
+      ).animate().fadeIn(duration: 400.ms);
     }
 
-    if (cubit.hasResults == false && cubit.didSearch) {
+    if (!cubit.hasResults && cubit.didSearch) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.search_off_rounded,
-              color: Colors.white.withOpacity(.5),
-              size: 100,
-            ),
+            Icon(Icons.search_off_rounded, color: AppColors.textMuted, size: 80),
+            const SizedBox(height: 16),
             RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(children: [
-                  TextSpan(
-                    text: 'No records found for\n',
-                    style: Styles.mReg.copyWith(
-                      fontSize: 18,
-                      color: Colors.white.withOpacity(.5),
-                    ),
-                  ),
-                  TextSpan(
-                    text: '"${cubit.query}"',
-                    style: Styles.mBold.copyWith(
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
-                  ),
-                ]))
+              textAlign: TextAlign.center,
+              text: TextSpan(children: [
+                TextSpan(
+                  text: 'No results for\n',
+                  style: Styles.mReg.copyWith(fontSize: 16, color: AppColors.textMuted),
+                ),
+                TextSpan(
+                  text: '"${cubit.query}"',
+                  style: Styles.mBold.copyWith(fontSize: 16, color: AppColors.textPrimary),
+                ),
+              ]),
+            ),
           ],
         ),
-      );
+      ).animate().fadeIn(duration: 400.ms);
     }
 
     return ListView(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Actors - (${cubit.actorResults?.length ?? 0})',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            ActorSearchResultsWidget(),
-          ],
+        _SearchSection(
+          title: 'Actors',
+          count: cubit.actorResults?.length ?? 0,
+          child: const ActorSearchResultsWidget(),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Movies - (${cubit.movieResults?.length ?? 0})',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            MovieSearchResultsWidget(),
-          ],
+        const SizedBox(height: 16),
+        _SearchSection(
+          title: 'Movies',
+          count: cubit.movieResults?.length ?? 0,
+          child: const MovieSearchResultsWidget(),
         ),
-        SizedBox(height: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'TV Shows - (${cubit.tvResults?.length ?? 0})',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            TvSearchResultsWidget(),
-          ],
+        const SizedBox(height: 16),
+        _SearchSection(
+          title: 'TV Shows',
+          count: cubit.tvResults?.length ?? 0,
+          child: const TvSearchResultsWidget(),
         ),
       ],
     );
   }
 }
 
+class _SearchSection extends StatelessWidget {
+  final String title;
+  final int count;
+  final Widget child;
+
+  const _SearchSection({
+    required this.title,
+    required this.count,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(title, style: Styles.mBold.copyWith(fontSize: 16)),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: Styles.mBold.copyWith(fontSize: 12, color: AppColors.primaryLight),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        child,
+      ],
+    );
+  }
+}
+
 class SearchField extends StatefulWidget {
-  const SearchField({Key? key}) : super(key: key);
+  const SearchField({super.key});
 
   @override
   State<SearchField> createState() => _SearchFieldState();
@@ -136,60 +136,37 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   final _runner = DelayedRunner(milliseconds: 700);
-  final controller = TextEditingController();
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SearchCubit>();
     return Container(
-      color: Color(0xff0E0E0E),
-      padding: EdgeInsets.only(
-        left: 10,
-        right: 10,
-        bottom: 10,
-      ),
+      color: AppColors.background,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
       child: TextField(
-        controller: controller,
-        onChanged: (value) async {
-          _runner.run(() async {
-            await cubit.search(controller.text);
-          });
+        controller: _controller,
+        onChanged: (value) {
+          _runner.run(() async => await cubit.search(_controller.text));
         },
-        style: Styles.mReg.copyWith(
-          color: Colors.white,
-          fontSize: 18,
-        ),
+        style: Styles.mReg.copyWith(fontSize: 16),
         decoration: InputDecoration(
           suffixIcon: GestureDetector(
             onTap: () {
-              controller.clear();
-              _runner.run(() async {
-                await cubit.search('');
-              });
+              _controller.clear();
+              _runner.run(() async => await cubit.search(''));
             },
-            child: Icon(
-              Icons.clear,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.clear_rounded, color: AppColors.textMuted),
           ),
-          contentPadding: EdgeInsets.all(12),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white,
-          ),
-          filled: true,
-          fillColor: Color(0xff2e2e2e),
-          hintText: 'Search here',
-          hintStyle: Styles.mReg.copyWith(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.pinkAccent,
-              width: 2,
-            ),
-          ),
-          border: InputBorder.none,
+          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
+          hintText: 'Search movies, shows, actors...',
+          hintStyle: Styles.mReg.copyWith(color: AppColors.textMuted, fontSize: 15),
         ),
       ),
     );

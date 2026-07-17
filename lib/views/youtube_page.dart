@@ -1,47 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YoutubePage extends StatefulWidget {
   final String? ytKey;
   final String? title;
-  YoutubePage({this.ytKey, this.title});
+  const YoutubePage({this.ytKey, this.title});
   @override
-  _YoutubePageState createState() => _YoutubePageState();
+  State<YoutubePage> createState() => _YoutubePageState();
 }
 
 class _YoutubePageState extends State<YoutubePage> {
   late YoutubePlayerController _controller;
-  bool _isPlayerReady = false;
   bool isFullScreen = false;
-  PlayerState? _playerState;
-  YoutubeMetaData? _videoMetaData;
 
   @override
   void initState() {
     super.initState();
     _controller = YoutubePlayerController(
       initialVideoId: widget.ytKey!,
-      flags: YoutubePlayerFlags(
+      flags: const YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
         controlsVisibleAtStart: true,
         forceHD: true,
       ),
-    )..addListener(listener);
-    _playerState = PlayerState.unknown;
-    _videoMetaData = const YoutubeMetaData();
+    )..addListener(_listener);
   }
 
-  void listener() {
+  void _listener() {
     if (mounted && isFullScreen != _controller.value.isFullScreen) {
-      isFullScreen = _controller.value.isFullScreen;
-      setState(() {});
-    }
-    if (mounted && !_controller.value.isFullScreen) {
-      setState(() {
-        _playerState = _controller.value.playerState;
-        _videoMetaData = _controller.metadata;
-      });
+      setState(() => isFullScreen = _controller.value.isFullScreen);
     }
   }
 
@@ -53,7 +43,6 @@ class _YoutubePageState extends State<YoutubePage> {
 
   @override
   void deactivate() {
-    // Pauses video while navigating to next page.
     _controller.pause();
     super.deactivate();
   }
@@ -61,32 +50,29 @@ class _YoutubePageState extends State<YoutubePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: isFullScreen == true
+      appBar: isFullScreen
           ? null
           : AppBar(
-              title: Text(widget.title!),
-              backgroundColor: Color(0xff0e0e0e),
+              title: Text(widget.title ?? '', style: Styles.mMed.copyWith(fontSize: 16)),
+              backgroundColor: AppColors.background,
               centerTitle: true,
             ),
-      backgroundColor: Color(0xff0e0e0e),
       body: Center(
         child: YoutubePlayer(
-          progressColors: ProgressBarColors(
-            handleColor: Colors.red,
-            backgroundColor: Colors.red,
-            bufferedColor: Colors.red,
+          progressColors: const ProgressBarColors(
+            handleColor: AppColors.primary,
+            backgroundColor: AppColors.cardLight,
+            bufferedColor: AppColors.textMuted,
+            playedColor: AppColors.primary,
           ),
           controller: _controller,
-          liveUIColor: Colors.amber,
-          topActions: <Widget>[
-            const SizedBox(width: 8.0),
+          liveUIColor: AppColors.primary,
+          topActions: [
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 _controller.metadata.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10.0,
-                ),
+                style: Styles.mReg.copyWith(fontSize: 10),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),

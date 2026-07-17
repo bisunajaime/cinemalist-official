@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/tvshows/similar/similar_tv_bloc.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
 
 class SimilarTvShowsWidget extends StatefulWidget {
@@ -35,8 +36,8 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
                   aspectRatio: 2 / 3,
                   child: Shimmer.fromColors(
                     child: Container(),
-                    baseColor: Color(0xff313131),
-                    highlightColor: Color(0xff4A4A4A),
+                    baseColor: AppColors.shimmerBase,
+                    highlightColor: AppColors.shimmerHighlight,
                   ),
                 ),
               ),
@@ -71,11 +72,7 @@ class _SimilarTvShowsWidgetState extends State<SimilarTvShowsWidget> {
             return GestureDetector(
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => TvShowPage(
-                    model: similarTvShows[i],
-                  ),
-                ),
+                AppRoutes.slideUp(TvShowPage(model: similarTvShows[i])),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

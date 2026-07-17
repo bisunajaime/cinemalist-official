@@ -6,6 +6,7 @@ import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/views/movie_page.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
@@ -37,12 +38,10 @@ class SavedMoviesWidget extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => MoviePage(
+                    AppRoutes.slideUp(MoviePage(
                         model: savedMovies[i],
                         tag: 'upcoming${savedMovies[i].posterPath}',
-                      ),
-                    ),
+                      )),
                   ),
                   child: Container(
                     margin: EdgeInsets.all(5),
@@ -115,7 +114,7 @@ class SavedMoviesWidget extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.pinkAccent,
+                      color: AppColors.primary,
                     ),
                     child: Icon(
                       Icons.delete,

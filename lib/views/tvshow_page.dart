@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/tvshows/credits/tvshow_credits_bloc.dart';
@@ -9,10 +10,9 @@ import 'package:cinemalist/bloc/tvshows/similar/similar_tv_bloc.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/models/tvshow_model.dart';
-import 'package:cinemalist/repository/tmdb_client/tmdb_api_client.dart';
-import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/widgets/generic/fab_go_home.dart';
 import 'package:cinemalist/widgets/generic/fab_save_record.dart';
@@ -21,59 +21,47 @@ import 'package:cinemalist/widgets/tv/similar_tv_shows_widget.dart';
 import 'package:cinemalist/widgets/tv/tv_show_credits_widget.dart';
 import 'package:cinemalist/widgets/tv/tv_show_seasons_widget.dart';
 
-import '../styles/styles.dart';
-
 class TvShowPage extends StatefulWidget {
   final TVShowModel? model;
 
-  TvShowPage({this.model});
+  const TvShowPage({this.model});
 
   @override
-  _TvShowPageState createState() => _TvShowPageState();
+  State<TvShowPage> createState() => _TvShowPageState();
 }
 
 class _TvShowPageState extends State<TvShowPage> {
   final _runner = DelayedRunner(milliseconds: 250);
-  TMDBRepository tmdbRepo = TMDBAPIRepository(
-    tmdbClient: TMDBApiClient(
-      httpClient: http.Client(),
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
-    print(widget.model!.id);
+    final tmdbRepo = context.read<TMDBRepository>();
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              TvShowCreditsCubit(tmdbRepo, widget.model?.id)..loadData(),
+          create: (context) => TvShowCreditsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) =>
-              TvSeasonsCubit(tmdbRepo, widget.model?.id)..loadData(),
+          create: (context) => TvSeasonsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
         BlocProvider(
-          create: (context) =>
-              SimilarTvShowsCubit(tmdbRepo, widget.model?.id)..loadData(),
+          create: (context) => SimilarTvShowsCubit(tmdbRepo, widget.model?.id)..loadData(),
         ),
       ],
       child: Scaffold(
-        backgroundColor: Color(0xff0E0E0E),
         body: CustomScrollView(
-          physics: BouncingScrollPhysics(),
-          slivers: <Widget>[
-            buildHeading(context),
-            buildBody(),
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            _buildAppBar(context),
+            _buildBody(),
           ],
         ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FABSaveRecord<TVShowModel>(
-              tag: 'movie-${widget.model!.id!}',
-              isSaved:
-                  context.watch<TvWatchLaterCubit>().isSaved(widget.model!),
+              tag: 'tv-${widget.model!.id!}',
+              isSaved: context.watch<TvWatchLaterCubit>().isSaved(widget.model!),
               record: widget.model!,
               onTap: (elem) async {
                 _runner.run(() async {
@@ -84,167 +72,110 @@ class _TvShowPageState extends State<TvShowPage> {
                 });
               },
             ),
-            SizedBox(width: 8),
-            FABGoHome(),
+            const SizedBox(width: 8),
+            const FABGoHome(),
           ],
         ),
       ),
     );
   }
 
-  SliverToBoxAdapter buildBody() {
+  SliverToBoxAdapter _buildBody() {
     return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              widget.model!.name!,
-              style: Styles.mBold.copyWith(
-                fontSize: 20,
-                color: Colors.pinkAccent[100],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  DateFormat.yMMMd()
-                      .format(DateTime.parse(widget.model!.firstAirDate!)),
-                  style: Styles.mMed.copyWith(
-                    fontSize: 12,
-                    color: Colors.amber,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            Text(
+              widget.model!.name ?? '',
+              style: Styles.heading.copyWith(fontSize: 32, color: AppColors.primaryLight),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+            const SizedBox(height: 8),
+            GenresOfMovieListWidget(genreIds: widget.model?.genreIds),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                if (widget.model?.firstAirDate != null &&
+                    widget.model!.firstAirDate!.isNotEmpty) ...[
+                  Icon(Icons.calendar_today_rounded, size: 14, color: AppColors.amber),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat.yMMMd().format(DateTime.parse(widget.model!.firstAirDate!)),
+                    style: Styles.mMed.copyWith(fontSize: 13, color: AppColors.amber),
                   ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.star,
-                      color: Colors.yellow,
-                      size: 12,
-                    ),
-                    Text(
-                      widget.model!.voteAverage.toString(),
-                      style: Styles.mBold.copyWith(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 16),
+                ],
+                Icon(Icons.star_rounded, color: AppColors.gold, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  (widget.model!.voteAverage ?? 0).toStringAsFixed(1),
+                  style: Styles.mBold.copyWith(fontSize: 13),
                 ),
               ],
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              widget.model!.overview!,
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+            const SizedBox(height: 12),
+            Text(
+              widget.model!.overview ?? '',
               style: Styles.mReg.copyWith(
-                fontSize: 10,
+                fontSize: 13,
                 height: 1.6,
+                color: AppColors.textSecondary,
               ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              'Cast',
-              style: Styles.mBold.copyWith(
-                fontSize: 20,
-                color: Colors.pinkAccent[100],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          TvShowCreditsWidget(),
-          SizedBox(
-            height: 10,
-          ),
-          TvShowSeasonsWidget(tvShowModel: widget.model!),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              'Similar Tv Shows',
-              style: Styles.mBold.copyWith(
-                fontSize: 20,
-                color: Colors.pinkAccent[100],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          SimilarTvShowsWidget(),
-          SizedBox(
-            height: 50,
-          ),
-        ],
+            ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+            const SizedBox(height: 24),
+            Text('Cast', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
+                .animate().fadeIn(delay: 300.ms, duration: 400.ms),
+            const SizedBox(height: 12),
+            TvShowCreditsWidget(),
+            const SizedBox(height: 24),
+            TvShowSeasonsWidget(tvShowModel: widget.model!),
+            const SizedBox(height: 24),
+            Text('Similar TV Shows', style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight))
+                .animate().fadeIn(delay: 400.ms, duration: 400.ms),
+            const SizedBox(height: 12),
+            SimilarTvShowsWidget(),
+            const SizedBox(height: 100),
+          ],
+        ),
       ),
     );
   }
 
-  SliverAppBar buildHeading(BuildContext context) {
+  SliverAppBar _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      expandedHeight: MediaQuery.of(context).size.height * .7,
-      backgroundColor: Colors.transparent,
+      expandedHeight: MediaQuery.of(context).size.height * 0.6,
+      backgroundColor: AppColors.background,
+      pinned: true,
+      stretch: true,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
-        background: Container(
-          color: Color(0xff0E0E0E),
-          height: double.infinity,
-          width: double.infinity,
-          child: ShaderMask(
-            shaderCallback: (rect) {
-              return LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black,
-                  Colors.transparent,
-                ],
-              ).createShader(
-                Rect.fromLTRB(
-                  0,
-                  0,
-                  rect.width,
-                  rect.height,
-                ),
-              );
-            },
-            blendMode: BlendMode.dstIn,
-            child: Image.network(
-              'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
-              height: double.infinity,
-              width: double.infinity,
+        stretchModes: const [StretchMode.zoomBackground],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            CachedNetworkImage(
+              imageUrl: 'https://image.tmdb.org/t/p/w500${widget.model!.posterPath}',
               fit: BoxFit.cover,
+              placeholder: (_, __) => Container(color: AppColors.card),
+              errorWidget: (_, __, ___) => Container(color: AppColors.card),
             ),
-          ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    AppColors.background.withValues(alpha: 0.3),
+                    AppColors.background,
+                  ],
+                  stops: const [0.3, 0.7, 1.0],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

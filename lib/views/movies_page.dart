@@ -7,9 +7,11 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/movies/nowshowing/nowshowing_bloc.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/widgets/movies/now_showing_movies_list_widget.dart';
 
 class MoviesPage extends StatefulWidget {
+  const MoviesPage();
   @override
   State<MoviesPage> createState() => _MoviesPageState();
 }
@@ -20,58 +22,49 @@ class _MoviesPageState extends State<MoviesPage>
   Widget build(BuildContext context) {
     super.build(context);
     return NestedScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) {
         return [
           SliverAppBar(
-            backgroundColor: Color(0xff0E0E0E),
+            backgroundColor: AppColors.background,
             automaticallyImplyLeading: false,
             pinned: true,
             centerTitle: false,
-            expandedHeight: MediaQuery.of(context).size.height * .2,
+            expandedHeight: MediaQuery.of(context).size.height * 0.18,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: EdgeInsets.zero,
-              stretchModes: [StretchMode.blurBackground],
               collapseMode: CollapseMode.parallax,
               centerTitle: false,
               title: Align(
                 alignment: Alignment.bottomLeft,
-                child: buildTitle(),
+                child: _buildTitle(),
               ),
-              // background: Sizedbox(
-              //   color: Color(0xff0E0E0E),
-              //   // child: MoviesSliverCarousel(),
-              // ),
             ),
           ),
         ];
       },
-      body: NowShowingMoviesListWidget(),
+      body: const NowShowingMoviesListWidget(),
     );
   }
 
-  Padding buildTitle() {
+  Widget _buildTitle() {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 10,
-        bottom: 10,
-      ),
+      padding: const EdgeInsets.only(left: 16, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
+        children: [
           Text(
             'MOVIES',
             style: Styles.mBold.copyWith(
-              color: Colors.pinkAccent,
+              color: AppColors.primaryLight,
               fontSize: 10,
+              letterSpacing: 2,
             ),
           ),
           Text(
             'Now Playing',
-            style: Styles.mBold.copyWith(
-              fontSize: 20,
-            ),
+            style: Styles.heading.copyWith(fontSize: 28),
           ),
         ],
       ),
@@ -80,104 +73,4 @@ class _MoviesPageState extends State<MoviesPage>
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class MoviesSliverCarousel extends StatefulWidget {
-  const MoviesSliverCarousel({Key? key}) : super(key: key);
-
-  @override
-  State<MoviesSliverCarousel> createState() => _MoviesSliverCarouselState();
-}
-
-class _MoviesSliverCarouselState extends State<MoviesSliverCarousel> {
-  final pageController = PageController(initialPage: 0);
-  int index = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
-
-  void startTimer() {
-    Timer.periodic(Duration(seconds: 4), (timer) {
-      if (!mounted) return;
-      final cubit = context.read<NowShowingCubit>();
-      if (cubit.state == null || cubit.state?.isEmpty == true) return;
-      if (index == cubit.state!.length - 1) {
-        pageController.jumpTo(0);
-        return;
-      }
-      pageController.nextPage(
-          duration: Duration(milliseconds: 1500), curve: Curves.fastOutSlowIn);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final pagedCubit = context.watch<NowShowingCubit>();
-    final state = pagedCubit.state;
-    if (pagedCubit.initialLoading) {
-      return Container(
-        height: double.infinity,
-        color: Color(0xff0E0E0E),
-      );
-    }
-    state!;
-    state.removeWhere((element) => element?.posterPath == null);
-    return PageView.builder(
-      itemCount: state.length,
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.horizontal,
-      controller: pageController,
-      onPageChanged: (page) {
-        setState(() => index = page);
-      },
-      itemBuilder: (BuildContext context, int index) {
-        final movie = state[index];
-        return ShaderMask(
-          shaderCallback: (rect) {
-            return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xff0E0E0E),
-                Colors.transparent,
-              ],
-            ).createShader(
-              Rect.fromLTRB(
-                0,
-                0,
-                rect.width,
-                rect.height,
-              ),
-            );
-          },
-          blendMode: BlendMode.dstIn,
-          child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Color(0xff0E0E0E),
-            ),
-            child: CachedNetworkImage(
-              imageUrl: "https://image.tmdb.org/t/p/w500${movie!.posterPath}",
-              fit: BoxFit.cover,
-              cacheManager: DefaultCacheManager(),
-              placeholder: (context, _) {
-                return Shimmer.fromColors(
-                  child: Container(
-                    height: double.infinity,
-                  ),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
-                );
-                // return Image.asset('assets/images/placeholder_box.png');
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
 }

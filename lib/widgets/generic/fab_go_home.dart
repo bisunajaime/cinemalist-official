@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:cinemalist/styles/theme.dart';
 
 class FABGoHome extends StatelessWidget {
-  const FABGoHome({Key? key}) : super(key: key);
+  const FABGoHome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      tooltip: 'Tap to go home',
+      tooltip: 'Go home',
       heroTag: 'home',
-      elevation: 0,
+      elevation: 4,
       onPressed: () {
         while (Navigator.canPop(context)) {
           Navigator.pop(context);
         }
       },
-      backgroundColor: Colors.red,
-      child: Icon(
-        Icons.home,
-        color: Colors.white,
-      ),
+      backgroundColor: AppColors.card,
+      child: const Icon(Icons.home_rounded, color: AppColors.textPrimary),
     );
   }
 }

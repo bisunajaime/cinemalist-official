@@ -3,109 +3,101 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
 
 class TvSearchResultsWidget extends StatelessWidget {
-  const TvSearchResultsWidget({Key? key}) : super(key: key);
+  const TvSearchResultsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<SearchCubit>();
     final tvShows = cubit.tvResults;
-    if (cubit.loading) {
-      return Container(
+    final height = MediaQuery.of(context).size.height * 0.2;
+
+    if (cubit.loading || tvShows == null || tvShows.isEmpty) {
+      return SizedBox(
         height: 150,
-        width: double.infinity,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: 9,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Container(
-                color: Colors.grey,
-                height: double.infinity,
-                child: AspectRatio(
-                  aspectRatio: 2 / 3,
-                  child: Shimmer.fromColors(
-                    child: Container(),
-                    baseColor: Colors.red,
-                    highlightColor: Colors.blue,
+          itemCount: 5,
+          itemBuilder: (_, __) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: AspectRatio(
+              aspectRatio: 2 / 3,
+              child: Shimmer.fromColors(
+                baseColor: AppColors.shimmerBase,
+                highlightColor: AppColors.shimmerHighlight,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
-            );
-          },
+            ),
+          ),
         ),
       );
     }
-    if (cubit.didSearch && tvShows?.isEmpty == true) {
-      return Container();
-    }
-    tvShows!;
-    tvShows.removeWhere((element) => element.posterPath == null);
-    return Container(
-      height: MediaQuery.of(context).size.height * .2,
-      width: MediaQuery.of(context).size.width,
+
+    final filtered = tvShows.where((s) => s.posterPath != null).toList();
+
+    return SizedBox(
+      height: height,
       child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: tvShows.length,
+        physics: const BouncingScrollPhysics(),
+        itemCount: filtered.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, i) {
+          final show = filtered[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => TvShowPage(
-                  model: tvShows[i],
-                ),
-              ),
+              AppRoutes.slideUp(TvShowPage(model: show)),
             ),
             child: AspectRatio(
               aspectRatio: 2 / 3,
               child: Container(
-                margin: EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(1),
-                  color: Colors.grey,
-                ),
-                child: Stack(
-                  children: <Widget>[
-                    Hero(
-                      tag: 'upcoming${tvShows[i].posterPath}',
-                      child: FadeInImage.assetNetwork(
+                margin: const EdgeInsets.all(4),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      FadeInImage.assetNetwork(
                         placeholder: 'assets/images/placeholder_box.png',
-                        image:
-                            'https://image.tmdb.org/t/p/w500${tvShows[i].posterPath}',
+                        image: 'https://image.tmdb.org/t/p/w300${show.posterPath}',
                         fit: BoxFit.cover,
-                        fadeInCurve: Curves.ease,
-                        fadeInDuration: Duration(milliseconds: 250),
-                        fadeOutDuration: Duration(milliseconds: 250),
-                        fadeOutCurve: Curves.ease,
-                        height: double.infinity,
-                        width: double.infinity,
+                        fadeInDuration: const Duration(milliseconds: 250),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 2,
-                      left: 2,
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow,
-                            size: 10,
-                          ),
-                          Text(
-                            tvShows[i].voteAverage.toString(),
-                            style: Styles.mBold.copyWith(
-                              fontSize: 10,
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [Colors.black87, Colors.transparent],
                             ),
                           ),
-                        ],
+                          child: Row(
+                            children: [
+                              Icon(Icons.star_rounded, color: AppColors.gold, size: 11),
+                              const SizedBox(width: 2),
+                              Text(
+                                (show.voteAverage ?? 0).toStringAsFixed(1),
+                                style: Styles.mBold.copyWith(fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

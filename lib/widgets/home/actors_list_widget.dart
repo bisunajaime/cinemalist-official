@@ -1,92 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/actors_barrel.dart';
 import 'package:cinemalist/models/generic_actor_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
 
 class ActorsListWidget extends StatelessWidget {
-  const ActorsListWidget({Key? key}) : super(key: key);
+  const ActorsListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<ActorsCubit>();
     final actors = cubit.state;
+
     if (cubit.isLoading) {
-      return Container(
-        height: 100,
-        width: double.infinity,
+      return SizedBox(
+        height: 120,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: 4,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: CircleAvatar(
-                radius: 35,
-                backgroundColor: Colors.grey,
-                child: Shimmer.fromColors(
-                  child: Container(),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
-                ),
-              ),
-            );
-          },
+          itemCount: 6,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemBuilder: (context, i) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Shimmer.fromColors(
+              baseColor: AppColors.shimmerBase,
+              highlightColor: AppColors.shimmerHighlight,
+              child: const CircleAvatar(radius: 38),
+            ),
+          ),
         ),
       );
     }
-    if (cubit.error) {
-      return Text('todo reload');
+
+    if (cubit.error || actors == null) {
+      return const SizedBox(height: 100, child: Center(child: Text('Failed to load')));
     }
-    actors!;
-    return Container(
-      height: 100,
-      width: double.infinity,
+
+    return SizedBox(
+      height: 120,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: actors.length,
-        physics: BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 5,
+          final actor = actors[i];
+          return GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              AppRoutes.slideUp(ActorInfoPage(
+                id: actor.id,
+                name: actor.name,
+                model: GenericActorModel.fromActorModel(actor),
+              )),
             ),
-            child: GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ActorInfoPage(
-                    id: actors[i].id,
-                    name: actors[i].name,
-                    model: GenericActorModel.fromActorModel(actors[i]),
-                  ),
-                ),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Color(0xff2e2e2e),
-                    backgroundImage: NetworkImage(
-                        'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
-                    radius: 35,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.4),
+                        width: 2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.15),
+                          blurRadius: 12,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.card,
+                      backgroundImage: actor.profilePath != null
+                          ? NetworkImage('https://image.tmdb.org/t/p/w200${actor.profilePath}')
+                          : null,
+                      radius: 38,
+                      child: actor.profilePath == null
+                          ? const Icon(Icons.person, color: AppColors.textMuted)
+                          : null,
+                    ),
                   ),
+                  const SizedBox(height: 6),
                   SizedBox(
-                    height: 1,
-                  ),
-                  Text(
-                    actors[i].name!,
-                    style: Styles.mMed.copyWith(
-                      fontSize: 8,
+                    width: 76,
+                    child: Text(
+                      actor.name ?? '',
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Styles.mMed.copyWith(fontSize: 10),
                     ),
                   ),
                 ],
               ),
             ),
-          );
+          ).animate(delay: (60 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0);
         },
       ),
     );

@@ -58,26 +58,26 @@ class FileLocalStorageRepository implements LocalStorageRepository {
     logger.waiting('saving file');
     try {
       if (json == 'null') {
-        throw Exception('$json is null');
+        throw Exception('json content is null string');
       }
       final file = await getFile();
       if (!await file.exists()) {
-        logger.waiting('file does not exists, so creating one');
-        await file.create();
+        logger.waiting('file does not exist, creating');
+        await file.create(recursive: true);
         logger.success('file created');
       }
       await file.writeAsString(json);
       logger.success('file saved');
       return true;
     } catch (e) {
-      logger.error('failed to save data');
+      logger.error('failed to save data: $e');
       return false;
     }
   }
 
   @override
   Future<File> getFile() async {
-    final dir = await getTemporaryDirectory();
+    final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/$fileName');
     return file;
   }

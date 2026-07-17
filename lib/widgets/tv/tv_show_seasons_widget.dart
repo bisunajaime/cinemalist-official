@@ -1,112 +1,106 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/bloc/tvshows/seasons/tvseasons_bloc.dart';
 import 'package:cinemalist/models/tvshow_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/seasoninfo_page.dart';
 
 class TvShowSeasonsWidget extends StatelessWidget {
   final TVShowModel tvShowModel;
-  const TvShowSeasonsWidget({Key? key, required this.tvShowModel})
-      : super(key: key);
+  const TvShowSeasonsWidget({super.key, required this.tvShowModel});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<TvSeasonsCubit>();
-    final tvSeasons = cubit.state;
+    final seasons = cubit.state;
 
     if (cubit.isLoading) {
-      return Container(
-        height: 100,
-        width: double.infinity,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: 4,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: CircleAvatar(
-                radius: 35,
-                backgroundColor: Colors.grey,
-                child: Shimmer.fromColors(
-                  child: Container(),
-                  baseColor: Color(0xff313131),
-                  highlightColor: Color(0xff4A4A4A),
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    }
-    if (cubit.error) {
-      return Text('todo reload');
-    }
-    tvSeasons!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(
-          height: 10,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            '${tvSeasons.length} Seasons',
-            style: Styles.mBold.copyWith(
-              fontSize: 20,
-              color: Colors.pinkAccent[100],
+      return SizedBox(
+        height: 180,
+        child: Shimmer.fromColors(
+          baseColor: AppColors.shimmerBase,
+          highlightColor: AppColors.shimmerHighlight,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
-        Container(
+      );
+    }
+
+    if (cubit.error || seasons == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${seasons.length} Seasons',
+          style: Styles.heading.copyWith(fontSize: 26, color: AppColors.primaryLight),
+        ).animate().fadeIn(duration: 400.ms),
+        const SizedBox(height: 12),
+        SizedBox(
           height: 200,
-          width: double.infinity,
           child: ListView.builder(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            itemCount: tvSeasons.length,
+            itemCount: seasons.length,
             itemBuilder: (context, i) {
-              final model = tvSeasons[i];
+              final season = seasons[i];
               return GestureDetector(
                 onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => SeasonInfoPage(
-                      index: i,
-                      tvSeasons: tvSeasons,
-                      tvShow: model,
-                      name: tvShowModel.name,
+                  AppRoutes.slideUp(SeasonInfoPage(
+                    index: i,
+                    tvSeasons: seasons,
+                    tvShow: season,
+                    name: tvShowModel.name,
+                  )),
+                ),
+                child: Container(
+                  width: 130,
+                  margin: const EdgeInsets.only(right: 10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        season.posterPath != null
+                            ? CachedNetworkImage(
+                                imageUrl: 'https://image.tmdb.org/t/p/w300${season.posterPath}',
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset('assets/images/placeholder.png', fit: BoxFit.cover),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [Colors.black87, Colors.transparent],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 8,
+                          left: 8,
+                          right: 8,
+                          child: Text(
+                            season.name ?? '',
+                            style: Styles.mBold.copyWith(fontSize: 13),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                child: Container(
-                  height: double.infinity,
-                  width: 130,
-                  margin: EdgeInsets.all(2),
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: Color(0xff2e2e2e),
-                    image: DecorationImage(
-                        image: (model.posterPath == null
-                                ? AssetImage('assets/images/placeholder.png')
-                                : NetworkImage(
-                                    'https://image.tmdb.org/t/p/w500${model.posterPath}'))
-                            as ImageProvider<Object>,
-                        fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(
-                          Colors.black26,
-                          BlendMode.darken,
-                        )),
-                  ),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    model.name!,
-                    style: Styles.mBold,
-                  ),
-                ),
-              );
+              ).animate(delay: (50 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.08, end: 0);
             },
           ),
         ),

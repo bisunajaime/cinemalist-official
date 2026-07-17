@@ -60,9 +60,8 @@ class SearchCubit extends SearchTMDBCubit<SearchModel?> {
   String get name => 'SearchCubit';
 
   @override
-  Future<SearchModel?> loadFromServer() {
-    // TODO: implement loadFromServer
-    throw UnimplementedError();
+  Future<SearchModel?> loadFromServer() async {
+    return state;
   }
 
   @override

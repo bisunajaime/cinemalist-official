@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:cinemalist/barrels/genres_barrel.dart';
@@ -11,11 +12,12 @@ import 'package:cinemalist/bloc/ranking/movie_ranking_cubit.dart';
 import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
 import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/search/search_cubit.dart';
+import 'package:cinemalist/bloc/theme/theme_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/repository/tmdb_client/tmdb_api_client.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_api_repository.dart';
 import 'package:cinemalist/repository/tmdb_repository/tmdb_repository.dart';
-import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/home_page.dart';
 import 'package:cinemalist/views/more_page.dart';
 import 'package:cinemalist/views/movies_page.dart';
@@ -27,187 +29,124 @@ import 'barrels/actors_barrel.dart';
 import 'bloc/tvshows/trending/populartvshows_bloc.dart';
 
 void main() {
-  // BlocSupervisor.delegate = SimpleBlocDelegate();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  const apiKey = String.fromEnvironment(
+    'TMDB_API_KEY',
+    defaultValue: 'efd2f9bdbe60bbb9414be9a5a20296b0',
+  );
+
   final TMDBRepository repository = TMDBAPIRepository(
     tmdbClient: TMDBApiClient(
       httpClient: http.Client(),
+      apiKey: apiKey,
     ),
   );
-  runApp(MyApp(
-    repository: repository,
-  ));
+  runApp(MyApp(repository: repository));
 }
-
-// BLoc Delegate
-// class SimpleBlocDelegate extends BlocDelegate {
-//   @override
-//   void onTransition(Bloc bloc, Transition transition) {
-//     super.onTransition(bloc, transition);
-//     print(transition);
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   final TMDBRepository repository;
 
-  MyApp({
-    required this.repository,
-  });
+  const MyApp({required this.repository});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => GenresCubit(repository)..loadData(),
+    return RepositoryProvider.value(
+      value: repository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(create: (_) => GenresCubit(repository)..loadData()),
+          BlocProvider(create: (_) => PopularMoviesCubit(repository)..loadData()),
+          BlocProvider(create: (_) => UpcomingMoviesCubit(repository)..loadData()),
+          BlocProvider(create: (_) => TrendingMoviesCubit(repository)..loadData()),
+          BlocProvider(create: (_) => ActorsCubit(repository)..loadData()),
+          BlocProvider(create: (_) => NowShowingCubit(repository)),
+          BlocProvider(create: (_) => PopularTvShowsCubit(repository)),
+          BlocProvider(create: (_) => SearchCubit(repository)),
+          BlocProvider(create: (_) => MoviesWatchLaterCubit()),
+          BlocProvider(create: (_) => TvWatchLaterCubit()),
+          BlocProvider(create: (_) => SavedActorsCubit()),
+          BlocProvider(create: (_) => MovieRankingCubit()),
+          BlocProvider(create: (_) => ActorRankingCubit()),
+          BlocProvider(create: (_) => TvShowRankingCubit()),
+          BlocProvider(create: (_) => RankingFilterCubit()),
+        ],
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            _updateSystemUI(themeMode);
+            return MaterialApp(
+              title: 'Cinemalist',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              home: const MainPage(),
+            );
+          },
         ),
-        BlocProvider(
-          create: (context) => PopularMoviesCubit(repository)..loadData(),
-        ),
-        BlocProvider(
-          create: (context) => UpcomingMoviesCubit(repository)..loadData(),
-        ),
-        BlocProvider(
-          create: (context) => TrendingMoviesCubit(repository)..loadData(),
-        ),
-        BlocProvider(
-          create: (context) => ActorsCubit(repository)..loadData(),
-        ),
-        BlocProvider(
-          create: (context) => NowShowingCubit(repository),
-        ),
-        BlocProvider(
-          create: (context) => PopularTvShowsCubit(repository),
-        ),
-        BlocProvider(
-          create: (context) => SearchCubit(repository),
-        ),
-        BlocProvider(
-          create: (context) => MoviesWatchLaterCubit(),
-        ),
-        BlocProvider(
-          create: (context) => TvWatchLaterCubit(),
-        ),
-        BlocProvider(
-          create: (context) => SavedActorsCubit(),
-        ),
-        BlocProvider(
-          create: (context) => MovieRankingCubit(),
-        ),
-        BlocProvider(
-          create: (context) => ActorRankingCubit(),
-        ),
-        BlocProvider(
-          create: (context) => TvShowRankingCubit(),
-        ),
-        BlocProvider(
-          create: (context) => RankingFilterCubit(),
-        ),
-      ],
-      child: MaterialApp(
-        title: 'Cinemalist',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: MainPage(),
       ),
     );
+  }
+
+  void _updateSystemUI(ThemeMode mode) {
+    final isDark = mode == ThemeMode.dark;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: isDark ? AppColors.surface : AppColors.lightSurface,
+      systemNavigationBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+    ));
   }
 }
 
 class MainPage extends StatefulWidget {
-  MainPage();
+  const MainPage();
   @override
-  _MainPageState createState() => _MainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with AutomaticKeepAliveClientMixin {
-  int index = 0;
-  late PageController controller;
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
+  int _currentIndex = 0;
+  late final PageController _pageController;
+  late final AnimationController _navAnimController;
 
   @override
   void initState() {
     super.initState();
-    controller = PageController(
-      initialPage: 0,
-      keepPage: true,
-    );
+    _pageController = PageController(initialPage: 0, keepPage: true);
+    _navAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    )..forward();
   }
 
   @override
-  // ignore: must_call_super
+  void dispose() {
+    _pageController.dispose();
+    _navAnimController.dispose();
+    super.dispose();
+  }
+
+  void _onTabTapped(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+    );
+    setState(() => _currentIndex = index);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: Color(0xff0E0E0E),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xff0E0E0E),
-          selectedItemColor: Colors.pinkAccent,
-          selectedFontSize: 10,
-          selectedLabelStyle: Styles.mBold.copyWith(
-            color: Colors.pinkAccent,
-          ),
-          unselectedFontSize: 9,
-          unselectedItemColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: index,
-          onTap: (i) {
-            controller.animateToPage(
-              i,
-              duration: Duration(milliseconds: 500),
-              curve: Curves.ease,
-            );
-            setState(() {
-              index = i;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.movie,
-              ),
-              label: 'Movie',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.tv,
-              ),
-              label: 'TV',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.bookmark,
-              ),
-              label: 'Saved',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.search,
-              ),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.more_horiz,
-              ),
-              label: 'More',
-            ),
-          ],
-        ),
         body: PageView(
-          controller: controller,
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: const <Widget>[
             HomePage(),
             MoviesPage(),
             TvShowsPage(),
@@ -216,10 +155,64 @@ class _MainPageState extends State<MainPage>
             MorePage(),
           ],
         ),
+        bottomNavigationBar: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: _navAnimController,
+            curve: Curves.easeOutCubic,
+          )),
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.surface,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: context.isDark ? 0.3 : 0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: _onTabTapped,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_rounded),
+                  activeIcon: Icon(Icons.home_rounded),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.movie_rounded),
+                  activeIcon: Icon(Icons.movie_rounded),
+                  label: 'Movies',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.tv_rounded),
+                  activeIcon: Icon(Icons.tv_rounded),
+                  label: 'TV',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bookmark_outline_rounded),
+                  activeIcon: Icon(Icons.bookmark_rounded),
+                  label: 'Saved',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.search_rounded),
+                  activeIcon: Icon(Icons.search_rounded),
+                  label: 'Search',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.more_horiz_rounded),
+                  activeIcon: Icon(Icons.more_horiz_rounded),
+                  label: 'More',
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

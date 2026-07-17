@@ -4,6 +4,7 @@ import 'package:cinemalist/bloc/ranking/actor_ranking_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/views/actor_info_page.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
@@ -36,13 +37,11 @@ class SavedActorsWidget extends StatelessWidget {
             child: GestureDetector(
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => ActorInfoPage(
+                AppRoutes.slideUp(ActorInfoPage(
                     id: actors[i].id,
                     name: actors[i].name,
                     model: actors[i],
-                  ),
-                ),
+                  )),
               ),
               child: Stack(
                 children: [
@@ -51,7 +50,7 @@ class SavedActorsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       CircleAvatar(
-                        backgroundColor: Color(0xff2e2e2e),
+                        backgroundColor: AppColors.card,
                         backgroundImage: NetworkImage(
                             'https://image.tmdb.org/t/p/w500${actors[i].profilePath!}'),
                         radius: 45,
@@ -95,7 +94,7 @@ class SavedActorsWidget extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.pinkAccent,
+                          color: AppColors.primary,
                         ),
                         child: Icon(
                           Icons.delete,

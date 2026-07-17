@@ -1,111 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/trending_movies_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/views/movie_page.dart';
 
 class TrendingMoviesListWidget extends StatelessWidget {
-  const TrendingMoviesListWidget({Key? key}) : super(key: key);
+  const TrendingMoviesListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<TrendingMoviesCubit>();
-    final trendingMovies = cubit.state;
+    final movies = cubit.state;
+    final height = MediaQuery.of(context).size.height * 0.28;
+
     if (cubit.isLoading) {
-      return Container(
-        height: MediaQuery.of(context).size.height * .3,
-        width: MediaQuery.of(context).size.width,
+      return SizedBox(
+        height: height,
         child: ListView.builder(
-          itemCount: 6,
+          itemCount: 4,
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
-            return Container(
-              height: double.infinity,
-              width: 150,
-              margin: EdgeInsets.all(5),
-              color: Colors.grey,
-              child: Shimmer.fromColors(
-                child: Container(
-                  color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemBuilder: (context, i) => Container(
+            width: 160,
+            margin: const EdgeInsets.all(4),
+            child: Shimmer.fromColors(
+              baseColor: AppColors.shimmerBase,
+              highlightColor: AppColors.shimmerHighlight,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                baseColor: Color(0xff313131),
-                highlightColor: Color(0xff4A4A4A),
               ),
-            );
-          },
+            ),
+          ),
         ),
       );
     }
-    if (cubit.error) {
-      return Text('todo error');
+
+    if (cubit.error || movies == null) {
+      return const SizedBox(height: 100, child: Center(child: Text('Failed to load')));
     }
-    trendingMovies!;
-    return Container(
-      height: MediaQuery.of(context).size.height * .3,
-      width: MediaQuery.of(context).size.width,
+
+    return SizedBox(
+      height: height,
       child: ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: trendingMovies.length,
+        physics: const BouncingScrollPhysics(),
+        itemCount: movies.length,
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         itemBuilder: (context, i) {
+          final movie = movies[i];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => MoviePage(
-                  model: trendingMovies[i],
-                  tag: 'trending${trendingMovies[i].posterPath}',
+              AppRoutes.slideUp(MoviePage(
+                model: movie,
+                tag: 'trending${movie.posterPath}',
+              )),
+            ),
+            child: Container(
+              width: 160,
+              margin: const EdgeInsets.all(4),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Hero(
+                      tag: 'trending${movie.posterPath}',
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/placeholder_box.png',
+                        image: 'https://image.tmdb.org/t/p/w300${movie.posterPath}',
+                        fit: BoxFit.cover,
+                        fadeInDuration: const Duration(milliseconds: 300),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black87,
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.star_rounded, color: AppColors.gold, size: 14),
+                            const SizedBox(width: 3),
+                            Text(
+                              (movie.voteAverage ?? 0).toStringAsFixed(1),
+                              style: Styles.mBold.copyWith(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            child: Container(
-              height: double.infinity,
-              width: 180,
-              margin: EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(1),
-                color: Color(0xff0e0e0e),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  Hero(
-                    tag: 'trending${trendingMovies[i].posterPath}',
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/images/placeholder_box.png',
-                      image:
-                          'https://image.tmdb.org/t/p/w500${trendingMovies[i].posterPath}',
-                      fadeInCurve: Curves.ease,
-                      fadeInDuration: Duration(milliseconds: 250),
-                      fadeOutDuration: Duration(milliseconds: 250),
-                      fadeOutCurve: Curves.ease,
-                      height: double.infinity,
-                      width: double.infinity,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 5,
-                    left: 5,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                          size: 12,
-                        ),
-                        Text(
-                          trendingMovies[i].voteAverage.toString(),
-                          style: Styles.mBold.copyWith(
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+          ).animate(delay: (50 * i).ms).fadeIn(duration: 300.ms).slideX(begin: 0.1, end: 0);
         },
       ),
     );

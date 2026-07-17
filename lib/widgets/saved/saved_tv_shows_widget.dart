@@ -6,6 +6,7 @@ import 'package:cinemalist/bloc/ranking/tvshow_ranking_cubit.dart';
 import 'package:cinemalist/bloc/watch_later/watch_later_cubit.dart';
 import 'package:cinemalist/models/ranking_model.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/delayed_runner.dart';
 import 'package:cinemalist/views/tvshow_page.dart';
 import 'package:cinemalist/widgets/dialogs/dialogs.dart';
@@ -33,11 +34,7 @@ class SavedTvShowsWidget extends StatelessWidget {
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => TvShowPage(
-                  model: savedTVShows[i],
-                ),
-              ),
+              AppRoutes.slideUp(TvShowPage(model: savedTVShows[i])),
             ),
             child: Stack(
               children: [
@@ -113,7 +110,7 @@ class SavedTvShowsWidget extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.pinkAccent,
+                        color: AppColors.primary,
                       ),
                       child: Icon(
                         Icons.delete,

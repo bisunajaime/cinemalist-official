@@ -12,252 +12,138 @@ import 'package:cinemalist/repository/search_results_repository.dart';
 import 'package:cinemalist/repository/tmdb_client/tmdb_client.dart';
 import 'package:cinemalist/repository/uri_generator.dart';
 
-import '../../barrels/models.dart';
-
 class TMDBApiClient implements TMDBClient {
-  final String apiKey = "efd2f9bdbe60bbb9414be9a5a20296b0";
-  final baseUrl = "api.themoviedb.org";
+  final String apiKey;
+  final baseUrl = 'api.themoviedb.org';
   final version = '/3';
   final http.Client httpClient;
   late final UriLoader uriLoader;
 
-  TMDBApiClient({required this.httpClient}) {
+  TMDBApiClient({required this.httpClient, required this.apiKey}) {
     uriLoader = TMDBUriLoader(baseUrl, version, apiKey);
+  }
+
+  Future<dynamic> _fetchJson(String url, [Map<String, dynamic>? filters]) async {
+    final response = await httpClient.get(uriLoader.generateUri(url, filters));
+    if (response.statusCode != 200) {
+      throw Exception('HTTP ${response.statusCode} on $url');
+    }
+    return jsonDecode(response.body);
+  }
+
+  List<T> _parseList<T>(dynamic json, String key, T Function(Map<String, dynamic>) fromJson) {
+    return (json[key] as List).map((data) => fromJson(data)).toList();
   }
 
   @override
   Future<List<GenresModel>> fetchCategories() async {
-    List<GenresModel> genres = [];
-    final url = '/genre/movie/list';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['genres']
-        .forEach((data) => genres.add(GenresModel.fromJson(data)));
-    return genres;
+    final json = await _fetchJson('/genre/movie/list');
+    return _parseList(json, 'genres', GenresModel.fromJson);
   }
 
   @override
   Future<List<GenericMoviesModel>> fetchPopular() async {
-    List<GenericMoviesModel> popularMovies = [];
-    final path = '/discover/movie';
     final filter = FilterBuilder().sortBy().page(1);
-    final uri = uriLoader.generateUri(path, filter.toJson());
-    final response = await httpClient.get(uri);
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (data) => popularMovies.add(GenericMoviesModel.fromJson(data)));
-    return popularMovies;
+    final json = await _fetchJson('/discover/movie', filter.toJson());
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<GenericMoviesModel>> fetchUpcoming() async {
-    List<GenericMoviesModel> upcomingMovies = [];
-    final url = '/movie/upcoming';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (data) => upcomingMovies.add(GenericMoviesModel.fromJson(data)));
-    return upcomingMovies;
+    final json = await _fetchJson('/movie/upcoming');
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<GenericMoviesModel>> fetchTrending() async {
-    List<GenericMoviesModel> trendingMovies = [];
-    final url = '/trending/movie/week';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (data) => trendingMovies.add(GenericMoviesModel.fromJson(data)));
-    return trendingMovies;
+    final json = await _fetchJson('/trending/movie/week');
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<ActorsModel>> fetchActors() async {
-    List<ActorsModel> actors = [];
-    final url = '/person/popular';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => actors.add(ActorsModel.fromJson(data)));
-    return actors;
+    final json = await _fetchJson('/person/popular');
+    return _parseList(json, 'results', ActorsModel.fromJson);
   }
 
   @override
   Future<List<GenericMoviesModel>> fetchNowPlaying({int? page}) async {
-    List<GenericMoviesModel> nowPlaying = [];
-    final url = '/movie/now_playing';
     final filters = FilterBuilder().page(page);
-    final response = await httpClient.get(uriLoader.generateUri(
-      url,
-      filters.toJson(),
-    ));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => nowPlaying.add(GenericMoviesModel.fromJson(data)));
-    return nowPlaying;
+    final json = await _fetchJson('/movie/now_playing', filters.toJson());
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<TVShowModel>> fetchPopularTvShows({int? page}) async {
-    List<TVShowModel> tvShows = [];
-
     final filters = FilterBuilder().sortBy().includeAdult().page(page);
-    final url = '/discover/tv';
-    final response =
-        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => tvShows.add(TVShowModel.fromJson(data)));
-    return tvShows;
+    final json = await _fetchJson('/discover/tv', filters.toJson());
+    return _parseList(json, 'results', TVShowModel.fromJson);
   }
 
   @override
   Future<MovieInfo> fetchMovieInfo({int? id}) async {
     final filters = FilterBuilder().appendToResponse();
-    final url = '/movie/$id';
-    final response = await httpClient.get(uriLoader.generateUri(
-      url,
-      filters.toJson(),
-    ));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    MovieInfo movieInfo = MovieInfo.fromJson(decodeJson);
-    return movieInfo;
+    final json = await _fetchJson('/movie/$id', filters.toJson());
+    return MovieInfo.fromJson(json);
   }
 
   @override
   Future<List<ActorInfoModel>> fetchMovieCasts({int? id}) async {
-    List<ActorInfoModel> casts = [];
-    final url = '/movie/$id/credits';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['cast']
-        .forEach((data) => casts.add(ActorInfoModel.fromJson(data)));
-    return casts;
+    final json = await _fetchJson('/movie/$id/credits');
+    return _parseList(json, 'cast', ActorInfoModel.fromJson);
   }
 
   @override
   Future<TvShowCreditsModel> fetchTvShowCredits({int? id}) async {
-    final url = '/tv/$id/credits';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    if (response.statusCode != 200) {
-      throw new Exception('There was a problem.');
-    }
-    final decodedJson = jsonDecode(response.body);
-    TvShowCreditsModel tvShowCreditsModel =
-        TvShowCreditsModel.fromJson(decodedJson);
-    return tvShowCreditsModel;
+    final json = await _fetchJson('/tv/$id/credits');
+    return TvShowCreditsModel.fromJson(json);
   }
 
   @override
   Future<ActorInfoModel> fetchActorInfo({int? id}) async {
-    final url = '/person/$id';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    final decodedJson = jsonDecode(response.body);
-    ActorInfoModel actorInfoModel = ActorInfoModel.fromJson(decodedJson);
-    return actorInfoModel;
+    final json = await _fetchJson('/person/$id');
+    return ActorInfoModel.fromJson(json);
   }
 
   @override
-  Future<List<GenericMoviesModel>> fetchSimilarMovies(
-      {int? id, int? page}) async {
-    List<GenericMoviesModel> similarMovies = [];
+  Future<List<GenericMoviesModel>> fetchSimilarMovies({int? id, int? page}) async {
     final filters = FilterBuilder().page(page);
-    final url = '/movie/$id/similar';
-    final response = await httpClient.get(uriLoader.generateUri(
-      url,
-      filters.toJson(),
-    ));
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (data) => similarMovies.add(GenericMoviesModel.fromJson(data)));
-    return similarMovies;
+    final json = await _fetchJson('/movie/$id/similar', filters.toJson());
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<TVShowModel>> fetchSimilarTvShows({int? id, int? page}) async {
-    List<TVShowModel> similarTvShows = [];
     final filters = FilterBuilder().page(page);
-    final url = '/tv/$id/similar';
-    final response =
-        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results']
-        .forEach((data) => similarTvShows.add(TVShowModel.fromJson(data)));
-    return similarTvShows;
+    final json = await _fetchJson('/tv/$id/similar', filters.toJson());
+    return _parseList(json, 'results', TVShowModel.fromJson);
   }
 
   @override
-  Future<List<GenericMoviesModel>> fetchMoviesByGenre(
-      {int? id, int? page}) async {
-    List<GenericMoviesModel> moviesByGenre = [];
-    final url = '/discover/movie';
+  Future<List<GenericMoviesModel>> fetchMoviesByGenre({int? id, int? page}) async {
     final filters = FilterBuilder()
         .sortBy()
         .includeAdult(include: false)
         .page(page)
         .withGenres(id);
-    final response =
-        await httpClient.get(uriLoader.generateUri(url, filters.toJson()));
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (movie) => moviesByGenre.add(GenericMoviesModel.fromJson(movie)));
-    return moviesByGenre;
+    final json = await _fetchJson('/discover/movie', filters.toJson());
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
-  Future<List<GenericMoviesModel>> fetchActorMovies(
-      {int? id, int? page}) async {
-    List<GenericMoviesModel> actorMovies = [];
-    final url = '/discover/movie';
-    final filters = FilterBuilder();
-    final filterMap =
-        filters.sortBy().includeAdult().page(page).withCast(id).toJson();
-    final response =
-        await httpClient.get(uriLoader.generateUri(url, filterMap));
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['results'].forEach(
-        (movie) => actorMovies.add(GenericMoviesModel.fromJson(movie)));
-    return actorMovies;
+  Future<List<GenericMoviesModel>> fetchActorMovies({int? id, int? page}) async {
+    final filters = FilterBuilder().sortBy().includeAdult().page(page).withCast(id);
+    final json = await _fetchJson('/discover/movie', filters.toJson());
+    return _parseList(json, 'results', GenericMoviesModel.fromJson);
   }
 
   @override
   Future<List<SeasonModel>> fetchTvSeasons({int? id}) async {
-    List<SeasonModel> seasons = [];
-    final url = '/tv/$id';
-    final response = await httpClient.get(uriLoader.generateUri(url));
-    final decodeJson = jsonDecode(response.body);
-    decodeJson['seasons']
-        .forEach((season) => seasons.add(SeasonModel.fromJson(season)));
-    return seasons;
+    final json = await _fetchJson('/tv/$id');
+    return _parseList(json, 'seasons', SeasonModel.fromJson);
   }
 
+  @override
   Future fetchSearchResults({String? type, String? query, int? page}) async {
     SearchResultsRepository searchResults =
         DefaultSearchResults(uriLoader, httpClient);

@@ -1,76 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cinemalist/bloc/ranking/ranking_filter_cubit.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 
 enum RankingFilter {
-  all, // todo: show ranking of all records
+  all,
   movies,
   tvShows,
   actors,
 }
 
-class RankingFilterBar extends StatefulWidget {
-  const RankingFilterBar({Key? key}) : super(key: key);
+class RankingFilterBar extends StatelessWidget {
+  const RankingFilterBar({super.key});
 
-  @override
-  State<RankingFilterBar> createState() => _RankingFilterBarState();
-}
-
-class _RankingFilterBarState extends State<RankingFilterBar> {
-  int selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    final rankingFilterCubit = context.read<RankingFilterCubit>();
-    selectedIndex = _rankingFilterToIndex[rankingFilterCubit.state]!;
-  }
-
-  void setIndex(int index) {
-    selectedIndex = index;
-    setState(() {});
-  }
-
-  static final _indexToRankingFilter = <int, RankingFilter>{
-    0: RankingFilter.movies,
-    1: RankingFilter.tvShows,
-    2: RankingFilter.actors,
-  };
-
-  static final _rankingFilterToIndex = <RankingFilter, int>{
-    RankingFilter.movies: 0,
-    RankingFilter.tvShows: 1,
-    RankingFilter.actors: 2,
-  };
+  static const _filters = [
+    (RankingFilter.movies, Icons.movie_rounded, 'Movies'),
+    (RankingFilter.tvShows, Icons.tv_rounded, 'TV Shows'),
+    (RankingFilter.actors, Icons.person_rounded, 'Actors'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final rankingFilterCubit = context.watch<RankingFilterCubit>();
-    return BottomNavigationBar(
-      backgroundColor: Colors.transparent,
-      unselectedItemColor: Color(0xf95d5d5d),
-      selectedItemColor: Color(0xffff628b),
-      selectedFontSize: 12,
-      unselectedFontSize: 12,
-      onTap: (value) {
-        setIndex(value);
-        rankingFilterCubit.updateFilter(_indexToRankingFilter[value]!);
-      },
-      currentIndex: selectedIndex,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.movie),
-          label: 'Movies',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.tv),
-          label: 'TV Shows',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Actors',
-        ),
-      ],
+    final cubit = context.watch<RankingFilterCubit>();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: _filters.map((f) {
+          final isSelected = cubit.state == f.$1;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => cubit.updateFilter(f.$1),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.15)
+                      : AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.primary.withValues(alpha: 0.4)
+                        : Colors.transparent,
+                    width: 1.5,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      f.$2,
+                      size: 16,
+                      color: isSelected ? AppColors.primaryLight : AppColors.textMuted,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      f.$3,
+                      style: Styles.mMed.copyWith(
+                        fontSize: 12,
+                        color: isSelected ? AppColors.primaryLight : AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }

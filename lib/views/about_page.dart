@@ -1,135 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/url_opener.dart';
 
-final tmdbSvg = SvgPicture.asset('assets/tmdb/tmdb_attribution_img.svg');
-final tmdbNoticeMessage =
-    'This product uses the TMDB API but is not endorsed or certified by TMDB.';
-
 class AboutPage extends StatelessWidget {
-  const AboutPage({Key? key}) : super(key: key);
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff01b4e4),
-        title: Text('About'),
+        backgroundColor: const Color(0xFF0277BD),
+        title: Text('About', style: Styles.mBold),
         centerTitle: false,
       ),
-      backgroundColor: Color(0xff0E0E0E),
       body: ListView(
-        padding: EdgeInsets.zero,
+        padding: const EdgeInsets.all(24),
         children: [
-          // AboutTheApp(),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 28),
-          //   child: Divider(
-          //     color: Colors.white,
-          //   ),
-          // ),
-          TMDbAttributionWidget(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 28),
-            child: Divider(
-              color: Colors.white,
+          Image.asset(
+            'assets/tmdb/tmdb_attribution_logo.png',
+            height: 180,
+          ).animate().fadeIn(duration: 500.ms).scale(begin: const Offset(0.9, 0.9)),
+          const SizedBox(height: 24),
+          Text(
+            'TMDb Attribution',
+            textAlign: TextAlign.center,
+            style: Styles.heading.copyWith(fontSize: 26),
+          ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
+          const SizedBox(height: 16),
+          Text(
+            'This product uses the TMDB API but is not endorsed or certified by TMDB.',
+            textAlign: TextAlign.center,
+            style: Styles.mReg.copyWith(
+              fontSize: 15,
+              height: 1.6,
+              color: AppColors.textSecondary,
             ),
-          )
+          ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
+          const SizedBox(height: 24),
+          Center(
+            child: FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFF0277BD),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () async {
+                await openUrl('https://www.themoviedb.org/');
+              },
+              icon: const Icon(Icons.open_in_new_rounded, size: 18),
+              label: Text('Visit TMDB', style: Styles.mBold.copyWith(fontSize: 14)),
+            ),
+          ).animate(delay: 400.ms).fadeIn(duration: 400.ms),
+          const SizedBox(height: 32),
+          const Divider(color: AppColors.cardLight),
+          const SizedBox(height: 16),
+          Text(
+            'Cinemalist v2.0.0',
+            textAlign: TextAlign.center,
+            style: Styles.mMed.copyWith(color: AppColors.textMuted, fontSize: 13),
+          ),
         ],
       ),
-    );
-  }
-}
-
-// todo:
-class AboutTheApp extends StatelessWidget {
-  const AboutTheApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 18),
-        Text(
-          'About The App',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          'Personal project',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(height: 18),
-      ],
-    );
-  }
-}
-
-class TMDbAttributionWidget extends StatelessWidget {
-  const TMDbAttributionWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(height: 24),
-        Text(
-          'TMDb Attribution',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-        ),
-        Image.asset(
-          'assets/tmdb/tmdb_attribution_logo.png',
-          height: 230,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 32,
-          ),
-          child: Text(
-            tmdbNoticeMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(height: 24),
-        TextButton(
-          style: TextButton.styleFrom(
-            backgroundColor: Color(0xff01b4e4),
-            padding: EdgeInsets.symmetric(
-              vertical: 14,
-              horizontal: 32,
-            ),
-          ),
-          onPressed: () async {
-            final tmdbUrl = 'https://www.themoviedb.org/';
-            await openUrl(tmdbUrl);
-          },
-          child: Text(
-            'Check it out here',
-            style: TextStyle(
-              color: Color(0xff0d253f),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(height: 24),
-      ],
     );
   }
 }

@@ -1,60 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cinemalist/barrels/genres_barrel.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/utils/genre_utils.dart';
 import 'package:cinemalist/views/genres_page.dart';
 
 class GenresListWidget extends StatelessWidget {
-  const GenresListWidget({Key? key}) : super(key: key);
+  const GenresListWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.watch<GenresCubit>();
     final genres = cubit.state;
+
     if (cubit.isLoading) {
-      return Container(
-        height: MediaQuery.of(context).size.height * .05,
-        width: MediaQuery.of(context).size.width,
+      return SizedBox(
+        height: 180,
         child: ListView.builder(
           itemCount: 6,
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, i) {
-            return Container(
-              height: double.infinity,
-              width: 50,
-              color: Colors.grey,
-              margin: EdgeInsets.symmetric(horizontal: 2),
-              child: Shimmer.fromColors(
-                child: Container(
-                  color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          itemBuilder: (context, i) => Container(
+            width: 140,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: Shimmer.fromColors(
+              baseColor: AppColors.shimmerBase,
+              highlightColor: AppColors.shimmerHighlight,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                baseColor: Color(0xff313131),
-                highlightColor: Color(0xff4A4A4A),
               ),
-            );
-          },
+            ),
+          ),
         ),
       );
     }
-    if (cubit.error) {
-      return Center(
-        child: Text('Failed to load genres'),
+
+    if (cubit.error || genres == null) {
+      return const SizedBox(
+        height: 60,
+        child: Center(child: Text('Failed to load genres')),
       );
     }
-    genres!;
 
-    return Container(
+    return SizedBox(
       height: 180,
-      width: MediaQuery.of(context).size.width,
       child: GridView.builder(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         itemCount: genres.length,
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 130,
-          childAspectRatio: 0.5,
+          maxCrossAxisExtent: 100,
+          childAspectRatio: 0.45,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
@@ -63,42 +66,35 @@ class GenresListWidget extends StatelessWidget {
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => GenresPage(
-                  id: genre.id,
-                  genre: genre.name,
-                ),
-              ),
+              AppRoutes.slideUp(GenresPage(id: genre.id, genre: genre.name)),
             ),
             child: Container(
-              width: 200,
-              padding: EdgeInsets.only(
-                left: 8,
-                right: 30,
-                bottom: 8,
-              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: grabColorForGenre(genre.name!),
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pinkAccent,
+                    color: grabColorForGenre(genre.name!).first.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
                   ),
                 ],
-                borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.bottomLeft,
+              padding: const EdgeInsets.all(12),
               child: Text(
                 genre.name!,
-                style: Styles.mBold.copyWith(
-                  fontSize: 16,
-                ),
+                style: Styles.mBold.copyWith(fontSize: 14),
               ),
             ),
-          );
+          ).animate(delay: (50 * i).ms).fadeIn(duration: 300.ms).scale(
+                begin: const Offset(0.95, 0.95),
+                end: const Offset(1, 1),
+              );
         },
       ),
     );

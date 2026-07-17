@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cinemalist/styles/styles.dart';
+import 'package:cinemalist/styles/theme.dart';
 import 'package:cinemalist/widgets/search/search_widget.dart';
 
 class SearchPage extends StatefulWidget {
+  const SearchPage();
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
@@ -13,62 +15,50 @@ class _SearchPageState extends State<SearchPage>
   Widget build(BuildContext context) {
     super.build(context);
     return NestedScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       headerSliverBuilder: (context, innerBoxIsScrolled) {
         return [
           SliverAppBar(
-            backgroundColor: Color(0xff0E0E0E),
+            backgroundColor: AppColors.background,
             pinned: true,
-            // bottom: PreferredSize(
-            //   child: SearchField(),
-            //   preferredSize: Size.fromHeight(20),
-            // ),
-            expandedHeight: MediaQuery.of(context).size.height * .2,
+            expandedHeight: MediaQuery.of(context).size.height * 0.18,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: EdgeInsets.zero,
               collapseMode: CollapseMode.none,
               title: Align(
                 alignment: Alignment.bottomLeft,
-                child: buildTitle(),
-              ),
-              background: Container(
-                color: Color(0xff0E0E0E),
-                // child: MoviesSliverCarousel(),
+                child: _buildTitle(),
               ),
             ),
           ),
           SliverPersistentHeader(
-            delegate: SearchHeaderDelegate(58),
+            delegate: SearchHeaderDelegate(62),
             pinned: true,
-          )
+          ),
         ];
       },
-      body: SearchWidget(),
+      body: const SearchWidget(),
     );
   }
 
-  Padding buildTitle() {
+  Widget _buildTitle() {
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 10,
-        bottom: 10,
-      ),
+      padding: const EdgeInsets.only(left: 16, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
+        children: [
           Text(
             'SEARCH',
             style: Styles.mBold.copyWith(
-              color: Colors.pinkAccent,
+              color: AppColors.primaryLight,
               fontSize: 10,
+              letterSpacing: 2,
             ),
           ),
           Text(
             'Find everything',
-            style: Styles.mBold.copyWith(
-              fontSize: 20,
-            ),
+            style: Styles.heading.copyWith(fontSize: 28),
           ),
         ],
       ),
@@ -81,12 +71,11 @@ class _SearchPageState extends State<SearchPage>
 
 class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double height;
-
   SearchHeaderDelegate(this.height);
+
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return SearchField();
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return const SearchField();
   }
 
   @override
@@ -96,7 +85,5 @@ class SearchHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => height;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
-  }
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
 }

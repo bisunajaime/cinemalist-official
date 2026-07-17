@@ -17,7 +17,7 @@ abstract class Cubit<T> extends c.Cubit<T?> {
   String? get toJson;
   Log get logger => LoggerLog(name);
   late final LocalStorageRepository localRepository;
-  Cubit(initialState) : super(initialState ?? null) {
+  Cubit(super.initialState) {
     if (fileName != null) {
       assert(fileName!.contains('.json'));
       localRepository = FileLocalStorageRepository(fileName!);
@@ -45,33 +45,31 @@ abstract class Cubit<T> extends c.Cubit<T?> {
   Future<bool> hasInternet() async {
     final connectivity = Connectivity();
     final result = await connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    return !result.contains(ConnectivityResult.none);
   }
 
   Future<void> loadData() async {
     try {
       logger.waiting('loading data');
       setIsLoading(true);
-      var result;
+      T? result;
       if (await hasInternet()) {
         result = await loadFromServer();
-      } else {
-        // TODO:
-        // result = await loadFromFile();
       }
       emit(result);
       setIsLoading(false);
-      // await saveLocal();
       logger.success('data loaded');
-    } catch (e) {
-      logger.error('there was a problem: $e');
+    } catch (e, stack) {
+      logger.error('error: $e\n$stack');
+      setIsLoading(false);
+      emit(null);
     }
   }
 }
 
 abstract class TMDBCubit<T> extends Cubit<T?> {
   final TMDBRepository tmdbRepository;
-  TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState ?? null);
+  TMDBCubit(this.tmdbRepository, {initialState}) : super(initialState);
 
   @override
   String? get fileName => null;
@@ -97,8 +95,7 @@ abstract class SearchTMDBCubit<T> extends Cubit<T?> {
   @override
   String? get toJson => null;
 
-  SearchTMDBCubit(this.tmdbRepository, {initialState})
-      : super(initialState ?? null);
+  SearchTMDBCubit(this.tmdbRepository, {initialState}) : super(initialState);
 
   void clearResults();
 }
@@ -106,7 +103,7 @@ abstract class SearchTMDBCubit<T> extends Cubit<T?> {
 abstract class LocalStorageCubit<T extends SerializableClass>
     extends c.Cubit<List<T>> {
   late final LocalStorageRepository localStorageRepository;
-  LocalStorageCubit(List<T> initialState) : super(initialState) {
+  LocalStorageCubit(super.initialState) {
     localStorageRepository = FileLocalStorageRepository(fileName);
     loadFromLocal();
   }
@@ -133,10 +130,7 @@ abstract class LocalStorageCubit<T extends SerializableClass>
     } else {
       results.insert(0, record);
     }
-    final newResults = jsonEncode(results.map((e) {
-      e.toJson();
-      return e.toJson();
-    }).toList());
+    final newResults = jsonEncode(results.map((e) => e.toJson()).toList());
     await localStorageRepository.save(newResults);
     emit(results);
     return true;
@@ -151,8 +145,7 @@ abstract class LocalStorageCubit<T extends SerializableClass>
 
 abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
   final TMDBRepository tmdbRepository;
-  PagedTMDBCubit(this.tmdbRepository, {initialState})
-      : super(initialState ?? <T>[]);
+  PagedTMDBCubit(this.tmdbRepository, {initialState}) : super(initialState);
   bool loadingNextPage = false;
   bool initialLoading = true;
   bool hasReachedMax = false;
@@ -171,7 +164,6 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
 
   Future<void> refresh() async {
     logger.waiting('refreshing');
-    state?.clear();
     page = 1;
     hasReachedMax = false;
     initialLoading = true;
@@ -186,10 +178,9 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
     initialLoading = true;
     final results = await loadFromServer();
     logger.success('first page loaded');
-    if (results == null) return null;
-    state?.addAll(results.toList());
+    if (results == null) return;
     initialLoading = false;
-    emit(results);
+    emit([...results]);
   }
 
   Future<void> loadNextPage({required Function onComplete}) async {
@@ -208,15 +199,16 @@ abstract class PagedTMDBCubit<T> extends Cubit<List<T>?> {
       logger.error('no results from server');
       return;
     }
-    state?.addAll(results.toList());
+    final currentState = state ?? [];
+    final newState = [...currentState, ...results];
     loadingNextPage = false;
-    if (results.isEmpty && state?.isNotEmpty == true) {
+    if (results.isEmpty && currentState.isNotEmpty) {
       logger.info('reached max');
       hasReachedMax = true;
     }
     logger.success('next page loaded for page: $page');
     onComplete();
-    emit(state);
+    emit(newState);
   }
 
   @override

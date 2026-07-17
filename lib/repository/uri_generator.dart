@@ -12,9 +12,7 @@ class TMDBUriLoader implements UriLoader {
   @override
   Uri generateUri(String path, [Map<String, dynamic>? queryParams]) {
     final pathWithVersion = '$version$path';
-    if (queryParams == null) {
-      queryParams = {};
-    }
+    queryParams ??= {};
     queryParams['language'] = 'en-US';
     queryParams['api_key'] = apiKey;
     return Uri.https(baseUrl, pathWithVersion, queryParams);
