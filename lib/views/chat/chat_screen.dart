@@ -29,6 +29,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final _focusNode = FocusNode();
+  bool _showScrollButton = false;
 
   @override
   void initState() {
@@ -36,16 +37,25 @@ class _ChatScreenState extends State<ChatScreen> {
     _chatCubit = ActiveChatCubit(listCubit: context.read<ChatListCubit>());
     _chatCubit.loadConversation(widget.conversation);
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    // Don't close _chatCubit — let streaming finish in background
-    // It will save the conversation via ChatListCubit when done
+    _scrollController.removeListener(_onScroll);
     _controller.dispose();
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final distanceFromBottom = _scrollController.position.maxScrollExtent - _scrollController.position.pixels;
+    final shouldShow = distanceFromBottom > 150;
+    if (shouldShow != _showScrollButton) {
+      setState(() => _showScrollButton = shouldShow);
+    }
   }
 
   void _send([String? text]) {
@@ -172,7 +182,9 @@ class _ChatScreenState extends State<ChatScreen> {
         body: Column(
           children: [
             Expanded(
-              child: BlocConsumer<ActiveChatCubit, ActiveChatState>(
+              child: Stack(
+                children: [
+                  BlocConsumer<ActiveChatCubit, ActiveChatState>(
                 listener: (context, state) {
                   if (state.isStreaming) _scrollToBottom();
                   if (state.error != null) {
@@ -224,6 +236,26 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   );
                 },
+              ),
+                  if (_showScrollButton)
+                    Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: GestureDetector(
+                        onTap: _scrollToBottom,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.card.withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8)],
+                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                          ),
+                          child: Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.primaryLight, size: 22),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             // Input
