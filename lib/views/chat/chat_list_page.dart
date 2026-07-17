@@ -127,12 +127,21 @@ class _ChatListPageState extends State<ChatListPage>
   }
 
   void _startGeneralChat(BuildContext context) async {
+    final listCubit = context.read<ChatListCubit>();
+    final emptyGeneral = listCubit.state.conversations
+        .where((c) => c.subject.type == ChatSubjectType.general && c.messages.isEmpty)
+        .toList();
+    if (emptyGeneral.isNotEmpty) {
+      if (context.mounted) {
+        Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: emptyGeneral.first)));
+      }
+      return;
+    }
     final subject = ChatSubject(
       id: DateTime.now().microsecondsSinceEpoch,
       title: 'Movie Chat',
       type: ChatSubjectType.general,
     );
-    final listCubit = context.read<ChatListCubit>();
     final convo = await listCubit.createConversation(subject);
     if (context.mounted) {
       Navigator.push(context, AppRoutes.slideUp(ChatScreen(conversation: convo)));
